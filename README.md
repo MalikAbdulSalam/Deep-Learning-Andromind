@@ -2,7 +2,7 @@
 
 # 📢📢  Attention Please 📢📢
 ## New Assignment has beed added in "Tasks" folder
-## See in "Tasks/Assignment_18_mean_std_bell_curve" file
+## See in "Tasks/Assignment_1" file
 # #######################################################
 ____________________________________________________________________________________________________________
 
