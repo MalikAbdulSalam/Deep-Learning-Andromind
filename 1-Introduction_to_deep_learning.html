@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lecture 01 - Introduction to Deep Learning</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+            line-height: 1.7;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        header {
+            text-align: center;
+            padding: 30px;
+            background: #172554;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        header h2 {
+            margin: 10px 0;
+            font-weight: normal;
+            font-size: 22px;
+        }
+
+        header p {
+            margin: 5px;
+        }
+
+        h2 {
+            color: #172554;
+            border-bottom: 2px solid #dbeafe;
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+
+        h3 {
+            color: #1e40af;
+            margin-top: 25px;
+        }
+
+        p {
+            font-size: 16px;
+        }
+
+        ul, ol {
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 7px;
+        }
+
+        .definition {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .important {
+            background: #fefce8;
+            border-left: 5px solid #eab308;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .diagram {
+            background: #111827;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: Consolas, monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .equation {
+            background: #f3f4f6;
+            padding: 18px;
+            text-align: center;
+            font-family: "Times New Roman", serif;
+            font-size: 22px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        code {
+            background: #f1f5f9;
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #be123c;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th {
+            background: #172554;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid #d1d5db;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .takeaways {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 28px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <header>
+        <h1>Lecture 01: Introduction to Deep Learning</h1>
+        <h2>Deep Learning Course</h2>
+        <p><strong>Instructor:</strong> Dr. Malik Abdul Salam</p>
+    </header>
+
+
+    <!-- LEARNING OBJECTIVES -->
+    <section>
+        <h2>1. Learning Objectives</h2>
+
+        <p>
+            By the end of this lecture, students should be able to:
+        </p>
+
+        <ul>
+            <li>Understand what Deep Learning is.</li>
+            <li>Understand the relationship between AI, Machine Learning, and Deep Learning.</li>
+            <li>Explain why Deep Learning became important.</li>
+            <li>Understand the basic idea of an Artificial Neural Network.</li>
+            <li>Identify common applications of Deep Learning.</li>
+            <li>Understand the overall Deep Learning course roadmap.</li>
+        </ul>
+    </section>
+
+
+    <!-- AI -->
+    <section>
+        <h2>2. What is Artificial Intelligence?</h2>
+
+        <p>
+            <strong>Artificial Intelligence (AI)</strong> is a field of computer
+            science that focuses on building machines and software capable of
+            performing tasks that normally require human intelligence.
+        </p>
+
+        <h3>Examples of AI</h3>
+
+        <ul>
+            <li>Understanding speech</li>
+            <li>Recognizing images</li>
+            <li>Making decisions</li>
+            <li>Understanding language</li>
+            <li>Predicting outcomes</li>
+            <li>Planning routes</li>
+            <li>Playing games</li>
+            <li>Controlling robots</li>
+        </ul>
+
+        <div class="definition">
+            <strong>Simple Definition:</strong><br>
+            AI is the broader field of making machines intelligent.
+        </div>
+
+        <div class="diagram">
+Camera
+   ↓
+AI System
+   ↓
+Understand Environment
+   ↓
+Make Decision
+   ↓
+Take Action
+        </div>
+    </section>
+
+
+    <!-- MACHINE LEARNING -->
+    <section>
+        <h2>3. What is Machine Learning?</h2>
+
+        <p>
+            Machine Learning is a subset of Artificial Intelligence in which
+            computers learn patterns from data and use those patterns to make
+            predictions or decisions.
+        </p>
+
+        <h3>Traditional Programming</h3>
+
+        <div class="diagram">
+Rules + Data
+     ↓
+Program
+     ↓
+Output
+        </div>
+
+        <p>For example, a spam filter could use manually created rules:</p>
+
+        <pre>
+IF email contains "FREE"
+AND email contains "WIN"
+THEN spam
+        </pre>
+
+        <h3>Machine Learning Approach</h3>
+
+        <div class="diagram">
+Data + Expected Output
+          ↓
+Machine Learning Algorithm
+          ↓
+Learned Model
+          ↓
+Prediction
+        </div>
+    </section>
+
+
+    <!-- DEEP LEARNING -->
+    <section>
+        <h2>4. What is Deep Learning?</h2>
+
+        <p>
+            Deep Learning is a subfield of Machine Learning that primarily
+            uses artificial neural networks containing multiple layers.
+        </p>
+
+        <div class="diagram">
+Artificial Intelligence
+          │
+          ↓
+Machine Learning
+          │
+          ↓
+Deep Learning
+        </div>
+
+        <div class="important">
+            <strong>Important:</strong>
+            AI is the broader field. Machine Learning is a subset of AI,
+            while Deep Learning is a subset of Machine Learning.
+        </div>
+    </section>
+
+
+    <!-- WHY DEEP -->
+    <section>
+        <h2>5. Why is it Called "Deep" Learning?</h2>
+
+        <p>
+            The term <strong>deep</strong> refers to the use of multiple
+            layers in a neural network.
+        </p>
+
+        <div class="diagram">
+Input Layer
+     ↓
+Hidden Layer 1
+     ↓
+Hidden Layer 2
+     ↓
+Hidden Layer 3
+     ↓
+Hidden Layer 4
+     ↓
+Output Layer
+        </div>
+
+        <p>
+            A network with more layers can learn increasingly complex
+            representations of the input data.
+        </p>
+    </section>
+
+
+    <!-- ML VS DL -->
+    <section>
+        <h2>6. Traditional Machine Learning vs Deep Learning</h2>
+
+        <h3>Traditional Machine Learning</h3>
+
+        <div class="diagram">
+Raw Data
+   ↓
+Feature Engineering
+   ↓
+ML Algorithm
+   ↓
+Prediction
+        </div>
+
+        <h3>Deep Learning</h3>
+
+        <div class="diagram">
+Raw Data
+   ↓
+Neural Network
+   ↓
+Feature Learning
+   ↓
+Prediction
+        </div>
+
+        <p>
+            One important advantage of Deep Learning is that the neural
+            network can learn useful representations directly from raw data.
+        </p>
+    </section>
+
+
+    <!-- IMAGE EXAMPLE -->
+    <section>
+        <h2>7. Example: Image Recognition</h2>
+
+        <p>
+            Suppose we want to identify whether an image contains a cat or a dog.
+        </p>
+
+        <h3>Traditional Approach</h3>
+
+        <div class="diagram">
+Image
+ ↓
+Extract Edges
+ ↓
+Extract Texture
+ ↓
+Extract Shape
+ ↓
+Machine Learning Algorithm
+ ↓
+Cat / Dog
+        </div>
+
+        <h3>Deep Learning Approach</h3>
+
+        <div class="diagram">
+Image
+ ↓
+Neural Network
+ ↓
+Low-Level Features
+ ↓
+Mid-Level Features
+ ↓
+High-Level Features
+ ↓
+Cat / Dog
+        </div>
+    </section>
+
+
+    <!-- ANN -->
+    <section>
+        <h2>8. Artificial Neural Network</h2>
+
+        <p>
+            The basic building block of many Deep Learning systems is the
+            <strong>Artificial Neural Network (ANN)</strong>.
+        </p>
+
+        <div class="diagram">
+Input Layer
+     ↓
+Hidden Layer(s)
+     ↓
+Output Layer
+        </div>
+
+        <p>
+            Neural networks are mathematical models inspired loosely by
+            biological neural networks.
+        </p>
+    </section>
+
+
+    <!-- NEURON -->
+    <section>
+        <h2>9. Artificial Neuron</h2>
+
+        <p>
+            An artificial neuron receives inputs, multiplies them by weights,
+            adds a bias, and passes the result through an activation function.
+        </p>
+
+        <div class="equation">
+            z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b
+        </div>
+
+        <div class="equation">
+            y = f(z)
+        </div>
+
+        <p>Where:</p>
+
+        <ul>
+            <li><strong>x</strong> = input</li>
+            <li><strong>w</strong> = weight</li>
+            <li><strong>b</strong> = bias</li>
+            <li><strong>f</strong> = activation function</li>
+            <li><strong>y</strong> = output</li>
+        </ul>
+
+        <div class="diagram">
+Inputs
+  ↓
+Weighted Sum
+  ↓
+Bias
+  ↓
+Activation Function
+  ↓
+Output
+        </div>
+    </section>
+
+
+    <!-- WEIGHTS -->
+    <section>
+        <h2>10. Weights</h2>
+
+        <p>
+            Weights determine the importance of different inputs.
+        </p>
+
+        <div class="equation">
+            y = w₁x₁ + w₂x₂
+        </div>
+
+        <p>
+            If a weight has a larger magnitude, the corresponding input can
+            have a stronger influence on the output.
+        </p>
+
+        <p>
+            During training, the neural network adjusts its weights to reduce
+            prediction error.
+        </p>
+    </section>
+
+
+    <!-- BIAS -->
+    <section>
+        <h2>11. Bias</h2>
+
+        <p>
+            Bias provides an additional parameter that allows the neuron to
+            shift its activation.
+        </p>
+
+        <div class="equation">
+            z = wx + b
+        </div>
+    </section>
+
+
+    <!-- ACTIVATION -->
+    <section>
+        <h2>12. Activation Functions</h2>
+
+        <p>
+            An activation function determines the output of a neuron after
+            applying the weighted sum and bias.
+        </p>
+
+        <h3>12.1 Sigmoid</h3>
+
+        <div class="equation">
+            σ(x) = 1 / (1 + e<sup>-x</sup>)
+        </div>
+
+        <p>
+            Output range:
+            <strong>0 ≤ σ(x) ≤ 1</strong>
+        </p>
+
+        <h3>12.2 ReLU</h3>
+
+        <div class="equation">
+            ReLU(x) = max(0, x)
+        </div>
+
+        <pre>
+x &lt; 0  →  0
+x &gt; 0  →  x
+        </pre>
+
+        <p>
+            ReLU is widely used in hidden layers of neural networks.
+        </p>
+
+        <h3>12.3 Softmax</h3>
+
+        <p>
+            Softmax is commonly used for multi-class classification.
+        </p>
+
+        <pre>
+Cat     → 0.80
+Dog     → 0.15
+Horse   → 0.05
+        </pre>
+
+        <p>
+            The probabilities sum to approximately 1.
+        </p>
+    </section>
+
+
+    <!-- LEARNING -->
+    <section>
+        <h2>13. How Does Deep Learning Learn?</h2>
+
+        <p>
+            A neural network starts with parameters that generally do not
+            produce accurate predictions. During training, the network
+            repeatedly adjusts these parameters.
+        </p>
+
+        <div class="diagram">
+Input Data
+    ↓
+Forward Propagation
+    ↓
+Prediction
+    ↓
+Loss Calculation
+    ↓
+Backpropagation
+    ↓
+Update Weights
+    ↓
+Repeat
+        </div>
+    </section>
+
+
+    <!-- LOSS -->
+    <section>
+        <h2>14. Loss Function</h2>
+
+        <p>
+            A loss function measures how different the model's prediction is
+            from the actual target.
+        </p>
+
+        <div class="equation">
+            Loss = Difference(Prediction, Actual)
+        </div>
+
+        <h3>Common Loss Functions</h3>
+
+        <ul>
+            <li>Mean Squared Error (MSE)</li>
+            <li>Binary Cross-Entropy</li>
+            <li>Categorical Cross-Entropy</li>
+        </ul>
+    </section>
+
+
+    <!-- BACKPROPAGATION -->
+    <section>
+        <h2>15. Backpropagation</h2>
+
+        <p>
+            Backpropagation is a fundamental algorithm used to calculate how
+            the network's parameters contributed to the prediction error.
+        </p>
+
+        <div class="diagram">
+Prediction
+     ↓
+Calculate Loss
+     ↓
+Calculate Gradients
+     ↓
+Propagate Error Backward
+     ↓
+Update Weights
+        </div>
+
+        <p>
+            Backpropagation is normally used together with an optimization
+            algorithm such as Gradient Descent.
+        </p>
+    </section>
+
+
+    <!-- GRADIENT DESCENT -->
+    <section>
+        <h2>16. Gradient Descent</h2>
+
+        <p>
+            Gradient Descent is an optimization method used to minimize the
+            loss function by updating model parameters.
+        </p>
+
+        <div class="diagram">
+High Loss
+   ↓
+Adjust Parameters
+   ↓
+Lower Loss
+   ↓
+Adjust Parameters
+   ↓
+Even Lower Loss
+        </div>
+
+        <div class="equation">
+            w<sub>new</sub> =
+            w<sub>old</sub> − η
+            (∂L / ∂w)
+        </div>
+
+        <p>Where:</p>
+
+        <ul>
+            <li><strong>w</strong> = weight</li>
+            <li><strong>L</strong> = loss</li>
+            <li><strong>η</strong> = learning rate</li>
+        </ul>
+    </section>
+
+
+    <!-- WHY POPULAR -->
+    <section>
+        <h2>17. Why Did Deep Learning Become Popular?</h2>
+
+        <div class="card-container">
+
+            <div class="card">
+                <h3>Large Datasets</h3>
+                <p>
+                    Modern systems generate huge amounts of images, videos,
+                    text, audio, sensor and other data.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Powerful Hardware</h3>
+                <p>
+                    GPUs made large-scale neural-network training much more
+                    practical.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Better Algorithms</h3>
+                <p>
+                    Advances in optimization, architectures, regularization
+                    and normalization improved training.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Open-Source Frameworks</h3>
+                <p>
+                    Frameworks such as TensorFlow, PyTorch and Keras simplified
+                    Deep Learning development.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- APPLICATIONS -->
+    <section>
+        <h2>18. Applications of Deep Learning</h2>
+
+        <h3>18.1 Computer Vision</h3>
+
+        <ul>
+            <li>Image classification</li>
+            <li>Object detection</li>
+            <li>Image segmentation</li>
+            <li>Face recognition</li>
+            <li>Medical imaging</li>
+            <li>Autonomous vehicles</li>
+        </ul>
+
+        <div class="diagram">
+Camera
+  ↓
+Deep Learning Model
+  ↓
+Object Detection
+  ↓
+Car / Person / Traffic Sign
+        </div>
+
+        <h3>18.2 Natural Language Processing</h3>
+
+        <ul>
+            <li>Machine translation</li>
+            <li>Text classification</li>
+            <li>Chatbots</li>
+            <li>Question answering</li>
+            <li>Text generation</li>
+            <li>Sentiment analysis</li>
+        </ul>
+
+        <h3>18.3 Speech</h3>
+
+        <ul>
+            <li>Speech recognition</li>
+            <li>Voice assistants</li>
+            <li>Speaker identification</li>
+            <li>Text-to-speech</li>
+            <li>Speech translation</li>
+        </ul>
+
+        <h3>18.4 Robotics</h3>
+
+        <ul>
+            <li>Object recognition</li>
+            <li>Navigation</li>
+            <li>Perception</li>
+            <li>Manipulation</li>
+            <li>Decision-making</li>
+            <li>Autonomous operation</li>
+        </ul>
+
+        <div class="diagram">
+Camera
+  ↓
+Deep Learning
+  ↓
+Object Detection
+  ↓
+Planning
+  ↓
+Robot Action
+        </div>
+    </section>
+
+
+    <!-- ARCHITECTURES -->
+    <section>
+        <h2>19. Major Deep Learning Architectures</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Architecture</th>
+                    <th>Full Name</th>
+                    <th>Common Applications</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>ANN / MLP</td>
+                    <td>Artificial Neural Network / Multi-Layer Perceptron</td>
+                    <td>Classification, Regression, Tabular Data</td>
+                </tr>
+
+                <tr>
+                    <td>CNN</td>
+                    <td>Convolutional Neural Network</td>
+                    <td>Images, Video, Computer Vision</td>
+                </tr>
+
+                <tr>
+                    <td>RNN</td>
+                    <td>Recurrent Neural Network</td>
+                    <td>Sequential Data, Time Series, Text</td>
+                </tr>
+
+                <tr>
+                    <td>LSTM</td>
+                    <td>Long Short-Term Memory</td>
+                    <td>Long-Term Sequential Dependencies</td>
+                </tr>
+
+                <tr>
+                    <td>GRU</td>
+                    <td>Gated Recurrent Unit</td>
+                    <td>Sequential Data</td>
+                </tr>
+
+                <tr>
+                    <td>Transformer</td>
+                    <td>Transformer Architecture</td>
+                    <td>NLP, LLMs, Vision, Multimodal AI</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+
+    <!-- WORKFLOW -->
+    <section>
+        <h2>20. Deep Learning Workflow</h2>
+
+        <div class="diagram">
+Problem Definition
+        ↓
+Data Collection
+        ↓
+Data Cleaning
+        ↓
+Data Preprocessing
+        ↓
+Train / Validation / Test Split
+        ↓
+Model Selection
+        ↓
+Model Training
+        ↓
+Evaluation
+        ↓
+Hyperparameter Tuning
+        ↓
+Deployment
+        ↓
+Monitoring
+        </div>
+    </section>
+
+
+    <!-- DATA SPLIT -->
+    <section>
+        <h2>21. Training, Validation and Testing</h2>
+
+        <h3>Training Set</h3>
+        <p>
+            Used to learn the model's parameters.
+        </p>
+
+        <h3>Validation Set</h3>
+        <p>
+            Used to tune the model and select configurations.
+        </p>
+
+        <h3>Test Set</h3>
+        <p>
+            Used for final evaluation of the trained model.
+        </p>
+
+        <div class="diagram">
+Dataset
+   │
+   ├── Training Data
+   │
+   ├── Validation Data
+   │
+   └── Testing Data
+        </div>
+    </section>
+
+
+    <!-- OVERFITTING -->
+    <section>
+        <h2>22. Overfitting</h2>
+
+        <p>
+            Overfitting occurs when a model learns the training data too
+            specifically and performs poorly on unseen data.
+        </p>
+
+        <div class="important">
+            <strong>Example:</strong><br>
+            Training Accuracy = 99%<br>
+            Testing Accuracy = 70%
+        </div>
+
+        <h3>Common Solutions</h3>
+
+        <ul>
+            <li>More training data</li>
+            <li>Data augmentation</li>
+            <li>Dropout</li>
+            <li>Regularization</li>
+            <li>Early stopping</li>
+            <li>Transfer learning</li>
+        </ul>
+    </section>
+
+
+    <!-- UNDERFITTING -->
+    <section>
+        <h2>23. Underfitting</h2>
+
+        <p>
+            Underfitting occurs when a model is too simple or has not learned
+            enough from the available data.
+        </p>
+
+        <div class="important">
+            <strong>Example:</strong><br>
+            Training Accuracy = 65%<br>
+            Testing Accuracy = 63%
+        </div>
+    </section>
+
+
+    <!-- COMPARISON -->
+    <section>
+        <h2>24. Deep Learning vs Machine Learning</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Machine Learning</th>
+                    <th>Deep Learning</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Feature Engineering</td>
+                    <td>Often required</td>
+                    <td>Often learned automatically</td>
+                </tr>
+
+                <tr>
+                    <td>Data Requirement</td>
+                    <td>Often lower</td>
+                    <td>Often higher</td>
+                </tr>
+
+                <tr>
+                    <td>Computation</td>
+                    <td>Usually lower</td>
+                    <td>Usually higher</td>
+                </tr>
+
+                <tr>
+                    <td>Hardware</td>
+                    <td>CPU often sufficient</td>
+                    <td>GPU often beneficial</td>
+                </tr>
+
+                <tr>
+                    <td>Complex Data</td>
+                    <td>Depends on algorithm</td>
+                    <td>Very strong</td>
+                </tr>
+
+                <tr>
+                    <td>Image Processing</td>
+                    <td>Traditional methods possible</td>
+                    <td>CNNs highly effective</td>
+                </tr>
+
+                <tr>
+                    <td>Text Processing</td>
+                    <td>Traditional ML possible</td>
+                    <td>Transformers widely used</td>
+                </tr>
+
+                <tr>
+                    <td>Training Time</td>
+                    <td>Often shorter</td>
+                    <td>Often longer</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+
+    <!-- TERMINOLOGY -->
+    <section>
+        <h2>25. Important Deep Learning Terminology</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Term</th>
+                    <th>Meaning</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Dataset</td>
+                    <td>Collection of data used for learning.</td>
+                </tr>
+
+                <tr>
+                    <td>Feature</td>
+                    <td>An input variable or measurable characteristic.</td>
+                </tr>
+
+                <tr>
+                    <td>Label</td>
+                    <td>The target or expected output.</td>
+                </tr>
+
+                <tr>
+                    <td>Model</td>
+                    <td>A mathematical representation learned from data.</td>
+                </tr>
+
+                <tr>
+                    <td>Parameter</td>
+                    <td>A value learned by the model, such as a weight.</td>
+                </tr>
+
+                <tr>
+                    <td>Hyperparameter</td>
+                    <td>A setting chosen by the practitioner.</td>
+                </tr>
+
+                <tr>
+                    <td>Epoch</td>
+                    <td>One complete pass through the training dataset.</td>
+                </tr>
+
+                <tr>
+                    <td>Batch</td>
+                    <td>A subset of training examples processed together.</td>
+                </tr>
+
+                <tr>
+                    <td>Learning Rate</td>
+                    <td>Controls the size of parameter updates.</td>
+                </tr>
+
+                <tr>
+                    <td>Loss</td>
+                    <td>Measures prediction error.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+
+    <!-- COURSE ROADMAP -->
+    <section>
+        <h2>26. Deep Learning Course Roadmap</h2>
+
+        <ol>
+            <li>Introduction to Deep Learning</li>
+            <li>Neural Network Fundamentals</li>
+            <li>Perceptron and Artificial Neurons</li>
+            <li>Activation Functions</li>
+            <li>Forward Propagation</li>
+            <li>Loss Functions</li>
+            <li>Backpropagation</li>
+            <li>Gradient Descent</li>
+            <li>Neural Network Implementation</li>
+            <li>Model Training and Evaluation</li>
+            <li>Overfitting and Regularization</li>
+            <li>Convolutional Neural Networks</li>
+            <li>Image Classification</li>
+            <li>Transfer Learning</li>
+            <li>Object Detection</li>
+            <li>Image Segmentation</li>
+            <li>RNN / LSTM / GRU</li>
+            <li>NLP with Deep Learning</li>
+            <li>Transformers</li>
+            <li>Deep Learning Projects</li>
+        </ol>
+    </section>
+
+
+    <!-- KEY TAKEAWAYS -->
+    <section>
+        <h2>27. Key Takeaways</h2>
+
+        <div class="takeaways">
+
+            <p>
+                <strong>1.</strong>
+                AI is the broad field of creating intelligent systems.
+            </p>
+
+            <p>
+                <strong>2.</strong>
+                Machine Learning is a subset of AI that learns from data.
+            </p>
+
+            <p>
+                <strong>3.</strong>
+                Deep Learning is a subset of Machine Learning based primarily
+                on multi-layer neural networks.
+            </p>
+
+            <p>
+                <strong>4.</strong>
+                Deep Learning can automatically learn useful representations
+                from raw data.
+            </p>
+
+            <p>
+                <strong>5.</strong>
+                Deep Learning is especially powerful for complex data such as
+                images, video, audio, text, and sequential information.
+            </p>
+
+        </div>
+    </section>
+
+
+    <!-- QUICK REVISION -->
+    <section>
+        <h2>28. Quick Revision</h2>
+
+        <div class="diagram">
+Artificial Intelligence
+          │
+          ├── Machine Learning
+          │       │
+          │       ├── Regression
+          │       ├── Classification
+          │       └── Clustering
+          │
+          └── Deep Learning
+                  │
+                  ├── ANN / MLP
+                  ├── CNN
+                  ├── RNN
+                  ├── LSTM
+                  ├── GRU
+                  └── Transformer
+        </div>
+
+        <div class="definition">
+            <strong>Core Deep Learning Idea:</strong>
+
+            <p>
+                Data → Neural Network → Prediction → Loss →
+                Backpropagation → Weight Update → Repeat
+            </p>
+        </div>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <p>
+            Deep Learning Course — Lecture 01
+        </p>
+
+        <p>
+            Prepared for educational purposes.
+        </p>
+    </footer>
+
+</div>
+
+</body>
+</html>
