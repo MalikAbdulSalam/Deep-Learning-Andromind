@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabelImg GitHub Setup Guide</title>
+
+```
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 1000px;
+        margin: auto;
+        padding: 30px;
+        color: #222;
+        background: #f5f7fa;
+    }
+
+    h1, h2, h3 {
+        color: #17365d;
+    }
+
+    h1 {
+        text-align: center;
+        padding: 20px;
+        background: #17365d;
+        color: white;
+        border-radius: 10px;
+    }
+
+    h2 {
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 8px;
+        margin-top: 35px;
+    }
+
+    .step {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .note {
+        background: #fff8dc;
+        border-left: 5px solid #e0b000;
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    .success {
+        background: #e8f7e8;
+        border-left: 5px solid #2e8b57;
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    .warning {
+        background: #ffecec;
+        border-left: 5px solid #d9534f;
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    pre {
+        background: #1e1e1e;
+        color: #f1f1f1;
+        padding: 15px;
+        border-radius: 6px;
+        overflow-x: auto;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .tree {
+        background: #1e1e1e;
+        color: #f1f1f1;
+        padding: 15px;
+        border-radius: 6px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        background: white;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
+
+    th {
+        background: #17365d;
+        color: white;
+    }
+
+    .kbd {
+        background: #eee;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-family: monospace;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<h1>LabelImg Setup from GitHub</h1>
+
+<p>
+    This guide explains how to install and configure the GitHub version of
+    <strong>LabelImg</strong> on Windows using a dedicated Conda environment.
+</p>
+
+<div class="step">
+    <h2>1. Create a Conda Environment</h2>
+
+```
+<p>It is recommended to use Python 3.10 for this LabelImg setup.</p>
+
+<pre><code>conda create -n anno python=3.10 -y
+```
+
+conda activate anno</code></pre>
+
+```
+<p>Verify Python:</p>
+
+<pre><code>python --version</code></pre>
+
+<p>Expected:</p>
+
+<pre><code>Python 3.10.x</code></pre>
+```
+
+</div>
+
+<div class="step">
+    <h2>2. Download LabelImg from GitHub</h2>
+
+```
+<p>Go to the directory where you want to keep the project:</p>
+
+<pre><code>cd "D:\Freelancing Projects"</code></pre>
+
+<p>Clone the repository:</p>
+
+<pre><code>git clone https://github.com/HumanSignal/labelImg.git</code></pre>
+
+<p>Enter the LabelImg directory:</p>
+
+<pre><code>cd labelImg</code></pre>
+
+<p>Your directory should now be:</p>
+
+<pre><code>D:\Freelancing Projects\labelImg</code></pre>
+```
+
+</div>
+
+<div class="step">
+    <h2>3. Install Required Packages</h2>
+
+```
+<p>Install PyQt5 and lxml:</p>
+
+<pre><code>pip install PyQt5 lxml</code></pre>
+
+<p>Check PyQt5:</p>
+
+<pre><code>pip show PyQt5</code></pre>
+```
+
+</div>
+
+<div class="step">
+    <h2>4. Generate the Qt Resources File</h2>
+
+```
+<p>
+    The GitHub source contains <code>resources.qrc</code>, but the generated
+    Python file <code>libs/resources.py</code> may not exist after cloning.
+</p>
+
+<p>Install the Qt resource compiler:</p>
+
+<pre><code>pip install pyqt5-tools</code></pre>
+
+<p>Then, from the LabelImg root directory, run:</p>
+
+<pre><code>pyrcc5 -o libs\resources.py resources.qrc</code></pre>
+
+<p>
+    This generates:
+</p>
+
+<pre><code>libs\resources.py</code></pre>
+
+<div class="note">
+    <strong>Important:</strong> Do not manually create an empty
+    <code>resources.py</code>. It should be generated from
+    <code>resources.qrc</code>.
+</div>
+
+<p>If Windows cannot find <code>pyrcc5</code>, check:</p>
+
+<pre><code>dir "%CONDA_PREFIX%\Scripts\pyrcc5.exe"</code></pre>
+
+<p>If it exists, run:</p>
+
+<pre><code>"%CONDA_PREFIX%\Scripts\pyrcc5.exe" -o libs\resources.py resources.qrc</code></pre>
+```
+
+</div>
+
+<div class="step">
+    <h2>5. Check the Project Structure</h2>
+
+```
+<p>Your LabelImg folder should look approximately like this:</p>
+
+<pre class="tree"><code>labelImg/
+```
+
+│
+├── labelImg.py
+├── resources.qrc
+├── README.md
+│
+├── data/
+│   └── predefined_classes.txt
+│
+└── libs/
+├── **init**.py
+├── canvas.py
+├── shape.py
+├── utils.py
+└── resources.py</code></pre>
+
+</div>
+
+<div class="step">
+    <h2>6. Configure Your Own Classes</h2>
+
+```
+<p>
+    LabelImg can use a predefined class list. Look for:
+</p>
+
+<pre><code>data\predefined_classes.txt</code></pre>
+
+<p>For example, replace its contents with:</p>
+
+<pre><code>bolt
+```
+
+nut
+washer
+damaged_bolt</code></pre>
+
+```
+<p>
+    Save the file and restart LabelImg.
+</p>
+
+<div class="success">
+    <strong>Result:</strong> When creating a bounding box, your own
+    class names can be selected instead of the default classes.
+</div>
+```
+
+</div>
+
+<div class="step">
+    <h2>7. Start LabelImg</h2>
+
+```
+<p>From:</p>
+
+<pre><code>D:\Freelancing Projects\labelImg</code></pre>
+
+<p>run:</p>
+
+<pre><code>python labelImg.py</code></pre>
+
+<p>
+    The LabelImg GUI should open.
+</p>
+```
+
+</div>
+
+<div class="step">
+    <h2>8. Open Your Image Folder</h2>
+
+```
+<p>Inside LabelImg:</p>
+
+<ol>
+    <li>Click <strong>Open Dir</strong>.</li>
+    <li>Select your image directory.</li>
+    <li>LabelImg will display the images one by one.</li>
+</ol>
+
+<p>For example:</p>
+
+<pre><code>D:\Freelancing Projects\bolt_detection\pitch_-60</code></pre>
+```
+
+</div>
+
+<div class="step">
+    <h2>9. Select YOLO Annotation Format</h2>
+
+```
+<p>
+    If you are going to train YOLOv8, YOLO11, or another YOLO model,
+    select the <strong>YOLO</strong> format in LabelImg.
+</p>
+
+<div class="note">
+    Make sure you select YOLO format before starting your annotations.
+</div>
+```
+
+</div>
+
+<div class="step">
+    <h2>10. Create Bounding Boxes</h2>
+
+```
+<p>You can press:</p>
+
+<p>
+    <span class="kbd">W</span>
+</p>
+
+<p>or click <strong>Create RectBox</strong>.</p>
+
+<p>Then:</p>
+
+<ol>
+    <li>Click and drag around the object.</li>
+    <li>Select your class name.</li>
+    <li>Press OK.</li>
+    <li>Save using <span class="kbd">Ctrl + S</span>.</li>
+</ol>
+```
+
+</div>
+
+<div class="step">
+    <h2>11. Example Bolt Dataset</h2>
+
+```
+<p>Suppose your dataset contains three classes:</p>
+
+<pre><code>bolt
+```
+
+nut
+washer</code></pre>
+
+```
+<p>Annotate every object according to its actual class.</p>
+
+<div class="warning">
+    <strong>Important:</strong> Keep class names consistent.
+    <br><br>
+    Do not use <code>Bolt</code>, <code>bolt</code>, and
+    <code>BOLT</code> as three different labels.
+</div>
+```
+
+</div>
+
+<div class="step">
+    <h2>12. Save the Annotations</h2>
+
+```
+<p>After annotation:</p>
+
+<pre><code>Ctrl + S</code></pre>
+
+<p>
+    LabelImg will create annotation files corresponding to your images.
+</p>
+
+<p>For YOLO format, an image such as:</p>
+
+<pre><code>image001.jpg</code></pre>
+
+<p>will have a corresponding annotation:</p>
+
+<pre><code>image001.txt</code></pre>
+```
+
+</div>
+
+<div class="step">
+    <h2>13. Recommended YOLO Dataset Structure</h2>
+
+```
+<p>For training, organize your dataset like this:</p>
+
+<pre class="tree"><code>bolt_dataset/
+```
+
+│
+├── images/
+│   ├── train/
+│   │   ├── image001.jpg
+│   │   ├── image002.jpg
+│   │   └── ...
+│   │
+│   └── val/
+│       ├── image101.jpg
+│       ├── image102.jpg
+│       └── ...
+│
+├── labels/
+│   ├── train/
+│   │   ├── image001.txt
+│   │   ├── image002.txt
+│   │   └── ...
+│   │
+│   └── val/
+│       ├── image101.txt
+│       ├── image102.txt
+│       └── ...
+│
+└── data.yaml</code></pre>
+
+</div>
+
+<div class="step">
+    <h2>14. Example data.yaml</h2>
+
+```
+<p>If you have three classes:</p>
+
+<pre><code>names:
+```
+
+0: bolt
+1: nut
+2: washer</code></pre>
+
+```
+<p>A complete example can be:</p>
+
+<pre><code>path: D:/Freelancing Projects/bolt_dataset
+```
+
+train: images/train
+val: images/val
+
+names:
+0: bolt
+1: nut
+2: washer</code></pre>
+
+</div>
+
+<div class="step">
+    <h2>15. Important YOLO Class Number Rule</h2>
+
+```
+<p>
+    YOLO does not store the class name directly in every annotation.
+    It stores the class ID.
+</p>
+
+<p>For example:</p>
+
+<pre><code>0 = bolt
+```
+
+1 = nut
+2 = washer</code></pre>
+
+```
+<p>A YOLO annotation may look like:</p>
+
+<pre><code>0 0.512 0.423 0.120 0.180</code></pre>
+
+<p>
+    The first number <code>0</code> means the object belongs to class
+    <code>bolt</code>.
+</p>
+```
+
+</div>
+
+<div class="step">
+    <h2>16. If You Get the PyQt5 drawLine Error</h2>
+
+```
+<p>
+    Some LabelImg versions can produce an error similar to:
+</p>
+
+<pre><code>TypeError: arguments did not match any overloaded call:
+```
+
+drawLine(...)</code></pre>
+
+```
+<p>
+    This occurs when floating-point coordinates are passed to Qt's
+    <code>drawLine()</code>.
+</p>
+
+<p>Open:</p>
+
+<pre><code>libs\canvas.py</code></pre>
+
+<p>Find the crosshair drawing section and make sure it uses integer
+    coordinates:</p>
+
+<pre><code>p.drawLine(
+int(self.prev_point.x()),
+0,
+int(self.prev_point.x()),
+int(self.pixmap.height())
+```
+
+)
+
+p.drawLine(
+0,
+int(self.prev_point.y()),
+int(self.pixmap.width()),
+int(self.prev_point.y())
+)</code></pre>
+
+```
+<p>Save the file and restart LabelImg.</p>
+```
+
+</div>
+
+<div class="step">
+    <h2>17. Complete Installation Commands</h2>
+
+```
+<p>
+    For future reference, the complete setup can be done with:
+</p>
+
+<pre><code>conda create -n anno python=3.10 -y
+```
+
+conda activate anno
+
+cd "D:\Freelancing Projects"
+
+git clone https://github.com/HumanSignal/labelImg.git
+
+cd labelImg
+
+pip install PyQt5 lxml
+
+pip install pyqt5-tools
+
+pyrcc5 -o libs\resources.py resources.qrc
+
+python labelImg.py</code></pre>
+
+</div>
+
+<div class="step">
+    <h2>18. Daily Usage</h2>
+
+```
+<p>Once everything is installed, you only need:</p>
+
+<pre><code>conda activate anno
+```
+
+cd "D:\Freelancing Projects\labelImg"
+
+python labelImg.py</code></pre>
+
+```
+<p>
+    You do not need to reinstall LabelImg every time.
+</p>
+```
+
+</div>
+
+<div class="success">
+    <h2>Final Setup</h2>
+
+```
+<p>Your final workflow is:</p>
+
+<pre><code>GitHub LabelImg
+   ↓
+```
+
+Conda environment: anno
+↓
+Python 3.10
+↓
+PyQt5 + lxml
+↓
+Generate resources.py
+↓
+Configure predefined_classes.txt
+↓
+Open LabelImg
+↓
+Open image folder
+↓
+Select YOLO format
+↓
+Create bounding boxes
+↓
+Save YOLO .txt annotations
+↓
+Prepare YOLO dataset
+↓
+Train YOLO model</code></pre>
+
+</div>
+
+</body>
+</html>
