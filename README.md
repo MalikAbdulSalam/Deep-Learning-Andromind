@@ -11,7 +11,7 @@ ________________________________________________________________________________
 [Lecture 1 : Introduction ](https://malikabdulsalam.github.io/Deep-Learning-Andromind/1-Introduction_to_deep_learning.html)
 
 
-[Lecture 1 : Introduction ](https://malikabdulsalam.github.io/Deep-Learning-Andromind/2-label_img_setup.html)
+[Lecture 1 : Label_img Setup ](https://malikabdulsalam.github.io/Deep-Learning-Andromind/2-label_img_setup.html)
 
 
 ## AI Tree
