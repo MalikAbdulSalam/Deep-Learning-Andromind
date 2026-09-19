@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Vision Image Dataset Pipeline</title>
+
+```
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        background: #f4f6f8;
+        color: #222;
+    }
+
+    header {
+        background: #1f2937;
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 34px;
+    }
+
+    header p {
+        margin-top: 10px;
+        font-size: 18px;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    section {
+        background: white;
+        margin-bottom: 25px;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        color: #2563eb;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 10px;
+    }
+
+    h3 {
+        color: #374151;
+    }
+
+    ul {
+        padding-left: 25px;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+
+    code {
+        background: #f1f5f9;
+        padding: 3px 6px;
+        border-radius: 4px;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    .pipeline {
+        background: #eff6ff;
+        padding: 20px;
+        border-left: 5px solid #2563eb;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    .note {
+        background: #fff7ed;
+        border-left: 5px solid #f97316;
+        padding: 15px;
+        margin-top: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background: #2563eb;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background: #f8fafc;
+    }
+
+    footer {
+        text-align: center;
+        background: #1f2937;
+        color: white;
+        padding: 20px;
+        margin-top: 40px;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<header>
+    <h1>Computer Vision Image Dataset Pipeline</h1>
+    <p>From Dataset Collection to Model Training</p>
+</header>
+
+<div class="container">
+
+```
+<!-- OVERVIEW -->
+<section>
+    <h2>1. Complete Dataset Workflow</h2>
+
+    <div class="pipeline">
+        Dataset Collection → Data Preprocessing → Data Visualization
+        → Data Annotation → Dataset Splitting → Data Augmentation
+        → Model Training → Evaluation
+    </div>
+
+    <p>
+        A high-quality computer vision model depends heavily on the quality
+        and preparation of its dataset. Dataset preparation should be treated
+        as a complete engineering pipeline rather than simply collecting images.
+    </p>
+</section>
+
+
+<!-- DATASET COLLECTION -->
+<section>
+    <h2>2. Dataset Collection</h2>
+
+    <p>
+        Dataset collection is the process of gathering images that represent
+        the real-world conditions in which the computer vision model will operate.
+    </p>
+
+    <h3>2.1 Define the Problem</h3>
+
+    <ul>
+        <li>Define the computer vision task.</li>
+        <li>Define the required classes.</li>
+        <li>Determine whether the task is classification, detection, segmentation, or tracking.</li>
+        <li>Define the expected deployment environment.</li>
+    </ul>
+
+    <h3>2.2 Image Sources</h3>
+
+    <ul>
+        <li>Industrial cameras</li>
+        <li>CCTV cameras</li>
+        <li>Mobile phones</li>
+        <li>Drones</li>
+        <li>Existing videos</li>
+        <li>Public datasets</li>
+        <li>Client-provided datasets</li>
+        <li>Web-based image sources where licensing permits</li>
+    </ul>
+
+    <h3>2.3 Extract Images from Videos</h3>
+
+    <p>
+        If the available data is video, frames can be extracted at a suitable
+        frame rate.
+    </p>
+
+    <pre>
+```
+
+Video
+↓
+Frame Extraction
+↓
+Image Dataset
+↓
+Remove Similar / Duplicate Frames </pre>
+
+```
+    <h3>2.4 Dataset Diversity</h3>
+
+    <p>The dataset should represent real-world variations such as:</p>
+
+    <ul>
+        <li>Different lighting conditions</li>
+        <li>Different camera angles</li>
+        <li>Different distances</li>
+        <li>Different object sizes</li>
+        <li>Different backgrounds</li>
+        <li>Different object orientations</li>
+        <li>Partial occlusion</li>
+        <li>Indoor and outdoor conditions</li>
+    </ul>
+
+    <div class="note">
+        <strong>Important:</strong> The dataset should represent the conditions
+        the model will encounter after deployment.
+    </div>
+</section>
+
+
+<!-- PREPROCESSING -->
+<section>
+    <h2>3. Data Preprocessing</h2>
+
+    <p>
+        Data preprocessing prepares raw images and annotations for training.
+        This stage is critical because poor-quality data can significantly
+        reduce model performance.
+    </p>
+
+    <h3>3.1 Image Cleaning</h3>
+
+    <ul>
+        <li>Remove corrupted images.</li>
+        <li>Remove completely irrelevant images.</li>
+        <li>Remove extremely low-quality images.</li>
+        <li>Check image resolution.</li>
+        <li>Check image formats.</li>
+    </ul>
+
+    <h3>3.2 Duplicate Removal</h3>
+
+    <p>
+        Duplicate or near-duplicate images can cause data leakage and may
+        artificially increase model performance.
+    </p>
+
+    <pre>
+```
+
+Image 001
+Image 002  → Duplicate → Remove
+Image 003 </pre>
+
+```
+    <h3>3.3 Image Standardization</h3>
+
+    <ul>
+        <li>Convert image formats when necessary.</li>
+        <li>Resize images when appropriate.</li>
+        <li>Normalize pixel values when required by the model.</li>
+        <li>Maintain aspect ratio where appropriate.</li>
+    </ul>
+
+    <div class="note">
+        For modern YOLO training pipelines, resizing is generally handled
+        by the training pipeline. Avoid unnecessarily modifying the original
+        images before training.
+    </div>
+
+    <h3>3.4 Annotation Cleaning</h3>
+
+    <ul>
+        <li>Check missing labels.</li>
+        <li>Check incorrect class names.</li>
+        <li>Check incorrect bounding boxes.</li>
+        <li>Remove duplicate bounding boxes.</li>
+        <li>Check segmentation masks.</li>
+        <li>Check objects that were accidentally missed.</li>
+    </ul>
+
+    <h3>3.5 Class Balance</h3>
+
+    <p>Check whether some classes have significantly fewer examples.</p>
+
+    <table>
+        <tr>
+            <th>Class</th>
+            <th>Number of Objects</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>Bolt</td>
+            <td>8,000</td>
+            <td>Good</td>
+        </tr>
+        <tr>
+            <td>Nut</td>
+            <td>7,500</td>
+            <td>Good</td>
+        </tr>
+        <tr>
+            <td>Washer</td>
+            <td>600</td>
+            <td>Needs attention</td>
+        </tr>
+    </table>
+</section>
+
+
+<!-- VISUALIZATION -->
+<section>
+    <h2>4. Data Visualization</h2>
+
+    <p>
+        Data visualization allows us to understand the dataset before training
+        the model.
+    </p>
+
+    <h3>4.1 Image Visualization</h3>
+
+    <ul>
+        <li>Display random images.</li>
+        <li>Display images from every class.</li>
+        <li>Check image quality.</li>
+        <li>Check brightness and contrast.</li>
+        <li>Check image dimensions.</li>
+    </ul>
+
+    <h3>4.2 Annotation Visualization</h3>
+
+    <ul>
+        <li>Draw bounding boxes on images.</li>
+        <li>Display class names.</li>
+        <li>Display segmentation masks.</li>
+        <li>Check object locations.</li>
+        <li>Identify incorrectly annotated images.</li>
+    </ul>
+
+    <pre>
+```
+
+Original Image
+↓
+Draw Bounding Boxes
+↓
+Display Class Labels
+↓
+Human Inspection </pre>
+
+```
+    <h3>4.3 Dataset Statistics</h3>
+
+    <ul>
+        <li>Number of images</li>
+        <li>Number of objects</li>
+        <li>Number of images per class</li>
+        <li>Objects per class</li>
+        <li>Image width and height distribution</li>
+        <li>Object-size distribution</li>
+        <li>Train/validation/test distribution</li>
+    </ul>
+
+    <h3>4.4 Useful Visualization Tools</h3>
+
+    <ul>
+        <li>Python</li>
+        <li>Matplotlib</li>
+        <li>OpenCV</li>
+        <li>Pandas</li>
+        <li>Seaborn</li>
+        <li>Roboflow</li>
+        <li>CVAT</li>
+        <li>Label Studio</li>
+    </ul>
+</section>
+
+
+<!-- ANNOTATION -->
+<section>
+    <h2>5. Data Annotation</h2>
+
+    <p>
+        Annotation means adding the information required by the model to
+        understand the objects or regions in an image.
+    </p>
+
+    <h3>Common Annotation Types</h3>
+
+    <table>
+        <tr>
+            <th>Task</th>
+            <th>Annotation</th>
+        </tr>
+        <tr>
+            <td>Classification</td>
+            <td>Class label</td>
+        </tr>
+        <tr>
+            <td>Object Detection</td>
+            <td>Bounding box + class</td>
+        </tr>
+        <tr>
+            <td>Segmentation</td>
+            <td>Pixel-level mask</td>
+        </tr>
+        <tr>
+            <td>Pose Estimation</td>
+            <td>Keypoints</td>
+        </tr>
+    </table>
+
+    <h3>Common Annotation Formats</h3>
+
+    <ul>
+        <li>YOLO</li>
+        <li>COCO</li>
+        <li>Pascal VOC</li>
+    </ul>
+
+    <h3>YOLO Annotation Example</h3>
+
+    <pre>
+```
+
+class_id x_center y_center width height
+
+0 0.521 0.431 0.215 0.312 </pre>
+
+```
+    <p>
+        YOLO bounding-box coordinates are normally normalized between 0 and 1.
+    </p>
+</section>
+
+
+<!-- SPLITTING -->
+<section>
+    <h2>6. Dataset Splitting</h2>
+
+    <p>
+        The dataset should be divided into separate subsets for training,
+        validation, and testing.
+    </p>
+
+    <table>
+        <tr>
+            <th>Dataset</th>
+            <th>Typical Percentage</th>
+            <th>Purpose</th>
+        </tr>
+        <tr>
+            <td>Training</td>
+            <td>70%</td>
+            <td>Train the model</td>
+        </tr>
+        <tr>
+            <td>Validation</td>
+            <td>20%</td>
+            <td>Tune and monitor the model</td>
+        </tr>
+        <tr>
+            <td>Testing</td>
+            <td>10%</td>
+            <td>Final evaluation</td>
+        </tr>
+    </table>
+
+    <div class="note">
+        The exact percentages can vary depending on dataset size and project
+        requirements.
+    </div>
+
+    <h3>Important: Avoid Data Leakage</h3>
+
+    <p>
+        Similar images, duplicate images, or frames from the same video sequence
+        should not be randomly distributed across train and test sets. Otherwise,
+        the test results may be misleading.
+    </p>
+</section>
+
+
+<!-- AUGMENTATION -->
+<section>
+    <h2>7. Data Augmentation</h2>
+
+    <p>
+        Data augmentation generates realistic variations of training images
+        to improve model generalization.
+    </p>
+
+    <ul>
+        <li>Horizontal flipping</li>
+        <li>Rotation</li>
+        <li>Scaling</li>
+        <li>Translation</li>
+        <li>Random cropping</li>
+        <li>Brightness adjustment</li>
+        <li>Contrast adjustment</li>
+        <li>Blur</li>
+        <li>Noise</li>
+        <li>Mosaic augmentation</li>
+        <li>MixUp</li>
+    </ul>
+
+    <pre>
+```
+
+Original Image
+↓
+Augmentation
+↓
+┌────┼─────┐
+↓    ↓     ↓
+Flip Rotate Brightness
+↓    ↓     ↓
+└────┼─────┘
+↓
+Additional Training Samples </pre>
+
+```
+    <div class="note">
+        Augmentation should represent realistic conditions. Excessive or
+        unrealistic augmentation can reduce model performance.
+    </div>
+</section>
+
+
+<!-- DIRECTORY -->
+<section>
+    <h2>8. Recommended Dataset Structure</h2>
+
+    <h3>Object Detection</h3>
+
+    <pre>
+```
+
+dataset/
+│
+├── images/
+│   ├── train/
+│   ├── val/
+│   └── test/
+│
+├── labels/
+│   ├── train/
+│   ├── val/
+│   └── test/
+│
+└── data.yaml </pre>
+
+```
+    <h3>Classification</h3>
+
+    <pre>
+```
+
+dataset/
+│
+├── train/
+│   ├── class_1/
+│   ├── class_2/
+│   └── class_3/
+│
+├── val/
+│   ├── class_1/
+│   ├── class_2/
+│   └── class_3/
+│
+└── test/
+├── class_1/
+├── class_2/
+└── class_3/ </pre> </section>
+
+```
+<!-- FINAL CHECK -->
+<section>
+    <h2>9. Final Dataset Quality Check</h2>
+
+    <ul>
+        <li>✓ Images are readable</li>
+        <li>✓ No corrupted images</li>
+        <li>✓ Duplicate images removed</li>
+        <li>✓ Relevant images only</li>
+        <li>✓ Correct annotations</li>
+        <li>✓ Correct class names</li>
+        <li>✓ Class distribution checked</li>
+        <li>✓ Train/validation/test split completed</li>
+        <li>✓ No data leakage</li>
+        <li>✓ Sample images visually inspected</li>
+        <li>✓ Bounding boxes/masks visually inspected</li>
+        <li>✓ Dataset statistics analyzed</li>
+        <li>✓ Augmentation strategy defined</li>
+    </ul>
+</section>
+
+
+<!-- COMPLETE PIPELINE -->
+<section>
+    <h2>10. Complete Computer Vision Pipeline</h2>
+
+    <pre>
+                COMPUTER VISION DATASET PIPELINE
+
+                         │
+                         ▼
+                Dataset Collection
+                         │
+                         ▼
+                Data Preprocessing
+                         │
+          ┌──────────────┴──────────────┐
+          ▼                             ▼
+    Data Cleaning                Annotation Cleaning
+          │                             │
+          └──────────────┬──────────────┘
+                         ▼
+                Data Visualization
+                         │
+                         ▼
+                 Data Annotation
+                         │
+                         ▼
+                Dataset Splitting
+                         │
+                         ▼
+                Data Augmentation
+                         │
+                         ▼
+                   Model Training
+                         │
+                         ▼
+                   Validation
+                         │
+                         ▼
+                   Model Testing
+                         │
+                         ▼
+                    Deployment
+    </pre>
+</section>
+
+
+<!-- KEY PRINCIPLE -->
+<section>
+    <h2>11. Key Principle</h2>
+
+    <div class="note">
+        <strong>Garbage In → Garbage Out</strong><br><br>
+        A powerful deep learning model cannot compensate for a poor-quality
+        dataset. Good dataset collection, preprocessing, annotation,
+        visualization, and validation are fundamental to achieving reliable
+        computer vision performance.
+    </div>
+</section>
+```
+
+</div>
+
+<footer>
+    Computer Vision & AI Dataset Preparation
+</footer>
+
+</body>
+</html>

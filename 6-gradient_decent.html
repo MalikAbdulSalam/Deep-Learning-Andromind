@@ -1,0 +1,1304 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bias and Gradient Descent in Deep Learning</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #1f4e79;
+            text-align: center;
+            border-bottom: 3px solid #1f4e79;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #1f4e79;
+            margin-top: 40px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        .definition {
+            background: #eaf3ff;
+            border-left: 5px solid #1f4e79;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .important {
+            background: #fff4cc;
+            border-left: 5px solid #e6a700;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #ffebee;
+            border-left: 5px solid #c62828;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .formula {
+            background: #f1f1f1;
+            padding: 18px;
+            text-align: center;
+            font-size: 21px;
+            font-family: "Times New Roman", serif;
+            margin: 15px 0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        .diagram {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #5b9bd5;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #1f4e79;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+
+        code {
+            background: #eee;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .number {
+            display: inline-block;
+            background: #1f4e79;
+            color: white;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Bias and Gradient Descent in Deep Learning</h1>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 1: BIAS -->
+    <!-- ===================================================== -->
+
+    <h2>1. What is Bias in a Neural Network?</h2>
+
+    <div class="definition">
+
+        <strong>Definition:</strong>
+
+        Bias is a learnable parameter in a neural network that allows a
+        neuron to shift its activation function. It gives the neuron
+        additional flexibility to fit the training data.
+
+    </div>
+
+    <p>
+        A neuron generally calculates:
+    </p>
+
+    <div class="formula">
+        z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b
+    </div>
+
+    <p>Then:</p>
+
+    <div class="formula">
+        y = f(z)
+    </div>
+
+    <p>Where:</p>
+
+    <ul>
+        <li><strong>x</strong> = input</li>
+        <li><strong>w</strong> = weight</li>
+        <li><strong>b</strong> = bias</li>
+        <li><strong>f</strong> = activation function</li>
+        <li><strong>y</strong> = output</li>
+    </ul>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 2: WHY BIAS -->
+    <!-- ===================================================== -->
+
+    <h2>2. Why Do We Need Bias?</h2>
+
+    <p>
+        Consider a simple linear equation:
+    </p>
+
+    <div class="formula">
+        y = wx + b
+    </div>
+
+    <p>
+        Here, <strong>w</strong> controls the slope and
+        <strong>b</strong> controls the vertical shift.
+    </p>
+
+    <div class="diagram">
+
+Without Bias:
+
+y = wx
+
+       /
+      /
+     /
+    /
+---/---------------- x
+
+
+With Bias:
+
+y = wx + b
+
+        /
+       /
+      /
+-----/-------------- x
+    ↑
+   Shift
+
+    </div>
+
+    <p>
+        In a neural network, bias gives each neuron the ability to shift
+        its activation rather than forcing the activation to pass through
+        a fixed point.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 3: EXAMPLE -->
+    <!-- ===================================================== -->
+
+    <h2>3. Example of Bias</h2>
+
+    <p>Suppose:</p>
+
+    <div class="formula">
+        x = 5
+    </div>
+
+    <div class="formula">
+        w = 2
+    </div>
+
+    <div class="formula">
+        b = 3
+    </div>
+
+    <p>Then:</p>
+
+    <div class="formula">
+        z = wx + b
+    </div>
+
+    <div class="formula">
+        z = (2 × 5) + 3
+    </div>
+
+    <div class="formula">
+        z = 13
+    </div>
+
+    <p>
+        Without bias:
+    </p>
+
+    <div class="formula">
+        z = (2 × 5) = 10
+    </div>
+
+    <div class="success">
+
+        Bias allows the neuron to adjust its output independently of
+        the weighted input contribution.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 4: BIAS LEARNING -->
+    <!-- ===================================================== -->
+
+    <h2>4. Is Bias Learned?</h2>
+
+    <p>
+        Yes. Bias is a <strong>learnable parameter</strong>, just like
+        weights.
+    </p>
+
+    <div class="diagram">
+
+Initial:
+Weight = 0.5
+Bias   = 0.2
+
+        ↓
+Training
+        ↓
+
+Updated:
+Weight = 0.63
+Bias   = 0.17
+
+    </div>
+
+    <p>
+        During training, backpropagation calculates the gradient of the
+        loss with respect to the bias, and the optimizer updates it.
+    </p>
+
+    <div class="formula">
+        b(new) = b(old) − η × ∂L/∂b
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 5: GRADIENT -->
+    <!-- ===================================================== -->
+
+    <h2>5. What is a Gradient?</h2>
+
+    <div class="definition">
+
+        A gradient tells us how the loss changes when a model parameter
+        changes.
+
+    </div>
+
+    <p>
+        For a weight:
+    </p>
+
+    <div class="formula">
+        ∂L / ∂w
+    </div>
+
+    <p>
+        This tells us how much the loss changes with respect to the weight.
+    </p>
+
+    <p>
+        Similarly:
+    </p>
+
+    <div class="formula">
+        ∂L / ∂b
+    </div>
+
+    <p>
+        tells us how the loss changes with respect to the bias.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 6: GRADIENT DESCENT -->
+    <!-- ===================================================== -->
+
+    <h2>6. What is Gradient Descent?</h2>
+
+    <div class="definition">
+
+        <strong>Gradient Descent</strong> is an optimization algorithm
+        used to minimize a loss function by repeatedly updating the
+        model's parameters in the direction that reduces the loss.
+
+    </div>
+
+    <p>
+        The basic idea is:
+    </p>
+
+    <div class="diagram">
+
+High Loss
+   ●
+    \
+     \
+      \
+       ●
+        \
+         ●
+          \
+           ●  ← Minimum Loss
+
+    </div>
+
+    <p>
+        The goal is to find parameter values that produce a small loss.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 7: FORMULA -->
+    <!-- ===================================================== -->
+
+    <h2>7. Gradient Descent Formula</h2>
+
+    <p>For a weight:</p>
+
+    <div class="formula">
+        w(new) = w(old) − η × ∂L/∂w
+    </div>
+
+    <p>For a bias:</p>
+
+    <div class="formula">
+        b(new) = b(old) − η × ∂L/∂b
+    </div>
+
+    <p>Where:</p>
+
+    <table>
+
+        <tr>
+            <th>Symbol</th>
+            <th>Meaning</th>
+        </tr>
+
+        <tr>
+            <td>w</td>
+            <td>Weight</td>
+        </tr>
+
+        <tr>
+            <td>b</td>
+            <td>Bias</td>
+        </tr>
+
+        <tr>
+            <td>η</td>
+            <td>Learning rate</td>
+        </tr>
+
+        <tr>
+            <td>L</td>
+            <td>Loss function</td>
+        </tr>
+
+        <tr>
+            <td>∂L/∂w</td>
+            <td>Gradient of loss with respect to weight</td>
+        </tr>
+
+        <tr>
+            <td>∂L/∂b</td>
+            <td>Gradient of loss with respect to bias</td>
+        </tr>
+
+    </table>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 8: WHY MINUS -->
+    <!-- ===================================================== -->
+
+    <h2>8. Why Do We Subtract the Gradient?</h2>
+
+    <p>
+        The gradient points in the direction of increasing loss.
+        Therefore, we move in the opposite direction to reduce the loss.
+    </p>
+
+    <div class="diagram">
+
+Gradient Direction
+       ↑
+       │
+       │
+       ●
+       │
+       ↓
+Opposite Direction
+= Lower Loss
+
+    </div>
+
+    <div class="important">
+
+        <strong>Remember:</strong>
+
+        Gradient tells us the direction of increasing loss.
+        Gradient descent moves in the opposite direction.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 9: LEARNING RATE -->
+    <!-- ===================================================== -->
+
+    <h2>9. What is Learning Rate?</h2>
+
+    <div class="definition">
+
+        The learning rate controls how large each parameter update is.
+
+    </div>
+
+    <div class="formula">
+        New Parameter =
+        Old Parameter − Learning Rate × Gradient
+    </div>
+
+    <h3>Small Learning Rate</h3>
+
+    <div class="diagram">
+
+Small Steps:
+
+●
+ \
+  ●
+   \
+    ●
+     \
+      ●
+       \
+        ●
+
+    </div>
+
+    <p>
+        Training may be slow but updates can be more controlled.
+    </p>
+
+    <h3>Large Learning Rate</h3>
+
+    <div class="diagram">
+
+Large Steps:
+
+●──────►●
+        │
+        ▼
+        ●──────►●
+                 │
+                 ▼
+
+    </div>
+
+    <p>
+        Training can overshoot a minimum and may become unstable.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 10: TYPES -->
+    <!-- ===================================================== -->
+
+    <h2>10. Types of Gradient Descent</h2>
+
+    <p>
+        The three fundamental forms of gradient descent are:
+    </p>
+
+    <div class="diagram">
+
+             Gradient Descent
+                    │
+       ┌────────────┼────────────┐
+       │            │            │
+       ▼            ▼            ▼
+    Batch          SGD         Mini-Batch
+  Gradient      Stochastic      Gradient
+   Descent       Gradient        Descent
+                  Descent
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 11: BATCH -->
+    <!-- ===================================================== -->
+
+    <h2>11. Batch Gradient Descent</h2>
+
+    <div class="definition">
+
+        Batch Gradient Descent calculates the gradient using the
+        <strong>entire training dataset</strong> before updating
+        the model parameters.
+
+    </div>
+
+    <h3>Example</h3>
+
+    <p>
+        Suppose we have 10,000 training samples.
+    </p>
+
+    <div class="diagram">
+
+10,000 Samples
+      ↓
+Calculate predictions for all
+      ↓
+Calculate total/average loss
+      ↓
+Calculate gradients
+      ↓
+Update weights
+      ↓
+Next iteration
+
+    </div>
+
+    <h3>Advantages</h3>
+
+    <ul>
+        <li>Stable gradient estimates</li>
+        <li>Deterministic updates for a fixed dataset/order</li>
+        <li>Can work well when the dataset fits comfortably in memory</li>
+    </ul>
+
+    <h3>Disadvantages</h3>
+
+    <ul>
+        <li>Can be computationally expensive for large datasets</li>
+        <li>Requires processing the full dataset for each update</li>
+        <li>Parameter updates happen less frequently</li>
+    </ul>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 12: STOCHASTIC -->
+    <!-- ===================================================== -->
+
+    <h2>12. Stochastic Gradient Descent (SGD)</h2>
+
+    <div class="definition">
+
+        Stochastic Gradient Descent updates the model using
+        <strong>one training sample at a time</strong>.
+
+    </div>
+
+    <div class="diagram">
+
+Sample 1
+   ↓
+Prediction
+   ↓
+Loss
+   ↓
+Gradient
+   ↓
+Update
+
+Sample 2
+   ↓
+Prediction
+   ↓
+Loss
+   ↓
+Gradient
+   ↓
+Update
+
+Sample 3
+   ↓
+...
+
+    </div>
+
+    <h3>Advantages</h3>
+
+    <ul>
+        <li>Frequent parameter updates</li>
+        <li>Low memory requirement</li>
+        <li>Can make progress quickly on large datasets</li>
+        <li>The noise in updates can sometimes help escape shallow regions</li>
+    </ul>
+
+    <h3>Disadvantages</h3>
+
+    <ul>
+        <li>Updates are noisy</li>
+        <li>Loss may fluctuate significantly</li>
+        <li>May require careful learning-rate scheduling</li>
+    </ul>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 13: MINI BATCH -->
+    <!-- ===================================================== -->
+
+    <h2>13. Mini-Batch Gradient Descent</h2>
+
+    <div class="definition">
+
+        Mini-Batch Gradient Descent divides the training dataset into
+        small batches and updates the parameters after each batch.
+
+    </div>
+
+    <p>For example:</p>
+
+    <div class="diagram">
+
+Dataset = 10,000 samples
+
+Batch 1 → 32 samples → Update
+Batch 2 → 32 samples → Update
+Batch 3 → 32 samples → Update
+...
+Batch N → 32 samples → Update
+
+    </div>
+
+    <p>
+        Common batch sizes include:
+    </p>
+
+    <ul>
+        <li>16</li>
+        <li>32</li>
+        <li>64</li>
+        <li>128</li>
+        <li>256</li>
+    </ul>
+
+    <p>
+        The appropriate batch size depends on the model, dataset,
+        hardware, and training setup.
+    </p>
+
+    <h3>Advantages</h3>
+
+    <ul>
+        <li>More efficient than processing one sample at a time on modern hardware</li>
+        <li>Usually more stable than pure SGD</li>
+        <li>Works well with GPU parallelism</li>
+        <li>Balances computational efficiency and update frequency</li>
+    </ul>
+
+    <h3>Disadvantages</h3>
+
+    <ul>
+        <li>Requires choosing a batch size</li>
+        <li>Still contains some gradient noise</li>
+        <li>Large batches require more memory</li>
+    </ul>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 14: COMPARISON -->
+    <!-- ===================================================== -->
+
+    <h2>14. Batch vs SGD vs Mini-Batch</h2>
+
+    <table>
+
+        <tr>
+            <th>Feature</th>
+            <th>Batch GD</th>
+            <th>SGD</th>
+            <th>Mini-Batch GD</th>
+        </tr>
+
+        <tr>
+            <td>Samples per update</td>
+            <td>Entire dataset</td>
+            <td>1 sample</td>
+            <td>Small batch</td>
+        </tr>
+
+        <tr>
+            <td>Update frequency</td>
+            <td>Low</td>
+            <td>Very high</td>
+            <td>High</td>
+        </tr>
+
+        <tr>
+            <td>Gradient noise</td>
+            <td>Low</td>
+            <td>High</td>
+            <td>Moderate</td>
+        </tr>
+
+        <tr>
+            <td>Memory requirement</td>
+            <td>High for large datasets</td>
+            <td>Low</td>
+            <td>Moderate</td>
+        </tr>
+
+        <tr>
+            <td>GPU efficiency</td>
+            <td>Can be good, but may be memory-heavy</td>
+            <td>Often inefficient</td>
+            <td>Usually very good</td>
+        </tr>
+
+        <tr>
+            <td>Typical modern deep learning use</td>
+            <td>Less common for large datasets</td>
+            <td>Used as a stochastic optimization principle</td>
+            <td>Very common</td>
+        </tr>
+
+    </table>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 15: EPOCH AND ITERATION -->
+    <!-- ===================================================== -->
+
+    <h2>15. Epoch, Batch and Iteration</h2>
+
+    <p>
+        These terms are important when working with mini-batch training.
+    </p>
+
+    <div class="definition">
+
+        <strong>Epoch:</strong>
+        One complete pass through the entire training dataset.
+    </div>
+
+    <div class="definition">
+
+        <strong>Batch:</strong>
+        A subset of training samples processed together.
+    </div>
+
+    <div class="definition">
+
+        <strong>Iteration / Step:</strong>
+        One parameter update, normally after processing one batch.
+    </div>
+
+    <h3>Example</h3>
+
+    <p>
+        Suppose:
+    </p>
+
+    <ul>
+        <li>Dataset = 1,000 samples</li>
+        <li>Batch size = 100</li>
+    </ul>
+
+    <div class="formula">
+        Iterations per Epoch = 1000 / 100 = 10
+    </div>
+
+    <p>
+        Therefore:
+    </p>
+
+    <div class="diagram">
+
+1 Epoch
+│
+├── Batch 1 → Update
+├── Batch 2 → Update
+├── Batch 3 → Update
+├── ...
+└── Batch 10 → Update
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 16: OPTIMIZERS -->
+    <!-- ===================================================== -->
+
+    <h2>16. Gradient Descent vs Optimizers</h2>
+
+    <div class="important">
+
+        Gradient Descent is the basic optimization idea.
+        Modern deep learning often uses improved optimizers that
+        modify how gradients are accumulated or how parameter updates
+        are scaled.
+
+    </div>
+
+    <p>Important optimizers include:</p>
+
+    <table>
+
+        <tr>
+            <th>Optimizer</th>
+            <th>Main Idea</th>
+        </tr>
+
+        <tr>
+            <td>SGD</td>
+            <td>Gradient-based updates, optionally with momentum</td>
+        </tr>
+
+        <tr>
+            <td>Momentum</td>
+            <td>Uses a moving direction from previous gradients</td>
+        </tr>
+
+        <tr>
+            <td>AdaGrad</td>
+            <td>Adapts learning rates based on accumulated squared gradients</td>
+        </tr>
+
+        <tr>
+            <td>RMSprop</td>
+            <td>Uses an exponentially weighted average of squared gradients</td>
+        </tr>
+
+        <tr>
+            <td>Adam</td>
+            <td>Combines momentum-like first-moment tracking with second-moment scaling</td>
+        </tr>
+
+        <tr>
+            <td>AdamW</td>
+            <td>Adam-style adaptive optimization with decoupled weight decay</td>
+        </tr>
+
+    </table>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 17: MOMENTUM -->
+    <!-- ===================================================== -->
+
+    <h2>17. Gradient Descent with Momentum</h2>
+
+    <p>
+        Momentum uses information from previous gradients to help
+        smooth the optimization trajectory.
+    </p>
+
+    <div class="formula">
+        vₜ = βvₜ₋₁ + (1 − β)∇L
+    </div>
+
+    <div class="formula">
+        θₜ₊₁ = θₜ − ηvₜ
+    </div>
+
+    <p>
+        Here, <strong>θ</strong> represents model parameters.
+    </p>
+
+    <p>
+        Momentum can help reduce oscillation and accelerate movement
+        in consistent directions.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 18: ADAGRAD -->
+    <!-- ===================================================== -->
+
+    <h2>18. AdaGrad</h2>
+
+    <div class="definition">
+
+        AdaGrad adapts the learning rate separately for each parameter
+        based on the history of squared gradients.
+
+    </div>
+
+    <p>A simplified form is:</p>
+
+    <div class="formula">
+        Gₜ = Gₜ₋₁ + gₜ²
+    </div>
+
+    <div class="formula">
+        θₜ₊₁ =
+        θₜ −
+        η / (√Gₜ + ε) × gₜ
+    </div>
+
+    <p>
+        A limitation is that the accumulated squared gradients can
+        continually grow, making the effective learning rate become
+        very small.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 19: RMSPROP -->
+    <!-- ===================================================== -->
+
+    <h2>19. RMSprop</h2>
+
+    <div class="definition">
+
+        RMSprop modifies the AdaGrad idea by using an exponentially
+        weighted moving average of squared gradients.
+
+    </div>
+
+    <div class="formula">
+        vₜ = βvₜ₋₁ + (1 − β)gₜ²
+    </div>
+
+    <div class="formula">
+        θₜ₊₁ =
+        θₜ −
+        η / (√vₜ + ε) × gₜ
+    </div>
+
+    <p>
+        This prevents the denominator from accumulating all historical
+        squared gradients indefinitely.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 20: ADAM -->
+    <!-- ===================================================== -->
+
+    <h2>20. Adam Optimizer</h2>
+
+    <div class="definition">
+
+        Adam stands for <strong>Adaptive Moment Estimation</strong>.
+        It tracks both the first moment and second moment of gradients.
+
+    </div>
+
+    <p>First moment:</p>
+
+    <div class="formula">
+        mₜ = β₁mₜ₋₁ + (1 − β₁)gₜ
+    </div>
+
+    <p>Second moment:</p>
+
+    <div class="formula">
+        vₜ = β₂vₜ₋₁ + (1 − β₂)gₜ²
+    </div>
+
+    <p>Bias-corrected moments:</p>
+
+    <div class="formula">
+        m̂ₜ = mₜ / (1 − β₁ᵗ)
+    </div>
+
+    <div class="formula">
+        v̂ₜ = vₜ / (1 − β₂ᵗ)
+    </div>
+
+    <p>Parameter update:</p>
+
+    <div class="formula">
+        θₜ₊₁ =
+        θₜ −
+        η ×
+        m̂ₜ / (√v̂ₜ + ε)
+    </div>
+
+    <div class="success">
+
+        Adam is widely used because it automatically adapts the effective
+        update size for different parameters and often provides a
+        convenient starting point for neural-network training.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 21: ADAMW -->
+    <!-- ===================================================== -->
+
+    <h2>21. AdamW</h2>
+
+    <div class="definition">
+
+        AdamW is an Adam-based optimizer that uses decoupled weight decay.
+        It is widely used in modern deep-learning training, particularly
+        in many transformer-based models.
+
+    </div>
+
+    <p>
+        The important conceptual difference is that weight decay is
+        handled separately from the adaptive gradient update.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 22: COMPLETE PIPELINE -->
+    <!-- ===================================================== -->
+
+    <h2>22. Complete Gradient Descent Training Process</h2>
+
+    <div class="diagram">
+
+Training Data
+      │
+      ▼
+Forward Propagation
+      │
+      ▼
+Prediction
+      │
+      ▼
+Loss Function
+      │
+      ▼
+Backpropagation
+      │
+      ▼
+Calculate Gradients
+      │
+      ▼
+Gradient-Based Optimizer
+      │
+      ▼
+Update Weights & Bias
+      │
+      ▼
+Next Batch
+      │
+      ▼
+Repeat for Multiple Epochs
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 23: IMPORTANT DISTINCTION -->
+    <!-- ===================================================== -->
+
+    <h2>23. Gradient Descent vs Backpropagation vs Optimizer</h2>
+
+    <table>
+
+        <tr>
+            <th>Concept</th>
+            <th>What It Does</th>
+        </tr>
+
+        <tr>
+            <td>Forward Propagation</td>
+            <td>Calculates the network prediction</td>
+        </tr>
+
+        <tr>
+            <td>Loss Function</td>
+            <td>Measures prediction error</td>
+        </tr>
+
+        <tr>
+            <td>Backpropagation</td>
+            <td>Calculates gradients of the loss with respect to parameters</td>
+        </tr>
+
+        <tr>
+            <td>Gradient Descent</td>
+            <td>Uses gradients to move parameters toward lower loss</td>
+        </tr>
+
+        <tr>
+            <td>Optimizer</td>
+            <td>Implements a parameter-update strategy, often improving basic gradient descent</td>
+        </tr>
+
+    </table>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 24: EASY MEMORY -->
+    <!-- ===================================================== -->
+
+    <h2>24. Easy Way to Remember</h2>
+
+    <div class="success">
+
+        <p>
+            <strong>Bias:</strong>
+            Helps shift a neuron's activation.
+        </p>
+
+        <p>
+            <strong>Gradient:</strong>
+            Tells us how the loss changes with respect to a parameter.
+        </p>
+
+        <p>
+            <strong>Backpropagation:</strong>
+            Calculates the gradients.
+        </p>
+
+        <p>
+            <strong>Gradient Descent:</strong>
+            Moves parameters in the direction that reduces loss.
+        </p>
+
+        <p>
+            <strong>Optimizer:</strong>
+            Determines how those gradients are used to update parameters.
+        </p>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PART 25: FINAL SUMMARY -->
+    <!-- ===================================================== -->
+
+    <h2>25. Final Summary</h2>
+
+    <div class="diagram">
+
+                  NEURAL NETWORK TRAINING
+
+                         │
+                         ▼
+                  Forward Pass
+                         │
+                         ▼
+                    Prediction
+                         │
+                         ▼
+                       Loss
+                         │
+                         ▼
+                 Backpropagation
+                         │
+                         ▼
+                     Gradients
+                         │
+                         ▼
+                Gradient Optimizer
+                         │
+                         ▼
+                Updated Parameters
+                         │
+                         ▼
+                      Repeat
+
+
+       Gradient Descent Types:
+
+       ┌───────────────────────────────┐
+       │ Batch Gradient Descent        │
+       │ → Entire dataset              │
+       ├───────────────────────────────┤
+       │ Stochastic Gradient Descent   │
+       │ → One sample                  │
+       ├───────────────────────────────┤
+       │ Mini-Batch Gradient Descent   │
+       │ → Small batch                 │
+       └───────────────────────────────┘
+
+    </div>
+
+    <div class="important">
+
+        <strong>Most Important Concept:</strong>
+
+        Backpropagation tells the network how the parameters contributed
+        to the error. Gradient-based optimization then uses this
+        information to update the weights and biases so that the loss
+        generally decreases over training.
+
+    </div>
+
+
+    <footer>
+        <p>
+            Deep Learning Notes | Bias, Gradient Descent & Optimizers
+        </p>
+    </footer>
+
+</div>
+
+</body>
+</html>
+```

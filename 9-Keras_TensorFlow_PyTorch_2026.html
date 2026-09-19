@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keras vs TensorFlow vs PyTorch — 2026</title>
+<style>
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #4b5563;
+  --border: #dbe2ea;
+  --accent: #2563eb;
+  --code: #111827;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.65;
+}
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 22px 50px;
+}
+article {
+  background: var(--card);
+  padding: 38px 46px;
+  border-radius: 14px;
+  box-shadow: 0 5px 25px rgba(0,0,0,.07);
+}
+h1 {
+  font-size: 2.15rem;
+  color: var(--accent);
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 12px;
+  margin-top: 0;
+}
+h2 {
+  margin-top: 38px;
+  color: #111827;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 7px;
+}
+h3 { margin-top: 28px; color: #374151; }
+p { margin: 12px 0; }
+ul { padding-left: 28px; }
+li { margin: 6px 0; }
+strong { color: #111827; }
+code {
+  background: #eef2f7;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-family: Consolas, monospace;
+}
+pre {
+  background: var(--code);
+  color: #f9fafb;
+  padding: 18px;
+  border-radius: 9px;
+  overflow-x: auto;
+  font-family: Consolas, "Courier New", monospace;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  display: block;
+  overflow-x: auto;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+th {
+  background: #eef4ff;
+  font-weight: 700;
+}
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  margin: 18px 0;
+  padding: 12px 18px;
+  border-left: 4px solid var(--accent);
+  background: #f0f5ff;
+  font-weight: 600;
+}
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 30px 0;
+}
+@media (max-width: 700px) {
+  .container { margin: 0 auto; padding: 0 10px 30px; }
+  article { padding: 24px 20px; border-radius: 0; }
+  h1 { font-size: 1.7rem; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<article>
+<p>For <strong>2026</strong>, the comparison has changed somewhat because <strong>Keras 3 is now multi-backend</strong> rather than being simply a TensorFlow-only high-level API. Keras 3 can run on TensorFlow, PyTorch, or JAX backends.</p>
+<h2>Keras vs TensorFlow vs PyTorch — 2026</h2>
+<h3>The simplest way to understand them</h3>
+<pre><code></code></pre>
+<pre><code>                    Deep Learning
+                         │
+          ┌──────────────┴──────────────┐
+          │                             │
+      High-Level API              Deep Learning Framework
+          │                             │
+        Keras                    ┌──────┴──────┐
+          │                      │             │
+          ▼                  TensorFlow     PyTorch
+      Backend                  Backend       Backend
+          │
+     ┌────┼────┐
+     ▼    ▼    ▼
+    TF   Torch JAX</code></pre>
+<p><strong>Keras is not really a direct competitor to TensorFlow and PyTorch anymore.</strong> Keras 3 is a high-level API that can sit on top of them.</p>
+<hr>
+<h2>1. Quick Comparison</h2>
+<table><thead><tr><th>FeatureKeras 3TensorFlowPyTorch</th><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td>Type</td><td>High-level DL API</td><td>ML/DL framework</td><td>ML/DL framework</td></tr>
+<tr><td>Main strength</td><td>Simplicity &amp; productivity</td><td>Full ecosystem &amp; deployment</td><td>Flexibility &amp; research</td></tr>
+<tr><td>Learning curve</td><td>⭐ Easy</td><td>⭐⭐ Medium</td><td>⭐⭐ Medium</td></tr>
+<tr><td>Custom models</td><td>Very good</td><td>Very good</td><td>Excellent</td></tr>
+<tr><td>Custom training loops</td><td>Good</td><td>Excellent</td><td>Excellent</td></tr>
+<tr><td>Research</td><td>Very good</td><td>Good</td><td>Excellent</td></tr>
+<tr><td>Computer Vision</td><td>Excellent</td><td>Excellent</td><td>Excellent</td></tr>
+<tr><td>NLP / LLM</td><td>Very good</td><td>Good</td><td>Excellent</td></tr>
+<tr><td>Generative AI</td><td>Very good</td><td>Good</td><td>Excellent</td></tr>
+<tr><td>GPU support</td><td>Depends on backend</td><td>Excellent</td><td>Excellent</td></tr>
+<tr><td>Hugging Face ecosystem</td><td>Good</td><td>Good</td><td>Excellent</td></tr>
+<tr><td>Robotics / CV</td><td>Good</td><td>Good</td><td>Excellent</td></tr>
+<tr><td>Deployment</td><td>Excellent</td><td>Excellent</td><td>Excellent</td></tr>
+<tr><td>Beginner friendly</td><td><strong>Excellent</strong></td><td>Good</td><td>Very good</td></tr>
+<tr><td>Low-level control</td><td>Medium</td><td>High</td><td><strong>Very high</strong></td></tr>
+<hr>
+<h1>2. Keras 3</h1>
+</tbody></table>
+<p>Keras is designed to make deep-learning development easier.</p>
+<p>For example:</p>
+<pre><code></code></pre>
+<pre><code>import keras
+from keras import layers
+
+model = keras.Sequential([
+    layers.Dense(64, activation=&quot;relu&quot;),
+    layers.Dense(32, activation=&quot;relu&quot;),
+    layers.Dense(1, activation=&quot;sigmoid&quot;)
+])</code></pre>
+<p>You don't have to write the low-level training machinery yourself.</p>
+<p>Keras 3 can use:</p>
+<pre><code></code></pre>
+<pre><code>Keras
+ ├── TensorFlow backend
+ ├── PyTorch backend
+ └── JAX backend</code></pre>
+<p>This is one of the biggest changes compared with older Keras.</p>
+<h3>Advantages</h3>
+<ul>
+<li>Easy to learn</li>
+<li>Very clean API</li>
+<li>Excellent for teaching</li>
+<li>Fast prototyping</li>
+<li><code>model.fit()</code> makes standard training simple</li>
+<li>Can use TensorFlow, PyTorch or JAX as backend</li>
+<li>Can work with PyTorch <code>DataLoader</code> and TensorFlow <code>tf.data</code></li>
+<li>Good model portability</li>
+</ul>
+<p>Keras officially describes itself as a multi-framework deep-learning API.</p>
+<h3>Disadvantages</h3>
+<p>If you are doing highly customized research or need very low-level control, native PyTorch can be more natural.</p>
+<hr>
+<h1>3. TensorFlow</h1>
+<p>TensorFlow is a complete machine-learning ecosystem.</p>
+<p>Typical architecture:</p>
+<pre><code></code></pre>
+<pre><code>TensorFlow
+│
+├── Tensor operations
+├── Automatic differentiation
+├── Neural networks
+├── GPU/accelerator support
+├── tf.data
+├── Distributed training
+├── Model serving
+└── Deployment ecosystem</code></pre>
+<p>Example:</p>
+<pre><code></code></pre>
+<pre><code>import tensorflow as tf
+
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation=&quot;relu&quot;),
+    tf.keras.layers.Dense(32, activation=&quot;relu&quot;),
+    tf.keras.layers.Dense(1, activation=&quot;sigmoid&quot;)
+])
+
+model.compile(
+    optimizer=&quot;adam&quot;,
+    loss=&quot;binary_crossentropy&quot;,
+    metrics=[&quot;accuracy&quot;]
+)
+
+model.fit(X_train, y_train, epochs=10)</code></pre>
+<p>One important current change: <strong>TensorFlow 2.16+ uses Keras 3 by default</strong>, while legacy Keras 2 can still be used separately through <code>tf_keras</code>.</p>
+<p>So today you should not think:</p>
+<pre><code></code></pre>
+<pre><code>TensorFlow = old Keras</code></pre>
+<p>Instead:</p>
+<pre><code></code></pre>
+<pre><code>TensorFlow = framework
+
+Keras 3 = high-level API
+             ↓
+       TensorFlow backend</code></pre>
+<hr>
+<h1>4. PyTorch</h1>
+<p>PyTorch is a complete deep-learning framework.</p>
+<p>Example:</p>
+<pre><code></code></pre>
+<pre><code>import torch
+import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(10, 64),
+    nn.ReLU(),
+    nn.Linear(64, 32),
+    nn.ReLU(),
+    nn.Linear(32, 1)
+)</code></pre>
+<p>Training:</p>
+<pre><code></code></pre>
+<pre><code>optimizer = torch.optim.Adam(
+    model.parameters(),
+    lr=0.001
+)
+
+for epoch in range(10):
+
+    optimizer.zero_grad()
+
+    output = model(X_train)
+
+    loss = criterion(output, y_train)
+
+    loss.backward()
+
+    optimizer.step()</code></pre>
+<p>PyTorch provides tensors, automatic differentiation, neural-network modules, optimization, GPU/accelerator support, distributed training, and compilation facilities.</p>
+<p>And importantly for <strong>2026</strong>, PyTorch 2.14 was released in September 2026, continuing development around compilation, distributed training, accelerator support, and performance.</p>
+<hr>
+<h1>5. Keras vs PyTorch for Learning</h1>
+<p>This is an important distinction.</p>
+<h3>Keras</h3>
+<pre><code></code></pre>
+<pre><code>model.fit(
+    X_train,
+    y_train,
+    epochs=20,
+    batch_size=32
+)</code></pre>
+<p>A lot of training machinery is abstracted.</p>
+<h3>PyTorch</h3>
+<pre><code></code></pre>
+<pre><code>for epoch in range(20):
+
+    optimizer.zero_grad()
+
+    prediction = model(X_train)
+
+    loss = criterion(prediction, y_train)
+
+    loss.backward()
+
+    optimizer.step()</code></pre>
+<p>You see more of what is actually happening.</p>
+<p>Therefore, for <strong>learning how deep learning works internally</strong>, PyTorch is particularly useful.</p>
+<hr>
+<h1>6. For Your AI Course</h1>
+<p>Since you are teaching:</p>
+<pre><code></code></pre>
+<pre><code>Python
+   ↓
+NumPy
+   ↓
+Pandas
+   ↓
+Machine Learning
+   ↓
+Neural Networks
+   ↓
+Deep Learning</code></pre>
+<p>I would structure the framework portion like this:</p>
+<pre><code></code></pre>
+<pre><code>Neural Network Fundamentals
+          ↓
+   NumPy implementation
+          ↓
+      PyTorch
+          ↓
+ CNN / RNN / Transformer
+          ↓
+   Computer Vision
+          ↓
+    LLM / Generative AI</code></pre>
+<h3>Why PyTorch?</h3>
+<p>Students can see:</p>
+<pre><code></code></pre>
+<pre><code>Forward Pass
+     ↓
+Loss
+     ↓
+loss.backward()
+     ↓
+Gradients
+     ↓
+optimizer.step()</code></pre>
+<p>That makes the relationship between your earlier topics—<strong>backpropagation, gradients and gradient descent</strong>—very clear.</p>
+<hr>
+<h1>7. For Your Computer Vision Work</h1>
+<p>For your type of work:</p>
+<ul>
+<li>YOLO</li>
+<li>OpenCV</li>
+<li>object detection</li>
+<li>segmentation</li>
+<li>Jetson</li>
+<li>robotics</li>
+<li>drone AI</li>
+<li>vision transformers</li>
+<li>Hugging Face</li>
+<li>LLMs</li>
+<li>multimodal AI</li>
+</ul>
+<p>I would make <strong>PyTorch your primary framework</strong>.</p>
+<p>A large part of the modern open-source AI ecosystem is built around PyTorch or provides strong PyTorch support. PyTorch itself describes its ecosystem as spanning computer vision, NLP, reinforcement learning and generative AI.</p>
+<hr>
+<h1>8. What About Keras 3 in 2026?</h1>
+<p>I would <strong>still teach Keras</strong>.</p>
+<p>But I would teach it differently than older courses.</p>
+<p>Don't teach:</p>
+<pre><code></code></pre>
+<pre><code>Keras = TensorFlow</code></pre>
+<p>Teach:</p>
+<pre><code></code></pre>
+<pre><code>Keras 3
+   │
+   ├── TensorFlow
+   ├── PyTorch
+   └── JAX</code></pre>
+<p>Keras 3 explicitly supports these backends and is designed to allow the same high-level model code to work across them when using compatible Keras APIs.</p>
+<p>This makes Keras valuable for students because they learn a clean high-level API without being locked into one backend.</p>
+<hr>
+<h1>9. What About TensorFlow?</h1>
+<p>TensorFlow is still important.</p>
+<p>I would <strong>not remove TensorFlow from an AI/DL curriculum</strong>.</p>
+<p>It remains useful for:</p>
+<ul>
+<li>production ML systems</li>
+<li>TensorFlow ecosystem</li>
+<li><code>tf.data</code></li>
+<li>TensorFlow Serving</li>
+<li>TensorFlow\.js</li>
+<li>TensorFlow Lite</li>
+<li>existing enterprise code</li>
+<li>Google ecosystem</li>
+<li>TPU-oriented workflows</li>
+</ul>
+<p>Keras 3 can also export/use models with TensorFlow deployment tooling, which is one of its ecosystem advantages.</p>
+<hr>
+<h1>10. What Should You Use in 2026?</h1>
+<p>For a <strong>new AI/DL project</strong>, my practical recommendation would be:</p>
+<h3>Primary</h3>
+<p><strong>PyTorch</strong></p>
+<pre><code></code></pre>
+<pre><code>PyTorch
+   ↓
+Deep Learning
+   ↓
+Computer Vision
+   ↓
+LLMs
+   ↓
+Generative AI
+   ↓
+Robotics</code></pre>
+<h3>Secondary</h3>
+<p><strong>Keras 3</strong></p>
+<pre><code></code></pre>
+<pre><code>Keras 3
+   ↓
+Fast prototyping
+   ↓
+Teaching
+   ↓
+Simple production models
+   ↓
+Multi-backend development</code></pre>
+<h3>Also learn</h3>
+<p><strong>TensorFlow</strong></p>
+<pre><code></code></pre>
+<pre><code>TensorFlow
+   ↓
+Existing systems
+   ↓
+Deployment
+   ↓
+TF ecosystem
+   ↓
+Specialized production requirements</code></pre>
+<hr>
+<h1>11. My Recommended Learning Order for You</h1>
+<p>I would teach your students:</p>
+<pre><code></code></pre>
+<pre><code>                    Deep Learning
+                         │
+                         ▼
+                  Neural Networks
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+           Theory                 Coding
+              │                     │
+              ▼                     ▼
+       Neuron / Perceptron       NumPy
+              │                     │
+       Activation Functions          ▼
+              │                  PyTorch
+              │                     │
+       Forward Propagation          ▼
+              │                  CNN
+       Loss Function                │
+              │                  RNN/LSTM
+       Backpropagation              │
+              │                  Transformer
+       Gradient Descent             │
+              │                     ▼
+              └──────────────► Real Projects</code></pre>
+<p>Then introduce:</p>
+<pre><code></code></pre>
+<pre><code>                 Frameworks
+                     │
+        ┌────────────┼────────────┐
+        │            │            │
+     PyTorch      Keras 3     TensorFlow
+        │            │            │
+   Primary        High-level   Ecosystem /
+   framework        API        deployment</code></pre>
+<h2>Bottom line</h2>
+<p><strong>For you personally, I would choose PyTorch as your primary deep-learning framework in 2026.</strong></p>
+<p>But <strong>learn Keras 3 as well</strong>, because it is now a multi-backend API rather than simply "TensorFlow's high-level API."</p>
+<p>And keep <strong>TensorFlow</strong> in your skill set for its ecosystem and deployment use cases.</p>
+<p>If you are teaching an AI course, a strong modern combination is:</p>
+<blockquote><strong>Theory + NumPy → PyTorch → Keras 3 → TensorFlow ecosystem → Transformers/LLMs</strong></blockquote>
+<p>This also aligns well with your existing computer-vision and AI work, where PyTorch gives you a strong foundation for moving from basic neural networks into CNNs, Transformers, detection, segmentation, and generative AI.</p>
+</article>
+</div>
+</body>
+</html>

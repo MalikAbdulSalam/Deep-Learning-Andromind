@@ -1,0 +1,737 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Neuron and Perceptron in Deep Learning</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            background-color: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #1f4e79;
+            text-align: center;
+            border-bottom: 3px solid #1f4e79;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #1f4e79;
+            margin-top: 35px;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        .definition {
+            background: #eaf3ff;
+            border-left: 5px solid #1f4e79;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .important {
+            background: #fff4cc;
+            border-left: 5px solid #e6a700;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .formula {
+            background: #f1f1f1;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-family: "Times New Roman", serif;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .diagram {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1f4e79;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f7f7f7;
+        }
+
+        code {
+            background: #eee;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #5b9bd5;
+        }
+
+        .summary {
+            background: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Neuron and Perceptron in Deep Learning</h1>
+
+    <!-- ===================================================== -->
+    <!-- 1. NEURON -->
+    <!-- ===================================================== -->
+
+    <h2>1. What is a Neuron in Deep Learning?</h2>
+
+    <div class="definition">
+        <strong>Definition:</strong>
+        A neuron is the basic computational unit of an Artificial Neural Network (ANN).
+        It receives input values, applies weights and bias, performs a mathematical
+        calculation, and passes the result through an activation function.
+    </div>
+
+    <p>
+        A neuron is inspired by the biological neuron in the human brain.
+        However, an artificial neuron is a mathematical model rather than
+        an exact representation of a biological neuron.
+    </p>
+
+    <h3>Basic Working of a Neuron</h3>
+
+    <div class="diagram">
+x₁ ──► w₁ ──┐
+            │
+x₂ ──► w₂ ──┤
+            │
+x₃ ──► w₃ ──┤──► Weighted Sum + Bias ──► Activation ──► Output
+            │
+xₙ ──► wₙ ──┘
+    </div>
+
+    <p>A neuron performs the following operations:</p>
+
+    <div class="step">
+        <strong>Step 1:</strong> Receive input values.
+    </div>
+
+    <div class="step">
+        <strong>Step 2:</strong> Multiply each input by its corresponding weight.
+    </div>
+
+    <div class="step">
+        <strong>Step 3:</strong> Add all weighted inputs and the bias.
+    </div>
+
+    <div class="step">
+        <strong>Step 4:</strong> Apply an activation function.
+    </div>
+
+    <div class="step">
+        <strong>Step 5:</strong> Produce the output.
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 2. MATHEMATICAL REPRESENTATION -->
+    <!-- ===================================================== -->
+
+    <h2>2. Mathematical Representation of a Neuron</h2>
+
+    <p>
+        Suppose a neuron has <strong>n inputs</strong>.
+        The weighted sum is calculated as:
+    </p>
+
+    <div class="formula">
+        z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b
+    </div>
+
+    <p>The final output is:</p>
+
+    <div class="formula">
+        y = f(z)
+    </div>
+
+    <h3>Where:</h3>
+
+    <table>
+        <tr>
+            <th>Symbol</th>
+            <th>Meaning</th>
+        </tr>
+
+        <tr>
+            <td>x</td>
+            <td>Input feature</td>
+        </tr>
+
+        <tr>
+            <td>w</td>
+            <td>Weight</td>
+        </tr>
+
+        <tr>
+            <td>b</td>
+            <td>Bias</td>
+        </tr>
+
+        <tr>
+            <td>z</td>
+            <td>Weighted sum</td>
+        </tr>
+
+        <tr>
+            <td>f</td>
+            <td>Activation function</td>
+        </tr>
+
+        <tr>
+            <td>y</td>
+            <td>Neuron output</td>
+        </tr>
+    </table>
+
+
+    <!-- ===================================================== -->
+    <!-- 3. EXAMPLE -->
+    <!-- ===================================================== -->
+
+    <h2>3. Example of a Neuron</h2>
+
+    <p>Suppose we have two inputs:</p>
+
+    <ul>
+        <li>x₁ = 2</li>
+        <li>x₂ = 3</li>
+    </ul>
+
+    <p>The weights are:</p>
+
+    <ul>
+        <li>w₁ = 0.5</li>
+        <li>w₂ = 0.8</li>
+    </ul>
+
+    <p>Bias:</p>
+
+    <ul>
+        <li>b = 1</li>
+    </ul>
+
+    <p>The neuron calculates:</p>
+
+    <div class="formula">
+        z = (2 × 0.5) + (3 × 0.8) + 1
+    </div>
+
+    <div class="formula">
+        z = 1 + 2.4 + 1
+    </div>
+
+    <div class="formula">
+        z = 4.4
+    </div>
+
+    <p>
+        If we use the ReLU activation function:
+    </p>
+
+    <div class="formula">
+        ReLU(z) = max(0, z)
+    </div>
+
+    <div class="formula">
+        ReLU(4.4) = 4.4
+    </div>
+
+    <p>
+        Therefore, the neuron output is:
+        <strong>4.4</strong>
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 4. ACTIVATION FUNCTION -->
+    <!-- ===================================================== -->
+
+    <h2>4. Activation Function</h2>
+
+    <p>
+        The activation function determines how the weighted sum is transformed
+        into the neuron's output.
+    </p>
+
+    <p>Common activation functions include:</p>
+
+    <table>
+        <tr>
+            <th>Activation</th>
+            <th>Formula / Description</th>
+            <th>Common Use</th>
+        </tr>
+
+        <tr>
+            <td>ReLU</td>
+            <td>max(0, x)</td>
+            <td>Hidden layers of many deep networks</td>
+        </tr>
+
+        <tr>
+            <td>Sigmoid</td>
+            <td>1 / (1 + e<sup>-x</sup>)</td>
+            <td>Binary classification output</td>
+        </tr>
+
+        <tr>
+            <td>Tanh</td>
+            <td>Outputs between -1 and 1</td>
+            <td>Some neural network architectures</td>
+        </tr>
+
+        <tr>
+            <td>Softmax</td>
+            <td>Converts values into class probabilities</td>
+            <td>Multi-class classification</td>
+        </tr>
+    </table>
+
+
+    <!-- ===================================================== -->
+    <!-- 5. LEARNING -->
+    <!-- ===================================================== -->
+
+    <h2>5. How Does a Neuron Learn?</h2>
+
+    <p>
+        Initially, the neural network does not know the correct weights.
+        During training, the weights and biases are adjusted to reduce the
+        prediction error.
+    </p>
+
+    <div class="diagram">
+Input Data
+    ↓
+Neural Network
+    ↓
+Prediction
+    ↓
+Compare with Actual Answer
+    ↓
+Loss
+    ↓
+Backpropagation
+    ↓
+Update Weights & Bias
+    ↓
+Better Prediction
+    </div>
+
+    <h3>Weight Update</h3>
+
+    <p>A simplified gradient-descent update is:</p>
+
+    <div class="formula">
+        w<sub>new</sub> = w<sub>old</sub> − η × ∂L/∂w
+    </div>
+
+    <p>Where:</p>
+
+    <ul>
+        <li><strong>L</strong> = Loss</li>
+        <li><strong>η</strong> = Learning rate</li>
+        <li><strong>∂L/∂w</strong> = Gradient of the loss with respect to the weight</li>
+    </ul>
+
+    <p>
+        This process is generally performed using
+        <strong>backpropagation</strong> and an optimization method such as
+        <strong>gradient descent</strong>.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 6. PERCEPTRON -->
+    <!-- ===================================================== -->
+
+    <h2>6. What is a Perceptron?</h2>
+
+    <div class="definition">
+        <strong>Definition:</strong>
+        A perceptron is one of the simplest artificial neural-network models.
+        It was introduced by Frank Rosenblatt in 1957 and is commonly used
+        to explain the basic idea of a neural classifier.
+    </div>
+
+    <p>
+        A traditional perceptron receives inputs, multiplies them by weights,
+        adds a bias, and applies a step activation function.
+    </p>
+
+    <div class="diagram">
+x₁ ──► w₁ ──┐
+            │
+x₂ ──► w₂ ──┤
+            ├──► Σ + b ──► Step Function ──► Output
+            │
+x₃ ──► w₃ ──┤
+            │
+xₙ ──► wₙ ──┘
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 7. PERCEPTRON FORMULA -->
+    <!-- ===================================================== -->
+
+    <h2>7. Perceptron Mathematical Model</h2>
+
+    <p>The perceptron first calculates:</p>
+
+    <div class="formula">
+        z = Σ(wᵢxᵢ) + b
+    </div>
+
+    <p>Then it applies a step activation function:</p>
+
+    <div class="formula">
+        y = 1 &nbsp;&nbsp; if z ≥ 0
+    </div>
+
+    <div class="formula">
+        y = 0 &nbsp;&nbsp; if z &lt; 0
+    </div>
+
+    <p>
+        Therefore, the traditional perceptron produces a binary output:
+        <strong>0 or 1</strong>.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 8. PERCEPTRON EXAMPLE -->
+    <!-- ===================================================== -->
+
+    <h2>8. Example of a Perceptron</h2>
+
+    <p>
+        Suppose we want to predict whether a student passes based on:
+    </p>
+
+    <ul>
+        <li>x₁ = Study Hours</li>
+        <li>x₂ = Attendance</li>
+    </ul>
+
+    <p>Suppose the perceptron equation is:</p>
+
+    <div class="formula">
+        z = 0.7x₁ + 0.5x₂ − 5
+    </div>
+
+    <p>If:</p>
+
+    <div class="formula">
+        z ≥ 0
+    </div>
+
+    <p>The output is:</p>
+
+    <div class="formula">
+        Pass = 1
+    </div>
+
+    <p>Otherwise:</p>
+
+    <div class="formula">
+        Fail = 0
+    </div>
+
+    <div class="diagram">
+Study Hours ──►
+               │
+Attendance ───►│  Perceptron ───► Pass / Fail
+               │
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 9. PERCEPTRON LIMITATIONS -->
+    <!-- ===================================================== -->
+
+    <h2>9. Limitation of a Single Perceptron</h2>
+
+    <p>
+        A single perceptron can learn only problems that are
+        <strong>linearly separable</strong>.
+    </p>
+
+    <p>
+        For example, a single perceptron can learn a simple
+        <strong>AND</strong> logic function.
+    </p>
+
+    <table>
+        <tr>
+            <th>x₁</th>
+            <th>x₂</th>
+            <th>AND Output</th>
+        </tr>
+
+        <tr>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+
+        <tr>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+        </tr>
+
+        <tr>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+
+        <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+        </tr>
+    </table>
+
+    <p>
+        However, a single perceptron cannot solve the
+        <strong>XOR problem</strong>.
+    </p>
+
+    <div class="important">
+        <strong>Important:</strong>
+        Multiple neurons and layers are required to learn more complex
+        nonlinear relationships.
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 10. SINGLE PERCEPTRON VS NEURAL NETWORK -->
+    <!-- ===================================================== -->
+
+    <h2>10. Single Perceptron vs Neural Network</h2>
+
+    <h3>Single Perceptron</h3>
+
+    <div class="diagram">
+Input
+  ↓
+Perceptron
+  ↓
+Output
+    </div>
+
+    <h3>Multilayer Neural Network</h3>
+
+    <div class="diagram">
+Input Layer
+     ↓
+Hidden Layer
+     ↓
+Hidden Layer
+     ↓
+Output Layer
+    </div>
+
+    <p>
+        Each neuron in a neural network performs a mathematical operation.
+        By connecting many neurons into layers, the network can learn
+        increasingly complex patterns.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 11. COMPARISON -->
+    <!-- ===================================================== -->
+
+    <h2>11. Perceptron vs Modern Neural Network Neuron</h2>
+
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>Perceptron</th>
+            <th>Modern Neural Network Neuron</th>
+        </tr>
+
+        <tr>
+            <td>Inputs</td>
+            <td>Multiple</td>
+            <td>Multiple</td>
+        </tr>
+
+        <tr>
+            <td>Weights</td>
+            <td>Yes</td>
+            <td>Yes</td>
+        </tr>
+
+        <tr>
+            <td>Bias</td>
+            <td>Yes</td>
+            <td>Yes</td>
+        </tr>
+
+        <tr>
+            <td>Weighted Sum</td>
+            <td>Yes</td>
+            <td>Yes</td>
+        </tr>
+
+        <tr>
+            <td>Activation</td>
+            <td>Usually Step</td>
+            <td>ReLU, Sigmoid, Tanh, GELU, etc.</td>
+        </tr>
+
+        <tr>
+            <td>Output</td>
+            <td>Usually 0 or 1</td>
+            <td>Can be continuous or probabilistic</td>
+        </tr>
+
+        <tr>
+            <td>Learning</td>
+            <td>Yes</td>
+            <td>Yes</td>
+        </tr>
+
+        <tr>
+            <td>Nonlinear Learning</td>
+            <td>Limited</td>
+            <td>Yes, with appropriate architecture and activations</td>
+        </tr>
+    </table>
+
+
+    <!-- ===================================================== -->
+    <!-- 12. NEURAL NETWORK HIERARCHY -->
+    <!-- ===================================================== -->
+
+    <h2>12. From Neuron to Deep Learning</h2>
+
+    <div class="diagram">
+Artificial Neuron
+       ↓
+   Perceptron
+       ↓
+ Neural Network
+       ↓
+Deep Neural Network
+       ↓
+  Deep Learning
+    </div>
+
+    <p>
+        A neural network consists of many interconnected neurons.
+        When multiple layers are used, the network becomes a
+        <strong>deep neural network</strong>.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 13. KEY CONCEPT -->
+    <!-- ===================================================== -->
+
+    <div class="summary">
+
+        <h2>13. Key Concept</h2>
+
+        <p>
+            <strong>A neuron</strong> performs a weighted calculation,
+            adds a bias, and applies an activation function.
+        </p>
+
+        <p>
+            <strong>A perceptron</strong> is a simple artificial neural-network
+            model that traditionally uses a step function and produces a
+            binary output.
+        </p>
+
+        <p>
+            <strong>Deep learning</strong> combines many neurons into multiple
+            layers and learns their weights using training algorithms such as
+            backpropagation and gradient-based optimization.
+        </p>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- FOOTER -->
+    <!-- ===================================================== -->
+
+    <footer>
+        <p>
+            Deep Learning Notes | Neuron & Perceptron
+        </p>
+    </footer>
+
+</div>
+
+</body>
+</html>
+```

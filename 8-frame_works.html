@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Neural Networks Work | TensorFlow, Keras and PyTorch</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.7;
+        margin: 0;
+        background: #f4f7fb;
+        color: #222;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+        padding: 30px;
+        background: #fff;
+    }
+
+    h1 {
+        background: #1f4e79;
+        color: white;
+        text-align: center;
+        padding: 25px;
+        border-radius: 10px;
+    }
+
+    h2 {
+        color: #1f4e79;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 8px;
+        margin-top: 40px;
+    }
+
+    h3 {
+        color: #2f75b5;
+    }
+
+    .box {
+        background: #eef5fc;
+        border-left: 5px solid #1f4e79;
+        padding: 15px 20px;
+        margin: 20px 0;
+        border-radius: 6px;
+    }
+
+    .example {
+        background: #f2f8ed;
+        border-left: 5px solid #70ad47;
+        padding: 15px 20px;
+        margin: 20px 0;
+        border-radius: 6px;
+    }
+
+    .warning {
+        background: #fff4e5;
+        border-left: 5px solid #ed7d31;
+        padding: 15px 20px;
+        margin: 20px 0;
+        border-radius: 6px;
+    }
+
+    pre {
+        background: #222;
+        color: #eee;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .architecture {
+        text-align: center;
+        font-family: monospace;
+        background: #fafafa;
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin: 20px 0;
+        white-space: pre;
+        overflow-x: auto;
+    }
+
+    .formula {
+        background: #f0f0f0;
+        padding: 15px;
+        text-align: center;
+        font-size: 19px;
+        font-weight: bold;
+        border-radius: 6px;
+        margin: 15px 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th, td {
+        border: 1px solid #ccc;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background: #1f4e79;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background: #f7f7f7;
+    }
+
+    .step {
+        background: #f8f8f8;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 18px;
+        margin: 15px 0;
+    }
+
+    .tag {
+        display: inline-block;
+        background: #e7f0f8;
+        padding: 6px 12px;
+        border-radius: 15px;
+        margin: 4px;
+    }
+
+    @media(max-width: 700px) {
+        .container {
+            padding: 15px;
+        }
+
+        table {
+            font-size: 14px;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>How Neural Networks Work<br>
+TensorFlow, Keras and PyTorch</h1>
+
+<div class="box">
+<strong>Learning Objectives:</strong>
+After this lesson, you will understand how a neural network receives input,
+performs calculations, makes predictions, calculates error, learns through
+backpropagation, and updates its parameters. You will also understand
+TensorFlow, Keras, and PyTorch and how they are related.
+</div>
+
+<h2>1. What is a Neural Network?</h2>
+
+<p>
+A <strong>Neural Network</strong> is a machine learning model made of interconnected
+computational units called <strong>neurons</strong>.
+</p>
+
+<p>
+A neural network learns a mapping between inputs and outputs by adjusting
+parameters such as <strong>weights and biases</strong>.
+</p>
+
+<div class="architecture">
+Input Data
+    │
+    ▼
+┌───────────────┐
+│ Input Layer   │
+└───────────────┘
+    │
+    ▼
+┌───────────────┐
+│ Hidden Layer  │
+└───────────────┘
+    │
+    ▼
+┌───────────────┐
+│ Hidden Layer  │
+└───────────────┘
+    │
+    ▼
+┌───────────────┐
+│ Output Layer  │
+└───────────────┘
+    │
+    ▼
+Prediction
+</div>
+
+<h2>2. Basic Neuron</h2>
+
+<p>
+A neuron receives inputs, multiplies them by weights, adds a bias, and
+then applies an activation function.
+</p>
+
+<div class="formula">
+z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b
+</div>
+
+<p>
+Then:
+</p>
+
+<div class="formula">
+a = f(z)
+</div>
+
+<p>
+where:
+</p>
+
+<table>
+<tr>
+    <th>Symbol</th>
+    <th>Meaning</th>
+</tr>
+<tr>
+    <td>x</td>
+    <td>Input</td>
+</tr>
+<tr>
+    <td>w</td>
+    <td>Weight</td>
+</tr>
+<tr>
+    <td>b</td>
+    <td>Bias</td>
+</tr>
+<tr>
+    <td>z</td>
+    <td>Weighted sum</td>
+</tr>
+<tr>
+    <td>f</td>
+    <td>Activation function</td>
+</tr>
+<tr>
+    <td>a</td>
+    <td>Neuron output</td>
+</tr>
+</table>
+
+<h2>3. How Does a Neural Network Work?</h2>
+
+<p>
+Training a neural network can be understood as a repeated cycle:
+</p>
+
+<div class="architecture">
+Input Data
+    ↓
+Forward Propagation
+    ↓
+Prediction
+    ↓
+Calculate Loss
+    ↓
+Backpropagation
+    ↓
+Calculate Gradients
+    ↓
+Optimizer
+    ↓
+Update Weights & Biases
+    ↓
+Repeat
+</div>
+
+<h2>4. Step 1 — Input Data</h2>
+
+<p>
+The neural network first receives input data.
+</p>
+
+<div class="example">
+<strong>Example:</strong>
+
+Suppose we want to predict whether a student will pass based on:
+
+<ul>
+    <li>Hours studied</li>
+    <li>Attendance</li>
+    <li>Previous marks</li>
+</ul>
+
+These values become the input features of the network.
+
+</div>
+
+<p>
+For example:
+</p>
+
+<div class="formula">
+X = [5, 85, 72]
+</div>
+
+<h2>5. Step 2 — Weights</h2>
+
+<p>
+Each input is multiplied by a weight.
+</p>
+
+<div class="formula">
+z = x₁w₁ + x₂w₂ + x₃w₃ + b
+</div>
+
+<p>
+Weights determine how strongly each input influences the neuron.
+</p>
+
+<div class="example">
+If the network learns that attendance is very important,
+it may assign a larger weight to the attendance feature.
+</div>
+
+<h2>6. Step 3 — Bias</h2>
+
+<p>
+Bias is an additional learnable parameter.
+</p>
+
+<div class="formula">
+z = Σ(wᵢxᵢ) + b
+</div>
+
+<p>
+Bias allows the neuron to shift its activation or decision boundary.
+</p>
+
+<h2>7. Step 4 — Activation Function</h2>
+
+<p>
+The weighted sum is passed through an activation function.
+</p>
+
+<div class="formula">
+a = f(z)
+</div>
+
+<p>
+Common activation functions include:
+</p>
+
+<table>
+<tr>
+    <th>Activation</th>
+    <th>Common Use</th>
+</tr>
+<tr>
+    <td>ReLU</td>
+    <td>Hidden layers</td>
+</tr>
+<tr>
+    <td>Sigmoid</td>
+    <td>Binary classification output</td>
+</tr>
+<tr>
+    <td>Softmax</td>
+    <td>Multi-class classification output</td>
+</tr>
+<tr>
+    <td>Tanh</td>
+    <td>Some hidden/recurrent architectures</td>
+</tr>
+</table>
+
+<h2>8. Step 5 — Forward Propagation</h2>
+
+<p>
+The complete process of sending information from the input layer toward
+the output layer is called <strong>forward propagation</strong> or
+<strong>forward pass</strong>.
+</p>
+
+<div class="architecture">
+Input
+  ↓
+Layer 1
+  ↓
+Activation
+  ↓
+Layer 2
+  ↓
+Activation
+  ↓
+Output Layer
+  ↓
+Prediction
+</div>
+
+<p>
+For a layer:
+</p>
+
+<div class="formula">
+Z = XW + b
+</div>
+
+<p>
+Then:
+</p>
+
+<div class="formula">
+A = f(Z)
+</div>
+
+<h2>9. Numerical Example</h2>
+
+<div class="example">
+
+<p>Suppose:</p>
+
+<p>
+x₁ = 2<br>
+x₂ = 3
+</p>
+
+<p>
+Weights:
+</p>
+
+<p>
+w₁ = 0.5<br>
+w₂ = 0.4
+</p>
+
+<p>
+Bias:
+</p>
+
+<p>
+b = 0.2
+</p>
+
+<p>Calculate:</p>
+
+<div class="formula">
+z = (2 × 0.5) + (3 × 0.4) + 0.2
+</div>
+
+<div class="formula">
+z = 1 + 1.2 + 0.2 = 2.4
+</div>
+
+<p>
+Using ReLU:
+</p>
+
+<div class="formula">
+ReLU(2.4) = 2.4
+</div>
+
+<p>
+Therefore, the neuron output is:
+</p>
+
+<div class="formula">
+a = 2.4
+</div>
+
+</div>
+
+<h2>10. Step 6 — Prediction</h2>
+
+<p>
+After passing through all network layers, the network produces an output.
+This is its current prediction.
+</p>
+
+<div class="example">
+For a binary classification problem:
+
+<strong>Output = 0.87</strong>
+
+This could be interpreted as approximately 87% model probability for
+the positive class, depending on the model and output configuration.
+
+</div>
+
+<h2>11. Step 7 — Loss Function</h2>
+
+<p>
+The prediction must be compared with the actual target.
+The difference is measured using a <strong>loss function</strong>.
+</p>
+
+<div class="formula">
+Loss = Difference between Prediction and Target
+</div>
+
+<p>
+Examples:
+</p>
+
+<table>
+<tr>
+    <th>Task</th>
+    <th>Common Loss</th>
+</tr>
+<tr>
+    <td>Regression</td>
+    <td>Mean Squared Error (MSE)</td>
+</tr>
+<tr>
+    <td>Binary Classification</td>
+    <td>Binary Cross-Entropy</td>
+</tr>
+<tr>
+    <td>Multi-Class Classification</td>
+    <td>Cross-Entropy</td>
+</tr>
+</table>
+
+<h2>12. Step 8 — Backpropagation</h2>
+
+<p>
+<strong>Backpropagation</strong> calculates how much each learnable parameter
+contributed to the loss by applying the chain rule of calculus.
+</p>
+
+<div class="architecture">
+Loss
+ ↓
+Gradient of Output Layer
+ ↓
+Gradient of Hidden Layer
+ ↓
+Gradient of Earlier Layers
+ ↓
+Gradients of Weights and Biases
+</div>
+
+<p>
+The result is a set of gradients such as:
+</p>
+
+<div class="formula">
+∂L / ∂w
+</div>
+
+<p>
+which means the rate at which the loss changes with respect to a weight.
+</p>
+
+<h2>13. Step 9 — Gradient Descent</h2>
+
+<p>
+Once gradients have been calculated, an optimization algorithm updates
+the model parameters.
+</p>
+
+<div class="formula">
+w_new = w_old − η × ∂L/∂w
+</div>
+
+<p>
+where <strong>η</strong> is the learning rate.
+</p>
+
+<div class="box">
+<strong>Important:</strong>
+Backpropagation calculates gradients. The optimizer uses those gradients
+to update the parameters.
+</div>
+
+<h2>14. Complete Learning Cycle</h2>
+
+<div class="architecture">
+                Training Data
+                     │
+                     ▼
+              ┌─────────────┐
+              │ Neural Net  │
+              └─────────────┘
+                     │
+                     ▼
+                Prediction
+                     │
+                     ▼
+                Loss Function
+                     │
+                     ▼
+              Backpropagation
+                     │
+                     ▼
+                 Gradients
+                     │
+                     ▼
+                 Optimizer
+                     │
+                     ▼
+             Updated Parameters
+                     │
+                     └──────────► Repeat
+</div>
+
+<h2>15. What Happens During Training?</h2>
+
+<div class="step">
+<strong>Epoch 1:</strong><br>
+The network starts with randomly initialized or otherwise initialized
+parameters and usually produces relatively poor predictions.
+</div>
+
+<div class="step">
+<strong>Epoch 2:</strong><br>
+The optimizer has updated the parameters using gradients, so the model
+may produce improved predictions.
+</div>
+
+<div class="step">
+<strong>Epoch 10:</strong><br>
+The network has repeatedly adjusted its parameters based on the training data.
+</div>
+
+<div class="step">
+<strong>Final:</strong><br>
+The trained parameters represent patterns learned from the training data.
+</div>
+
+<h2>16. Simple Real-World Example</h2>
+
+<p>
+Suppose we build a neural network to classify images of cats and dogs.
+</p>
+
+<div class="architecture">
+Cat/Dog Image
+      ↓
+Pixel Values
+      ↓
+CNN Layers
+      ↓
+Feature Extraction
+      ↓
+Classification Layer
+      ↓
+Probability
+      ↓
+Cat or Dog
+</div>
+
+<p>
+During training:
+</p>
+
+<ol>
+    <li>Image enters the network.</li>
+    <li>The network extracts features.</li>
+    <li>The network produces a prediction.</li>
+    <li>The prediction is compared with the true label.</li>
+    <li>Loss is calculated.</li>
+    <li>Backpropagation calculates gradients.</li>
+    <li>The optimizer updates weights.</li>
+    <li>The process repeats.</li>
+</ol>
+
+<h2>17. What is TensorFlow?</h2>
+
+<p>
+<strong>TensorFlow</strong> is an open-source machine learning framework
+developed by Google and widely used for building, training, evaluating,
+and deploying machine learning and deep learning models.
+</p>
+
+<p>
+The fundamental data structure in TensorFlow is the <strong>Tensor</strong>.
+</p>
+
+<div class="architecture">
+Data
+ │
+ ▼
+Tensor
+ │
+ ▼
+TensorFlow Operations
+ │
+ ▼
+Neural Network
+ │
+ ▼
+Training
+ │
+ ▼
+Saved Model
+ │
+ ▼
+Deployment
+</div>
+
+<h3>Tensor</h3>
+
+<p>
+A tensor is a multidimensional array.
+</p>
+
+<table>
+<tr>
+    <th>Dimension</th>
+    <th>Example</th>
+</tr>
+<tr>
+    <td>0D</td>
+    <td>Scalar</td>
+</tr>
+<tr>
+    <td>1D</td>
+    <td>Vector</td>
+</tr>
+<tr>
+    <td>2D</td>
+    <td>Matrix</td>
+</tr>
+<tr>
+    <td>3D</td>
+    <td>Image-like data</td>
+</tr>
+<tr>
+    <td>4D</td>
+    <td>Batch of images</td>
+</tr>
+</table>
+
+<h2>18. What is Keras?</h2>
+
+<p>
+<strong>Keras</strong> is a high-level deep learning API designed to make
+building and training neural networks easier.
+</p>
+
+<p>
+Modern Keras can work with different computational backends, including
+<strong>TensorFlow, JAX, and PyTorch</strong>.
+</p>
+
+<div class="box">
+<strong>Important:</strong>
+Keras and TensorFlow are not simply two names for the same thing.
+Keras is a high-level API, while TensorFlow is a broader machine learning
+framework/backend ecosystem. Keras can also be used with other supported
+backends.
+</div>
+
+<h2>19. Keras Example</h2>
+
+<pre><code>import keras
+from keras import layers
+
+model = keras.Sequential([
+    layers.Dense(64, activation="relu"),
+    layers.Dense(32, activation="relu"),
+    layers.Dense(1, activation="sigmoid")
+])
+
+model.compile(
+    optimizer="adam",
+    loss="binary_crossentropy",
+    metrics=["accuracy"]
+)
+
+model.fit(X_train, y_train, epochs=10, batch_size=32)</code></pre>
+
+<p>
+Keras provides high-level components such as:
+</p>
+
+<ul>
+    <li>Layers</li>
+    <li>Models</li>
+    <li>Optimizers</li>
+    <li>Loss functions</li>
+    <li>Metrics</li>
+    <li>Callbacks</li>
+</ul>
+
+<h2>20. What is PyTorch?</h2>
+
+<p>
+<strong>PyTorch</strong> is an open-source machine learning framework
+developed by Meta and widely used for deep learning research and production.
+</p>
+
+<p>
+It provides tensors, automatic differentiation, neural network modules,
+optimizers, GPU acceleration, and other tools for developing machine
+learning systems.
+</p>
+
+<div class="architecture">
+Input Tensor
+     ↓
+PyTorch Model
+     ↓
+Prediction
+     ↓
+Loss
+     ↓
+Autograd
+     ↓
+Gradients
+     ↓
+Optimizer
+     ↓
+Updated Parameters
+</div>
+
+<h2>21. PyTorch Example</h2>
+
+<pre><code>import torch
+import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(10, 64),
+    nn.ReLU(),
+    nn.Linear(64, 32),
+    nn.ReLU(),
+    nn.Linear(32, 1),
+    nn.Sigmoid()
+)
+
+criterion = nn.BCELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+for epoch in range(10):
+
+    optimizer.zero_grad()
+
+    output = model(X_train)
+
+    loss = criterion(output, y_train)
+
+    loss.backward()
+
+    optimizer.step()
+
+    print("Loss:", loss.item())</code></pre>
+
+<h2>22. Understanding the PyTorch Training Loop</h2>
+
+<p>
+The four most important lines are:
+</p>
+
+<pre><code>optimizer.zero_grad()
+output = model(X_train)
+loss.backward()
+optimizer.step()</code></pre>
+
+<table>
+<tr>
+    <th>Command</th>
+    <th>Purpose</th>
+</tr>
+
+<tr>
+    <td>zero_grad()</td>
+    <td>Clears previously stored gradients.</td>
+</tr>
+
+<tr>
+    <td>model(...)</td>
+    <td>Performs the forward pass.</td>
+</tr>
+
+<tr>
+    <td>loss.backward()</td>
+    <td>Calculates gradients using automatic differentiation.</td>
+</tr>
+
+<tr>
+    <td>optimizer.step()</td>
+    <td>Updates model parameters.</td>
+</tr>
+</table>
+
+<h2>23. TensorFlow/Keras vs PyTorch</h2>
+
+<table>
+<tr>
+    <th>Feature</th>
+    <th>TensorFlow + Keras</th>
+    <th>PyTorch</th>
+</tr>
+
+<tr>
+    <td>Developer</td>
+    <td>Google / Keras ecosystem</td>
+    <td>Meta and open-source community</td>
+</tr>
+
+<tr>
+    <td>High-Level API</td>
+    <td>Keras</td>
+    <td>PyTorch provides higher-level tooling and libraries, but the core API is comparatively explicit</td>
+</tr>
+
+<tr>
+    <td>Tensor Operations</td>
+    <td>TensorFlow tensors</td>
+    <td>PyTorch tensors</td>
+</tr>
+
+<tr>
+    <td>Automatic Differentiation</td>
+    <td>tf.GradientTape and related mechanisms</td>
+    <td>Autograd</td>
+</tr>
+
+<tr>
+    <td>Neural Network API</td>
+    <td>Keras layers/models</td>
+    <td>torch.nn</td>
+</tr>
+
+<tr>
+    <td>GPU Support</td>
+    <td>Yes</td>
+    <td>Yes</td>
+</tr>
+
+<tr>
+    <td>Deployment</td>
+    <td>Strong ecosystem</td>
+    <td>Strong ecosystem</td>
+</tr>
+
+<tr>
+    <td>Model Training</td>
+    <td>High-level training APIs or custom loops</td>
+    <td>Custom training loops are common</td>
+</tr>
+</table>
+
+<h2>24. TensorFlow + Keras Relationship</h2>
+
+<div class="architecture">
+                Keras
+          High-Level Deep Learning API
+                   │
+        ┌──────────┼──────────┐
+        ▼          ▼          ▼
+   TensorFlow     JAX       PyTorch
+    Backend      Backend     Backend
+        │
+        ▼
+Tensor Operations
+        │
+        ▼
+Hardware Acceleration
+        │
+     CPU / GPU / TPU
+</div>
+
+<p>
+The key idea is that <strong>Keras is an API</strong>, while TensorFlow,
+JAX, and PyTorch can serve as supported backends for Keras.
+</p>
+
+<h2>25. TensorFlow vs Keras vs PyTorch</h2>
+
+<div class="example">
+
+<strong>Think of them this way:</strong>
+
+<p>
+<strong>TensorFlow:</strong> A broad machine learning framework and ecosystem.
+</p>
+
+<p>
+<strong>Keras:</strong> A high-level API for conveniently building and training
+neural networks, capable of using supported backends.
+</p>
+
+<p>
+<strong>PyTorch:</strong> A complete deep learning framework with tensors,
+automatic differentiation, neural network modules, optimizers, and deployment
+tools.
+</p>
+
+</div>
+
+<h2>26. Simple Analogy</h2>
+
+<div class="box">
+
+<p>
+Imagine building a house.
+</p>
+
+<p>
+<strong>TensorFlow / PyTorch:</strong>
+The underlying tools, materials, and machinery used to build the system.
+</p>
+
+<p>
+<strong>Keras:</strong>
+A higher-level interface that makes many common construction tasks easier.
+</p>
+
+<p>
+<strong>Neural Network:</strong>
+The actual structure you build.
+</p>
+
+</div>
+
+<h2>27. Same Neural Network Concept in Keras and PyTorch</h2>
+
+<table>
+<tr>
+    <th>Concept</th>
+    <th>Keras</th>
+    <th>PyTorch</th>
+</tr>
+
+<tr>
+    <td>Dense Layer</td>
+    <td>layers.Dense()</td>
+    <td>nn.Linear()</td>
+</tr>
+
+<tr>
+    <td>ReLU</td>
+    <td>activation="relu"</td>
+    <td>nn.ReLU()</td>
+</tr>
+
+<tr>
+    <td>Model</td>
+    <td>keras.Model / Sequential</td>
+    <td>nn.Module</td>
+</tr>
+
+<tr>
+    <td>Loss</td>
+    <td>keras.losses</td>
+    <td>torch.nn loss classes</td>
+</tr>
+
+<tr>
+    <td>Optimizer</td>
+    <td>keras.optimizers</td>
+    <td>torch.optim</td>
+</tr>
+
+<tr>
+    <td>Gradient Calculation</td>
+    <td>GradientTape</td>
+    <td>autograd</td>
+</tr>
+</table>
+
+<h2>28. Why Do We Need These Frameworks?</h2>
+
+<p>
+Without frameworks, we would need to manually implement many operations:
+</p>
+
+<ul>
+    <li>Tensor calculations</li>
+    <li>Matrix multiplication</li>
+    <li>Activation functions</li>
+    <li>Gradient calculations</li>
+    <li>Backpropagation</li>
+    <li>GPU acceleration</li>
+    <li>Optimization algorithms</li>
+    <li>Model saving and loading</li>
+</ul>
+
+<p>
+Deep learning frameworks automate much of this work.
+</p>
+
+<h2>29. Neural Network Development Workflow</h2>
+
+<div class="architecture">
+Collect Data
+    ↓
+Prepare Dataset
+    ↓
+Train / Validation / Test Split
+    ↓
+Choose Architecture
+    ↓
+Build Model
+    ↓
+Choose Loss Function
+    ↓
+Choose Optimizer
+    ↓
+Train
+    ↓
+Validate
+    ↓
+Tune Hyperparameters
+    ↓
+Test
+    ↓
+Save Model
+    ↓
+Deploy
+</div>
+
+<h2>30. Important Terms</h2>
+
+<table>
+<tr>
+    <th>Term</th>
+    <th>Meaning</th>
+</tr>
+
+<tr>
+    <td>Parameter</td>
+    <td>Learnable value such as a weight or bias.</td>
+</tr>
+
+<tr>
+    <td>Hyperparameter</td>
+    <td>Value chosen by the developer, such as learning rate or batch size.</td>
+</tr>
+
+<tr>
+    <td>Epoch</td>
+    <td>One complete pass through the training dataset.</td>
+</tr>
+
+<tr>
+    <td>Batch</td>
+    <td>A subset of training samples processed together.</td>
+</tr>
+
+<tr>
+    <td>Iteration</td>
+    <td>One optimizer update, commonly after processing one batch.</td>
+</tr>
+
+<tr>
+    <td>Loss</td>
+    <td>A numerical measure used to quantify prediction error.</td>
+</tr>
+
+<tr>
+    <td>Gradient</td>
+    <td>Derivative information indicating how the loss changes with parameters.</td>
+</tr>
+
+<tr>
+    <td>Optimizer</td>
+    <td>Algorithm that updates model parameters using gradients.</td>
+</tr>
+</table>
+
+<h2>31. The Complete Picture</h2>
+
+<div class="architecture">
+                  DATA
+                   │
+                   ▼
+             Neural Network
+                   │
+                   ▼
+            Forward Pass
+                   │
+                   ▼
+              Prediction
+                   │
+                   ▼
+             Loss Function
+                   │
+                   ▼
+            Backpropagation
+                   │
+                   ▼
+               Gradients
+                   │
+                   ▼
+               Optimizer
+                   │
+                   ▼
+          Updated Parameters
+                   │
+                   ▼
+                 REPEAT
+                   │
+                   ▼
+            Trained Model
+                   │
+                   ▼
+               Inference
+                   │
+                   ▼
+              Prediction
+</div>
+
+<h2>32. Key Points to Remember</h2>
+
+<ul>
+    <li>A neural network learns by adjusting its parameters.</li>
+    <li>A neuron calculates a weighted sum plus bias and applies an activation function.</li>
+    <li><strong>Forward propagation</strong> produces predictions.</li>
+    <li><strong>Loss</strong> measures how far predictions are from the target.</li>
+    <li><strong>Backpropagation</strong> calculates gradients.</li>
+    <li><strong>Gradient-based optimizers</strong> update weights and biases.</li>
+    <li><strong>TensorFlow</strong> is a broad machine learning framework and ecosystem.</li>
+    <li><strong>Keras</strong> is a high-level deep learning API that supports multiple backends.</li>
+    <li><strong>PyTorch</strong> is a deep learning framework with tensors, autograd, neural network modules, optimizers, and more.</li>
+    <li>Both TensorFlow/Keras and PyTorch can train models on CPUs and supported accelerators.</li>
+</ul>
+
+<h2>33. Final Summary</h2>
+
+<div class="box">
+
+<p>
+<strong>How does a neural network learn?</strong>
+</p>
+
+<p>
+Input → Forward Pass → Prediction → Loss → Backpropagation → Gradients →
+Optimizer → Updated Parameters → Repeat
+</p>
+
+<p>
+<strong>TensorFlow:</strong> Broad ML framework and ecosystem.
+</p>
+
+<p>
+<strong>Keras:</strong> High-level deep learning API that can use supported backends.
+</p>
+
+<p>
+<strong>PyTorch:</strong> Deep learning framework providing tensors,
+automatic differentiation, neural network building blocks, optimization,
+and deployment capabilities.
+</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

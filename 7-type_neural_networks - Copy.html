@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Types of Neural Network Architectures</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.7;
+        margin: 0;
+        background: #f4f7fb;
+        color: #222;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+        padding: 30px;
+        background: white;
+    }
+
+    h1 {
+        background: #1f4e79;
+        color: white;
+        padding: 25px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    h2 {
+        color: #1f4e79;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 8px;
+        margin-top: 40px;
+    }
+
+    h3 {
+        color: #2f75b5;
+    }
+
+    .box {
+        background: #eef5fc;
+        border-left: 5px solid #1f4e79;
+        padding: 15px 20px;
+        margin: 20px 0;
+        border-radius: 6px;
+    }
+
+    .example {
+        background: #f5f5f5;
+        border-left: 5px solid #70ad47;
+        padding: 15px 20px;
+        margin: 20px 0;
+    }
+
+    .warning {
+        background: #fff4e5;
+        border-left: 5px solid #ed7d31;
+        padding: 15px 20px;
+        margin: 20px 0;
+    }
+
+    pre {
+        background: #222;
+        color: #eee;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th, td {
+        border: 1px solid #ccc;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background: #1f4e79;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background: #f7f7f7;
+    }
+
+    .architecture {
+        text-align: center;
+        font-family: monospace;
+        background: #fafafa;
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin: 20px 0;
+        white-space: pre;
+        overflow-x: auto;
+    }
+
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .formula {
+        background: #f0f0f0;
+        padding: 15px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 6px;
+        margin: 15px 0;
+    }
+
+    .tag {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 3px;
+        background: #e7f0f8;
+        border-radius: 15px;
+        font-size: 14px;
+    }
+
+    @media(max-width: 700px) {
+        .container {
+            padding: 15px;
+        }
+
+        table {
+            font-size: 14px;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Types of Neural Network Architectures</h1>
+
+<div class="box">
+<strong>Learning Objective:</strong>
+After this lesson, you will understand the major types of neural networks,
+their architectures, how they process data, and where each architecture is commonly used.
+</div>
+
+<h2>1. What is a Neural Network Architecture?</h2>
+
+<p>
+A <strong>neural network architecture</strong> describes how neurons are organized
+and how information flows between them.
+</p>
+
+<p>
+Different types of data require different ways of processing information.
+For example:
+</p>
+
+<ul>
+    <li>Images contain spatial patterns.</li>
+    <li>Videos contain spatial and temporal patterns.</li>
+    <li>Text contains sequential relationships.</li>
+    <li>Graphs contain relationships between connected entities.</li>
+</ul>
+
+<p>
+Therefore, different neural network architectures have been developed for different
+types of problems.
+</p>
+
+<h2>2. Basic Neural Network Architecture</h2>
+
+<p>
+The simplest neural network consists of:
+</p>
+
+<ul>
+    <li>Input Layer</li>
+    <li>One or more Hidden Layers</li>
+    <li>Output Layer</li>
+</ul>
+
+<div class="architecture">
+Input Layer        Hidden Layer        Output Layer
+
+x₁  ───────────►   ●
+│
+x₂  ───────────►   ● ───────────►  ●
+│
+x₃  ───────────►   ●
+
+</div>
+
+<p>
+The information normally flows from the input toward the output.
+This type of network is called a <strong>Feedforward Neural Network</strong>.
+</p>
+
+<h2>3. Major Types of Neural Networks</h2>
+
+<p>The major neural network architectures include:</p>
+
+<div class="card">
+<span class="tag">Perceptron</span>
+<span class="tag">Feedforward NN</span>
+<span class="tag">MLP</span>
+<span class="tag">CNN</span>
+<span class="tag">RNN</span>
+<span class="tag">LSTM</span>
+<span class="tag">GRU</span>
+<span class="tag">Autoencoder</span>
+<span class="tag">GAN</span>
+<span class="tag">Transformer</span>
+<span class="tag">GNN</span>
+<span class="tag">Siamese Network</span>
+<span class="tag">Residual Network</span>
+</div>
+
+<h2>4. Perceptron</h2>
+
+<p>
+The <strong>Perceptron</strong> is one of the simplest neural network architectures.
+It contains a single computational layer.
+</p>
+
+<div class="architecture">
+Inputs              Weighted Sum          Output
+
+x₁ ───────►
+x₂ ───────►       Σ(wᵢxᵢ) + b ───────► Activation ───────► y
+x₃ ───────►
+
+</div>
+
+<div class="formula">
+z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b
+</div>
+
+<p>
+Traditionally, the perceptron uses a threshold activation function.
+</p>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Simple binary classification</li>
+    <li>Basic logic gates such as AND and OR</li>
+    <li>Understanding neural network fundamentals</li>
+</ul>
+
+<div class="warning">
+<strong>Limitation:</strong>
+A single perceptron cannot solve non-linearly separable problems such as XOR.
+</div>
+
+<h2>5. Feedforward Neural Network</h2>
+
+<p>
+In a <strong>Feedforward Neural Network (FNN)</strong>, information moves in one direction:
+from input to hidden layers and finally to the output.
+</p>
+
+<div class="architecture">
+Input Layer        Hidden Layer 1       Hidden Layer 2       Output
+
+x₁ ───────►         ● ───────────►       ●
+x₂ ───────►         ● ───────────►       ● ───────────► ●
+x₃ ───────►         ● ───────────►       ●
+
+</div>
+
+<p>
+There are no feedback connections in a basic feedforward network.
+</p>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Classification</li>
+    <li>Regression</li>
+    <li>Tabular data</li>
+    <li>Pattern recognition</li>
+</ul>
+
+<h2>6. Multi-Layer Perceptron (MLP)</h2>
+
+<p>
+An <strong>MLP</strong> is a feedforward neural network containing one or more
+hidden layers.
+</p>
+
+<div class="architecture">
+Input              Hidden Layers                 Output
+
+● ───────────────► ● ───────────────► ●
+● ───────────────► ● ───────────────► ● ─────────► ●
+● ───────────────► ● ───────────────► ●
+
+</div>
+
+<p>
+Each neuron typically performs:
+</p>
+
+<div class="formula">
+z = Σ(wᵢxᵢ) + b
+<br>
+a = f(z)
+</div>
+
+<p>
+where:
+</p>
+
+<ul>
+    <li><strong>w</strong> = weight</li>
+    <li><strong>x</strong> = input</li>
+    <li><strong>b</strong> = bias</li>
+    <li><strong>f</strong> = activation function</li>
+    <li><strong>a</strong> = activated output</li>
+</ul>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Classification</li>
+    <li>Regression</li>
+    <li>Fraud detection</li>
+    <li>Prediction problems</li>
+</ul>
+
+<h2>7. Convolutional Neural Network (CNN)</h2>
+
+<p>
+A <strong>Convolutional Neural Network</strong> is particularly designed for data
+with spatial structure, especially images.
+</p>
+
+<div class="architecture">
+Image
+  │
+  ▼
+Convolution
+  │
+  ▼
+Activation
+  │
+  ▼
+Pooling
+  │
+  ▼
+Convolution
+  │
+  ▼
+Pooling
+  │
+  ▼
+Flatten
+  │
+  ▼
+Fully Connected Layer
+  │
+  ▼
+Output
+</div>
+
+<h3>Important CNN Components</h3>
+
+<ul>
+    <li><strong>Convolution:</strong> extracts local features.</li>
+    <li><strong>Activation:</strong> introduces non-linearity.</li>
+    <li><strong>Pooling:</strong> reduces spatial dimensions.</li>
+    <li><strong>Flatten:</strong> converts feature maps into a vector.</li>
+    <li><strong>Fully Connected Layer:</strong> performs final prediction.</li>
+</ul>
+
+<h3>CNN Learns Hierarchical Features</h3>
+
+<div class="architecture">
+Early Layers
+    ↓
+Edges
+    ↓
+Corners / Textures
+    ↓
+Shapes
+    ↓
+Object Parts
+    ↓
+Complete Object
+</div>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Image classification</li>
+    <li>Object detection</li>
+    <li>Image segmentation</li>
+    <li>Face recognition</li>
+    <li>Medical image analysis</li>
+    <li>Satellite image analysis</li>
+</ul>
+
+<p>
+Examples of CNN-based architectures include <strong>LeNet, AlexNet, VGG,
+Inception, ResNet and EfficientNet</strong>.
+</p>
+
+<h2>8. Recurrent Neural Network (RNN)</h2>
+
+<p>
+An <strong>RNN</strong> is designed for sequential data.
+Unlike a basic feedforward network, an RNN maintains information from previous
+time steps.
+</p>
+
+<div class="architecture">
+x₁ ──► [RNN] ──► h₁
+          │
+          ▼
+x₂ ──► [RNN] ──► h₂
+          │
+          ▼
+x₃ ──► [RNN] ──► h₃
+          │
+          ▼
+x₄ ──► [RNN] ──► h₄
+</div>
+
+<p>
+The hidden state carries information from previous steps.
+</p>
+
+<div class="formula">
+hₜ = f(Wₓxₜ + Wₕhₜ₋₁ + b)
+</div>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Time-series prediction</li>
+    <li>Speech processing</li>
+    <li>Text processing</li>
+    <li>Sequence classification</li>
+</ul>
+
+<div class="warning">
+<strong>Problem:</strong>
+Basic RNNs can suffer from vanishing and exploding gradients when learning
+long-term dependencies.
+</div>
+
+<h2>9. Long Short-Term Memory (LSTM)</h2>
+
+<p>
+<strong>LSTM</strong> is a special type of recurrent neural network designed
+to handle long-term dependencies better than a basic RNN.
+</p>
+
+<div class="architecture">
+Previous State
+      │
+      ▼
+ ┌─────────────┐
+ │    LSTM     │
+ │             │
+ │ Forget Gate │
+ │ Input Gate  │
+ │ Output Gate │
+ └─────────────┘
+      │
+      ▼
+New Hidden State
+</div>
+
+<h3>LSTM Gates</h3>
+
+<table>
+<tr>
+    <th>Gate</th>
+    <th>Purpose</th>
+</tr>
+<tr>
+    <td>Forget Gate</td>
+    <td>Decides what information should be removed.</td>
+</tr>
+<tr>
+    <td>Input Gate</td>
+    <td>Decides what new information should be stored.</td>
+</tr>
+<tr>
+    <td>Output Gate</td>
+    <td>Controls what information becomes the output.</td>
+</tr>
+</table>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Time-series forecasting</li>
+    <li>Speech recognition</li>
+    <li>Language modeling</li>
+    <li>Sequence prediction</li>
+</ul>
+
+<h2>10. Gated Recurrent Unit (GRU)</h2>
+
+<p>
+A <strong>GRU</strong> is another recurrent architecture designed to handle
+long-term dependencies.
+</p>
+
+<p>
+GRU is generally simpler than LSTM and uses fewer gates.
+</p>
+
+<div class="architecture">
+Input Sequence
+      │
+      ▼
+ ┌──────────┐
+ │   GRU    │
+ │          │
+ │ Update   │
+ │ Reset    │
+ │ Gates    │
+ └──────────┘
+      │
+      ▼
+Output Sequence
+</div>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Speech processing</li>
+    <li>Time-series prediction</li>
+    <li>Text processing</li>
+    <li>Sequence classification</li>
+</ul>
+
+<h2>11. Autoencoder</h2>
+
+<p>
+An <strong>Autoencoder</strong> is a neural network that learns to represent
+input data in a compressed form and reconstruct the original input.
+</p>
+
+<div class="architecture">
+Input
+  │
+  ▼
+Encoder
+  │
+  ▼
+Latent Representation
+  │
+  ▼
+Decoder
+  │
+  ▼
+Reconstructed Input
+</div>
+
+<p>
+The architecture has three major components:
+</p>
+
+<ul>
+    <li><strong>Encoder:</strong> compresses the input.</li>
+    <li><strong>Latent Space:</strong> compact representation.</li>
+    <li><strong>Decoder:</strong> reconstructs the input.</li>
+</ul>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Dimensionality reduction</li>
+    <li>Denoising</li>
+    <li>Anomaly detection</li>
+    <li>Feature learning</li>
+    <li>Data compression</li>
+</ul>
+
+<h2>12. Variational Autoencoder (VAE)</h2>
+
+<p>
+A <strong>Variational Autoencoder</strong> is a generative version of an
+autoencoder that learns a probability distribution in latent space.
+</p>
+
+<div class="architecture">
+Input
+  │
+  ▼
+Encoder
+  │
+  ├────► Mean (μ)
+  │
+  └────► Variance (σ)
+          │
+          ▼
+      Latent Sample
+          │
+          ▼
+       Decoder
+          │
+          ▼
+       New Data
+</div>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Generative modeling</li>
+    <li>Image generation</li>
+    <li>Data representation</li>
+    <li>Data synthesis</li>
+</ul>
+
+<h2>13. Generative Adversarial Network (GAN)</h2>
+
+<p>
+A <strong>GAN</strong> consists of two neural networks competing with each other:
+</p>
+
+<ul>
+    <li><strong>Generator</strong></li>
+    <li><strong>Discriminator</strong></li>
+</ul>
+
+<div class="architecture">
+Random Noise
+     │
+     ▼
+ Generator
+     │
+     ▼
+Fake Data ──────────┐
+                    ▼
+              Discriminator
+                    ▲
+                    │
+Real Data ──────────┘
+                    │
+                    ▼
+              Real / Fake
+</div>
+
+<h3>Generator</h3>
+
+<p>
+The generator creates synthetic data that attempts to resemble real data.
+</p>
+
+<h3>Discriminator</h3>
+
+<p>
+The discriminator attempts to distinguish real data from generated data.
+</p>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Image generation</li>
+    <li>Image-to-image translation</li>
+    <li>Super-resolution</li>
+    <li>Data augmentation</li>
+    <li>Image synthesis</li>
+</ul>
+
+<h2>14. Transformer Neural Network</h2>
+
+<p>
+The <strong>Transformer</strong> architecture was introduced for sequence
+processing and is based primarily on <strong>attention mechanisms</strong>
+rather than recurrence.
+</p>
+
+<div class="architecture">
+Input Tokens
+     │
+     ▼
+Embedding
+     │
+     ▼
+Positional Information
+     │
+     ▼
+Self-Attention
+     │
+     ▼
+Feedforward Network
+     │
+     ▼
+Output
+</div>
+
+<h3>Self-Attention</h3>
+
+<p>
+Self-attention allows the model to determine which parts of the input sequence
+are important when processing a particular token.
+</p>
+
+<div class="formula">
+Attention(Q,K,V) =
+softmax(QKᵀ / √dₖ)V
+</div>
+
+<p>
+where:
+</p>
+
+<ul>
+    <li><strong>Q</strong> = Query</li>
+    <li><strong>K</strong> = Key</li>
+    <li><strong>V</strong> = Value</li>
+    <li><strong>dₖ</strong> = dimension of the key vectors</li>
+</ul>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Natural Language Processing</li>
+    <li>Machine translation</li>
+    <li>Text generation</li>
+    <li>Large Language Models</li>
+    <li>Computer vision</li>
+    <li>Multimodal AI</li>
+</ul>
+
+<h2>15. Graph Neural Network (GNN)</h2>
+
+<p>
+A <strong>Graph Neural Network</strong> is designed for graph-structured data.
+A graph consists of:
+</p>
+
+<ul>
+    <li>Nodes</li>
+    <li>Edges</li>
+    <li>Node or edge features</li>
+</ul>
+
+<div class="architecture">
+        Node A
+       /      \
+      /        \
+   Node B ─── Node C
+      \        /
+       \      /
+        Node D
+
+Nodes = Entities
+Edges = Relationships
+
+</div>
+
+<p>
+GNNs aggregate information from neighboring nodes to learn representations.
+</p>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Social network analysis</li>
+    <li>Recommendation systems</li>
+    <li>Fraud detection</li>
+    <li>Drug discovery</li>
+    <li>Traffic networks</li>
+    <li>Knowledge graphs</li>
+</ul>
+
+<h2>16. Siamese Neural Network</h2>
+
+<p>
+A <strong>Siamese Network</strong> contains two or more branches that share
+the same parameters.
+</p>
+
+<div class="architecture">
+Image A ──► Network ──► Feature A ──┐
+                                     ├──► Similarity
+Image B ──► Network ──► Feature B ──┘
+</div>
+
+<p>
+Instead of directly classifying an image, the network can learn whether two
+inputs are similar or different.
+</p>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Face verification</li>
+    <li>Signature verification</li>
+    <li>Image matching</li>
+    <li>One-shot learning</li>
+    <li>Similarity search</li>
+</ul>
+
+<h2>17. Residual Neural Network (ResNet)</h2>
+
+<p>
+A <strong>Residual Network</strong> introduces shortcut connections that allow
+information to bypass one or more layers.
+</p>
+
+<div class="architecture">
+Input x
+   │
+   ├──────────────────────┐
+   │                      │
+   ▼                      │
+Layer 1                   │
+   │                      │
+Layer 2                   │
+   │                      │
+   └──────► F(x) ─────────┤
+                          ▼
+                    F(x) + x
+                          │
+                          ▼
+                       Output
+</div>
+
+<p>
+The fundamental idea is the residual mapping:
+</p>
+
+<div class="formula">
+Output = F(x) + x
+</div>
+
+<p>
+Shortcut connections help very deep networks learn effectively and help
+mitigate degradation problems associated with simply stacking many layers.
+</p>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Image classification</li>
+    <li>Object detection</li>
+    <li>Image segmentation</li>
+    <li>Computer vision feature extraction</li>
+</ul>
+
+<h2>18. U-Net</h2>
+
+<p>
+<strong>U-Net</strong> is a popular encoder-decoder architecture, especially
+for image segmentation.
+</p>
+
+<div class="architecture">
+             Encoder
+                │
+       ┌────────┴────────┐
+       ▼                 │
+     Down                │
+       ▼                 │
+     Down                │
+       ▼                 │
+   Bottleneck            │
+       │                 │
+       ▼                 │
+     Up ◄──── Skip Connection
+       │
+       ▼
+     Up ◄──── Skip Connection
+       │
+       ▼
+Segmentation Mask
+</div>
+
+<h3>Applications</h3>
+
+<ul>
+    <li>Medical image segmentation</li>
+    <li>Satellite image segmentation</li>
+    <li>Road segmentation</li>
+    <li>Object segmentation</li>
+    <li>Industrial image segmentation</li>
+</ul>
+
+<h2>19. Neural Network Architecture Comparison</h2>
+
+<table>
+<tr>
+    <th>Architecture</th>
+    <th>Main Data Type</th>
+    <th>Main Purpose</th>
+</tr>
+
+<tr>
+    <td>Perceptron</td>
+    <td>Simple numerical data</td>
+    <td>Basic classification</td>
+</tr>
+
+<tr>
+    <td>FNN</td>
+    <td>Tabular / numerical</td>
+    <td>Classification and regression</td>
+</tr>
+
+<tr>
+    <td>MLP</td>
+    <td>Tabular / feature vectors</td>
+    <td>Classification and regression</td>
+</tr>
+
+<tr>
+    <td>CNN</td>
+    <td>Images / spatial data</td>
+    <td>Vision tasks</td>
+</tr>
+
+<tr>
+    <td>RNN</td>
+    <td>Sequences</td>
+    <td>Sequential prediction</td>
+</tr>
+
+<tr>
+    <td>LSTM</td>
+    <td>Long sequences</td>
+    <td>Long-term dependencies</td>
+</tr>
+
+<tr>
+    <td>GRU</td>
+    <td>Sequences</td>
+    <td>Efficient sequence modeling</td>
+</tr>
+
+<tr>
+    <td>Autoencoder</td>
+    <td>Images / vectors</td>
+    <td>Representation and reconstruction</td>
+</tr>
+
+<tr>
+    <td>VAE</td>
+    <td>Images / vectors</td>
+    <td>Generative modeling</td>
+</tr>
+
+<tr>
+    <td>GAN</td>
+    <td>Images / data</td>
+    <td>Data generation</td>
+</tr>
+
+<tr>
+    <td>Transformer</td>
+    <td>Text / sequences / multimodal data</td>
+    <td>Attention-based modeling</td>
+</tr>
+
+<tr>
+    <td>GNN</td>
+    <td>Graph data</td>
+    <td>Relationship modeling</td>
+</tr>
+
+<tr>
+    <td>Siamese Network</td>
+    <td>Pairs of inputs</td>
+    <td>Similarity / verification</td>
+</tr>
+
+<tr>
+    <td>ResNet</td>
+    <td>Images</td>
+    <td>Deep feature learning</td>
+</tr>
+
+<tr>
+    <td>U-Net</td>
+    <td>Images</td>
+    <td>Pixel-level segmentation</td>
+</tr>
+</table>
+
+<h2>20. Which Neural Network Should You Use?</h2>
+
+<table>
+<tr>
+    <th>Problem</th>
+    <th>Common Architecture</th>
+</tr>
+
+<tr>
+    <td>Simple binary classification</td>
+    <td>Perceptron / MLP</td>
+</tr>
+
+<tr>
+    <td>Tabular classification</td>
+    <td>MLP</td>
+</tr>
+
+<tr>
+    <td>Tabular regression</td>
+    <td>MLP</td>
+</tr>
+
+<tr>
+    <td>Image classification</td>
+    <td>CNN / Vision Transformer</td>
+</tr>
+
+<tr>
+    <td>Object detection</td>
+    <td>CNN-based detectors / Transformer-based detectors</td>
+</tr>
+
+<tr>
+    <td>Image segmentation</td>
+    <td>U-Net / CNN-based segmentation models</td>
+</tr>
+
+<tr>
+    <td>Time-series data</td>
+    <td>RNN / LSTM / GRU / Transformer</td>
+</tr>
+
+<tr>
+    <td>Text processing</td>
+    <td>Transformer</td>
+</tr>
+
+<tr>
+    <td>Image generation</td>
+    <td>GAN / VAE / Diffusion-based models</td>
+</tr>
+
+<tr>
+    <td>Similarity between images</td>
+    <td>Siamese / metric-learning networks</td>
+</tr>
+
+<tr>
+    <td>Graph data</td>
+    <td>GNN</td>
+</tr>
+</table>
+
+<h2>21. Neural Network Family Tree</h2>
+
+<div class="architecture">
+                         Neural Networks
+                               │
+              ┌────────────────┼────────────────┐
+              │                │                │
+         Feedforward       Recurrent         Generative
+              │                │                │
+       ┌──────┼──────┐     ┌────┼────┐      ┌───┼────┐
+       │      │      │     │    │    │      │   │    │
+  Perceptron MLP    CNN   RNN  LSTM  GRU    AE  VAE  GAN
+
+```
+                           │
+                     Attention-Based
+                           │
+                      Transformer
+                           │
+                 ┌─────────┴─────────┐
+                 │                   │
+                NLP              Vision
+                 │                   │
+               LLMs              ViTs
+```
+
+Other Specialized Architectures:
+GNN ── Graph Data
+Siamese ── Similarity
+U-Net ── Segmentation
+ResNet ── Deep Vision
+
+</div>
+
+<h2>22. Important Concept: Architecture vs Model</h2>
+
+<p>
+The terms <strong>architecture</strong> and <strong>model</strong> are related
+but should not always be treated as exactly the same thing.
+</p>
+
+<div class="box">
+<strong>Architecture</strong> describes the design of a neural network:
+layers, connections, operations, attention, convolution, recurrence, etc.
+</div>
+
+<div class="box">
+<strong>Model</strong> usually refers to a particular implementation of an
+architecture together with its learned parameters (weights).
+</div>
+
+<p>For example:</p>
+
+<div class="example">
+<strong>ResNet</strong> → architecture family<br>
+<strong>ResNet-50</strong> → a particular architecture configuration<br>
+<strong>Trained ResNet-50 weights</strong> → learned model parameters
+</div>
+
+<h2>23. How to Remember Neural Network Types</h2>
+
+<table>
+<tr>
+    <th>Think About</th>
+    <th>Architecture</th>
+</tr>
+
+<tr>
+    <td>Simple neurons</td>
+    <td>Perceptron</td>
+</tr>
+
+<tr>
+    <td>Normal forward flow</td>
+    <td>FNN / MLP</td>
+</tr>
+
+<tr>
+    <td>Images</td>
+    <td>CNN</td>
+</tr>
+
+<tr>
+    <td>Sequences</td>
+    <td>RNN</td>
+</tr>
+
+<tr>
+    <td>Long sequences</td>
+    <td>LSTM / GRU</td>
+</tr>
+
+<tr>
+    <td>Compression</td>
+    <td>Autoencoder</td>
+</tr>
+
+<tr>
+    <td>Generate data</td>
+    <td>GAN / VAE</td>
+</tr>
+
+<tr>
+    <td>Attention</td>
+    <td>Transformer</td>
+</tr>
+
+<tr>
+    <td>Relationships / networks</td>
+    <td>GNN</td>
+</tr>
+
+<tr>
+    <td>Similarity</td>
+    <td>Siamese Network</td>
+</tr>
+
+<tr>
+    <td>Deep CNN with shortcuts</td>
+    <td>ResNet</td>
+</tr>
+
+<tr>
+    <td>Pixel-level segmentation</td>
+    <td>U-Net</td>
+</tr>
+</table>
+
+<h2>24. Complete Deep Learning Workflow</h2>
+
+<div class="architecture">
+                 Identify Data
+                      │
+                      ▼
+              Understand Structure
+                      │
+          ┌───────────┼────────────┐
+          │           │            │
+        Image      Sequence      Graph
+          │           │            │
+          ▼           ▼            ▼
+         CNN      RNN/LSTM/     GNN
+                  Transformer
+          │           │            │
+          └───────────┼────────────┘
+                      ▼
+                Build Network
+                      │
+                      ▼
+                Forward Pass
+                      │
+                      ▼
+                    Loss
+                      │
+                      ▼
+                Backpropagation
+                      │
+                      ▼
+                  Optimizer
+                      │
+                      ▼
+                    Train
+                      │
+                      ▼
+                  Evaluate
+                      │
+                      ▼
+                  Deployment
+</div>
+
+<h2>25. Key Points</h2>
+
+<ul>
+    <li><strong>Perceptron</strong> is one of the simplest neural networks.</li>
+    <li><strong>MLP</strong> uses multiple fully connected layers.</li>
+    <li><strong>CNN</strong> is highly useful for spatial data such as images.</li>
+    <li><strong>RNN</strong> processes sequential information using recurrent hidden states.</li>
+    <li><strong>LSTM</strong> and <strong>GRU</strong> improve handling of longer dependencies.</li>
+    <li><strong>Autoencoders</strong> learn compact representations and reconstruction.</li>
+    <li><strong>GANs</strong> use a generator and discriminator for adversarial generation.</li>
+    <li><strong>Transformers</strong> use attention to model relationships between tokens or other elements.</li>
+    <li><strong>GNNs</strong> process graph-structured data.</li>
+    <li><strong>Siamese networks</strong> are useful for learning similarity.</li>
+    <li><strong>ResNet</strong> uses shortcut connections to enable very deep networks.</li>
+    <li><strong>U-Net</strong> is widely used for segmentation.</li>
+</ul>
+
+<h2>26. Final Summary</h2>
+
+<div class="box">
+
+<p>
+There is no single neural network architecture that is ideal for every problem.
+The architecture should be selected according to the structure of the data and
+the task.
+</p>
+
+<p>
+<strong>Images → CNN / Vision Transformer</strong>
+</p>
+
+<p>
+<strong>Sequences → RNN / LSTM / GRU / Transformer</strong>
+</p>
+
+<p>
+<strong>Text → Transformer</strong>
+</p>
+
+<p>
+<strong>Graphs → GNN</strong>
+</p>
+
+<p>
+<strong>Similarity → Siamese Network</strong>
+</p>
+
+<p>
+<strong>Compression / Representation → Autoencoder</strong>
+</p>
+
+<p>
+<strong>Generation → GAN / VAE / other generative architectures</strong>
+</p>
+
+<p>
+<strong>Segmentation → U-Net / related encoder-decoder architectures</strong>
+</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

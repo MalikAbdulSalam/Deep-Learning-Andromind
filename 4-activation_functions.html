@@ -1,0 +1,870 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Activation Functions for Neural Networks</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #1f4e79;
+            text-align: center;
+            border-bottom: 3px solid #1f4e79;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #1f4e79;
+            margin-top: 40px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        .definition {
+            background: #eaf3ff;
+            border-left: 5px solid #1f4e79;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .important {
+            background: #fff4cc;
+            border-left: 5px solid #e6a700;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .formula {
+            background: #f1f1f1;
+            padding: 18px;
+            text-align: center;
+            font-size: 21px;
+            font-family: "Times New Roman", serif;
+            margin: 15px 0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        .diagram {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #1f4e79;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+
+        code {
+            background: #eee;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .function-box {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #eaf3ff;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 3px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Activation Functions for Neural Networks</h1>
+
+    <!-- INTRODUCTION -->
+
+    <div class="definition">
+
+        <strong>Definition:</strong>
+
+        An activation function is a mathematical function applied to the output
+        of a neuron. It determines whether and how strongly the neuron should
+        activate and introduces non-linearity into a neural network.
+    </div>
+
+    <p>
+        Without activation functions, a neural network made entirely of
+        linear operations would still behave like a single linear transformation,
+        even if it contained many layers.
+    </p>
+
+    <div class="diagram">
+
+Input
+  ↓
+Weighted Sum
+  ↓
+z = Σ(wx) + b
+  ↓
+Activation Function
+  ↓
+Neuron Output
+
+    </div>
+
+
+    <!-- WHY ACTIVATION FUNCTIONS -->
+
+    <h2>1. Why Do We Need Activation Functions?</h2>
+
+    <p>
+        The main purpose of an activation function is to introduce
+        <strong>non-linearity</strong> into the neural network.
+    </p>
+
+    <p>
+        Real-world problems such as image recognition, speech recognition,
+        object detection, and natural language processing are generally
+        not simple linear problems.
+    </p>
+
+    <div class="important">
+
+        <strong>Important:</strong>
+
+        If every layer of a neural network uses only a linear function,
+        stacking many layers does not give the network the expressive
+        benefit of nonlinear transformations.
+    </div>
+
+
+    <!-- BASIC NEURON -->
+
+    <h2>2. Activation Function in a Neuron</h2>
+
+    <p>
+        A neuron first calculates a weighted sum:
+    </p>
+
+    <div class="formula">
+        z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b
+    </div>
+
+    <p>
+        The activation function is then applied:
+    </p>
+
+    <div class="formula">
+        y = f(z)
+    </div>
+
+    <div class="diagram">
+
+Inputs
+  ↓
+Weights
+  ↓
+Weighted Sum + Bias
+  ↓
+      z
+  ↓
+Activation Function
+  ↓
+Output
+
+    </div>
+
+
+    <!-- 1 THRESHOLD -->
+
+    <h2>3. Threshold Activation Function</h2>
+
+    <div class="function-box">
+
+        <h3>What is Threshold Activation?</h3>
+
+        <p>
+            The threshold function, also called the step function,
+            produces a binary output.
+        </p>
+
+        <p>
+            If the input is greater than or equal to a threshold,
+            the output is 1. Otherwise, the output is 0.
+        </p>
+
+        <div class="formula">
+
+            f(x) =
+            1 &nbsp; if x ≥ 0
+            <br><br>
+            0 &nbsp; if x &lt; 0
+
+        </div>
+
+        <h3>Output Range</h3>
+
+        <p>
+            <strong>0 or 1</strong>
+        </p>
+
+        <h3>Example</h3>
+
+        <div class="formula">
+            z = 2.5
+        </div>
+
+        <p>
+            Since 2.5 ≥ 0:
+        </p>
+
+        <div class="formula">
+            Output = 1
+        </div>
+
+        <h3>Applications</h3>
+
+        <ul>
+            <li>Traditional perceptron</li>
+            <li>Simple binary decision systems</li>
+            <li>Historical neural-network models</li>
+        </ul>
+
+        <h3>Advantages</h3>
+
+        <ul>
+            <li>Very simple</li>
+            <li>Easy to understand</li>
+            <li>Produces a clear binary decision</li>
+        </ul>
+
+        <h3>Disadvantages</h3>
+
+        <ul>
+            <li>Not differentiable at the threshold</li>
+            <li>Gradient is zero almost everywhere</li>
+            <li>Not suitable for modern gradient-based deep learning</li>
+        </ul>
+
+    </div>
+
+
+    <!-- 2 SIGMOID -->
+
+    <h2>4. Sigmoid Activation Function</h2>
+
+    <div class="function-box">
+
+        <h3>What is Sigmoid?</h3>
+
+        <p>
+            Sigmoid is an S-shaped activation function that converts
+            any real-valued input into a value between 0 and 1.
+        </p>
+
+        <div class="formula">
+            σ(x) = 1 / (1 + e<sup>-x</sup>)
+        </div>
+
+        <h3>Output Range</h3>
+
+        <p>
+            <strong>0 &lt; σ(x) &lt; 1</strong>
+        </p>
+
+        <h3>Example</h3>
+
+        <div class="formula">
+            σ(0) = 0.5
+        </div>
+
+        <div class="formula">
+            σ(2) ≈ 0.881
+        </div>
+
+        <div class="formula">
+            σ(-2) ≈ 0.119
+        </div>
+
+        <h3>Interpretation</h3>
+
+        <p>
+            Because the output is between 0 and 1, sigmoid is useful
+            when an output needs to represent a probability-like value
+            for a binary classification task.
+        </p>
+
+        <h3>Advantages</h3>
+
+        <ul>
+            <li>Output is bounded between 0 and 1</li>
+            <li>Smooth and differentiable</li>
+            <li>Useful for binary classification output layers</li>
+        </ul>
+
+        <h3>Disadvantages</h3>
+
+        <ul>
+            <li>Can suffer from vanishing gradients</li>
+            <li>Not zero-centered</li>
+            <li>Can become saturated for very large positive or negative inputs</li>
+        </ul>
+
+        <h3>Common Use</h3>
+
+        <div class="success">
+            <strong>Binary Classification Output Layer</strong>
+            <br>
+            Example: Cat vs Not Cat
+        </div>
+
+    </div>
+
+
+    <!-- 3 RELU -->
+
+    <h2>5. ReLU Activation Function</h2>
+
+    <div class="function-box">
+
+        <h3>What is ReLU?</h3>
+
+        <p>
+            ReLU stands for <strong>Rectified Linear Unit</strong>.
+            It is one of the most commonly used activation functions
+            in modern deep neural networks.
+        </p>
+
+        <div class="formula">
+            ReLU(x) = max(0, x)
+        </div>
+
+        <p>Therefore:</p>
+
+        <div class="formula">
+
+            ReLU(x) = x &nbsp; if x &gt; 0
+            <br><br>
+            ReLU(x) = 0 &nbsp; if x ≤ 0
+
+        </div>
+
+        <h3>Examples</h3>
+
+        <div class="formula">
+            ReLU(5) = 5
+        </div>
+
+        <div class="formula">
+            ReLU(0) = 0
+        </div>
+
+        <div class="formula">
+            ReLU(-3) = 0
+        </div>
+
+        <h3>Output Range</h3>
+
+        <p>
+            <strong>[0, ∞)</strong>
+        </p>
+
+        <h3>Advantages</h3>
+
+        <ul>
+            <li>Computationally simple</li>
+            <li>Efficient to calculate</li>
+            <li>Usually provides stronger gradients than sigmoid/tanh in positive regions</li>
+            <li>Widely used in hidden layers of deep networks</li>
+        </ul>
+
+        <h3>Disadvantage</h3>
+
+        <p>
+            ReLU can suffer from the <strong>dying ReLU problem</strong>.
+        </p>
+
+        <p>
+            If a neuron stays in the negative region, its gradient can remain
+            zero and the neuron may stop updating effectively.
+        </p>
+
+        <h3>Common Applications</h3>
+
+        <ul>
+            <li>Convolutional Neural Networks (CNNs)</li>
+            <li>Image Classification</li>
+            <li>Object Detection</li>
+            <li>Computer Vision</li>
+            <li>Deep Neural Networks</li>
+        </ul>
+
+    </div>
+
+
+    <!-- 4 TANH -->
+
+    <h2>6. Tanh Activation Function</h2>
+
+    <div class="function-box">
+
+        <h3>What is Tanh?</h3>
+
+        <p>
+            Tanh, or hyperbolic tangent, is an S-shaped activation function
+            that maps values between -1 and +1.
+        </p>
+
+        <div class="formula">
+            tanh(x) =
+            (e<sup>x</sup> - e<sup>-x</sup>) /
+            (e<sup>x</sup> + e<sup>-x</sup>)
+        </div>
+
+        <h3>Output Range</h3>
+
+        <p>
+            <strong>-1 &lt; tanh(x) &lt; 1</strong>
+        </p>
+
+        <h3>Examples</h3>
+
+        <div class="formula">
+            tanh(0) = 0
+        </div>
+
+        <div class="formula">
+            tanh(2) ≈ 0.964
+        </div>
+
+        <div class="formula">
+            tanh(-2) ≈ -0.964
+        </div>
+
+        <h3>Advantages</h3>
+
+        <ul>
+            <li>Zero-centered output</li>
+            <li>Useful when negative and positive values are meaningful</li>
+            <li>Smooth and differentiable</li>
+        </ul>
+
+        <h3>Disadvantages</h3>
+
+        <ul>
+            <li>Can suffer from vanishing gradients</li>
+            <li>Saturates for large positive and negative values</li>
+        </ul>
+
+        <h3>Common Applications</h3>
+
+        <ul>
+            <li>Some recurrent neural networks</li>
+            <li>Historical neural-network architectures</li>
+            <li>Situations where zero-centered activations are useful</li>
+        </ul>
+
+    </div>
+
+
+    <!-- 5 SOFTMAX -->
+
+    <h2>7. Softmax Activation Function</h2>
+
+    <div class="function-box">
+
+        <h3>What is Softmax?</h3>
+
+        <p>
+            Softmax converts a vector of raw scores, often called logits,
+            into a probability distribution across multiple classes.
+        </p>
+
+        <div class="formula">
+            Softmax(zᵢ) =
+            e<sup>zᵢ</sup> /
+            Σ e<sup>zⱼ</sup>
+        </div>
+
+        <p>
+            The probabilities produced by softmax sum to 1.
+        </p>
+
+        <div class="formula">
+            P₁ + P₂ + ... + Pₙ = 1
+        </div>
+
+        <h3>Example</h3>
+
+        <p>
+            Suppose a neural network produces these logits:
+        </p>
+
+        <div class="formula">
+            [2.0, 1.0, 0.1]
+        </div>
+
+        <p>
+            Softmax converts them approximately into:
+        </p>
+
+        <div class="formula">
+            [0.659, 0.242, 0.099]
+        </div>
+
+        <p>
+            The probabilities add up to approximately:
+        </p>
+
+        <div class="formula">
+            0.659 + 0.242 + 0.099 ≈ 1
+        </div>
+
+        <h3>Output Range</h3>
+
+        <p>
+            Each output is between 0 and 1.
+        </p>
+
+        <h3>Common Application</h3>
+
+        <div class="success">
+
+            <strong>Multi-Class Classification</strong>
+
+            <p>
+                Example:
+            </p>
+
+            <ul>
+                <li>Cat</li>
+                <li>Dog</li>
+                <li>Horse</li>
+            </ul>
+
+            <p>
+                Softmax can produce a probability for each class.
+            </p>
+
+        </div>
+
+        <h3>Important</h3>
+
+        <p>
+            Softmax is normally applied to a vector of class scores rather
+            than independently to a single scalar.
+        </p>
+
+    </div>
+
+
+    <!-- COMPARISON -->
+
+    <h2>8. Comparison of Activation Functions</h2>
+
+    <table>
+
+        <tr>
+            <th>Function</th>
+            <th>Output Range</th>
+            <th>Nonlinear?</th>
+            <th>Common Use</th>
+            <th>Main Issue</th>
+        </tr>
+
+        <tr>
+            <td>Threshold</td>
+            <td>0 or 1</td>
+            <td>No useful smooth gradient</td>
+            <td>Perceptron</td>
+            <td>Not suitable for gradient-based deep learning</td>
+        </tr>
+
+        <tr>
+            <td>Sigmoid</td>
+            <td>0 to 1</td>
+            <td>Yes</td>
+            <td>Binary classification output</td>
+            <td>Vanishing gradients</td>
+        </tr>
+
+        <tr>
+            <td>ReLU</td>
+            <td>0 to ∞</td>
+            <td>Yes</td>
+            <td>Hidden layers, CNNs</td>
+            <td>Dying ReLU</td>
+        </tr>
+
+        <tr>
+            <td>Tanh</td>
+            <td>-1 to 1</td>
+            <td>Yes</td>
+            <td>Some RNNs / hidden layers</td>
+            <td>Vanishing gradients</td>
+        </tr>
+
+        <tr>
+            <td>Softmax</td>
+            <td>0 to 1 per class</td>
+            <td>Yes</td>
+            <td>Multi-class classification output</td>
+            <td>Can become numerically sensitive with extreme logits if implemented naively</td>
+        </tr>
+
+    </table>
+
+
+    <!-- WHEN TO USE -->
+
+    <h2>9. When Should We Use Each Activation Function?</h2>
+
+    <table>
+
+        <tr>
+            <th>Situation</th>
+            <th>Common Choice</th>
+        </tr>
+
+        <tr>
+            <td>Traditional perceptron</td>
+            <td>Threshold / Step</td>
+        </tr>
+
+        <tr>
+            <td>Hidden layers of many deep networks</td>
+            <td>ReLU or related variants</td>
+        </tr>
+
+        <tr>
+            <td>Binary classification output</td>
+            <td>Sigmoid</td>
+        </tr>
+
+        <tr>
+            <td>Multi-class classification output</td>
+            <td>Softmax</td>
+        </tr>
+
+        <tr>
+            <td>Some recurrent architectures</td>
+            <td>Tanh</td>
+        </tr>
+
+    </table>
+
+
+    <!-- SIMPLE MEMORY TRICK -->
+
+    <h2>10. Easy Way to Remember</h2>
+
+    <div class="diagram">
+
+Threshold
+    ↓
+Binary Decision
+0 or 1
+
+
+Sigmoid
+    ↓
+Binary Probability
+0 to 1
+
+
+ReLU
+    ↓
+Deep Network Hidden Layers
+0 to ∞
+
+
+Tanh
+    ↓
+Zero-Centered
+-1 to +1
+
+
+Softmax
+    ↓
+Multi-Class Probabilities
+Sum = 1
+
+    </div>
+
+
+    <!-- NEURAL NETWORK EXAMPLE -->
+
+    <h2>11. Activation Functions in a Neural Network</h2>
+
+    <div class="diagram">
+
+                ┌── ReLU ──►
+Input ──► Hidden Layer ──► Hidden Layer ──► Output
+                │              │
+                └── ReLU ──────┘
+
+Binary Classification:
+Output → Sigmoid
+
+Multi-Class Classification:
+Output → Softmax
+
+    </div>
+
+    <p>
+        A common architecture might therefore use ReLU in hidden layers
+        and use an output activation appropriate to the prediction task.
+    </p>
+
+
+    <!-- KEY POINTS -->
+
+    <h2>12. Key Points</h2>
+
+    <div class="summary">
+
+        <ul>
+
+            <li>
+                <strong>Threshold:</strong>
+                Produces a hard binary decision and is associated with
+                the traditional perceptron.
+            </li>
+
+            <li>
+                <strong>Sigmoid:</strong>
+                Maps a scalar to the range 0 to 1 and is commonly used
+                for binary classification outputs.
+            </li>
+
+            <li>
+                <strong>ReLU:</strong>
+                Outputs zero for negative inputs and the input itself
+                for positive inputs; widely used in hidden layers.
+            </li>
+
+            <li>
+                <strong>Tanh:</strong>
+                Maps values to approximately -1 to +1 and is zero-centered.
+            </li>
+
+            <li>
+                <strong>Softmax:</strong>
+                Converts multiple logits into a probability distribution
+                whose values sum to 1, commonly for multi-class outputs.
+            </li>
+
+        </ul>
+
+    </div>
+
+
+    <!-- FINAL SUMMARY -->
+
+    <h2>13. Overall Concept</h2>
+
+    <div class="diagram">
+
+                 Neural Network
+                       │
+                       ▼
+              ┌─────────────────┐
+              │ Activation      │
+              │ Function        │
+              └─────────────────┘
+                       │
+          ┌────────────┼────────────┐
+          ▼            ▼            ▼
+      Hidden       Binary        Multi-Class
+      Layers       Output          Output
+          │            │              │
+          ▼            ▼              ▼
+        ReLU        Sigmoid        Softmax
+
+    </div>
+
+    <div class="important">
+
+        <strong>Remember:</strong>
+
+        The activation function is not simply an extra calculation.
+        It is what allows neural networks to model complex nonlinear
+        relationships.
+
+    </div>
+
+
+    <footer>
+        <p>
+            Deep Learning Notes | Activation Functions
+        </p>
+    </footer>
+
+</div>
+
+</body>
+</html>
+```

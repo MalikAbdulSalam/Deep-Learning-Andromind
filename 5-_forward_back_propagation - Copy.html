@@ -1,0 +1,1088 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Perceptron, ANN and Backpropagation</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f4e79;
+            border-bottom: 3px solid #1f4e79;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #1f4e79;
+            margin-top: 40px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        .definition {
+            background: #eaf3ff;
+            border-left: 5px solid #1f4e79;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .important {
+            background: #fff4cc;
+            border-left: 5px solid #e6a700;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .formula {
+            background: #f1f1f1;
+            padding: 18px;
+            text-align: center;
+            font-size: 20px;
+            font-family: "Times New Roman", serif;
+            margin: 15px 0;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        .diagram {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #5b9bd5;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #1f4e79;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+
+        code {
+            background: #eee;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #1f4e79;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>How Neural Networks Work: Perceptron, ANN & Backpropagation</h1>
+
+
+    <!-- ===================================================== -->
+    <!-- 1. INTRODUCTION -->
+    <!-- ===================================================== -->
+
+    <h2>1. What is a Neural Network?</h2>
+
+    <div class="definition">
+
+        A neural network is a computational model made of interconnected
+        artificial neurons. The neurons process input data using weights,
+        biases and activation functions to produce an output.
+
+    </div>
+
+    <p>
+        The basic idea is:
+    </p>
+
+    <div class="diagram">
+
+Input Data
+    ↓
+Weighted Calculations
+    ↓
+Activation Functions
+    ↓
+Prediction
+    ↓
+Loss / Error
+    ↓
+Backpropagation
+    ↓
+Update Weights
+    ↓
+Better Prediction
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 2. PERCEPTRON -->
+    <!-- ===================================================== -->
+
+    <h2>2. How Does a Perceptron Work?</h2>
+
+    <div class="definition">
+
+        A perceptron is one of the simplest neural-network models.
+        It takes input values, multiplies them by weights, adds a bias,
+        and produces an output using an activation function.
+
+    </div>
+
+    <div class="diagram">
+
+x₁ ──► w₁ ──┐
+            │
+x₂ ──► w₂ ──┤
+            ├──► Σ + b ──► Activation ──► Output
+            │
+x₃ ──► w₃ ──┤
+            │
+xₙ ──► wₙ ──┘
+
+    </div>
+
+    <p>The weighted sum is:</p>
+
+    <div class="formula">
+        z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b
+    </div>
+
+    <p>The output is:</p>
+
+    <div class="formula">
+        y = f(z)
+    </div>
+
+    <p>
+        In the traditional perceptron, <code>f(z)</code> is usually
+        a step/threshold function.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 3. PERCEPTRON EXAMPLE -->
+    <!-- ===================================================== -->
+
+    <h2>3. Simple Perceptron Example</h2>
+
+    <p>
+        Suppose we want to predict whether a student passes based on
+        study hours and attendance.
+    </p>
+
+    <table>
+
+        <tr>
+            <th>Input</th>
+            <th>Meaning</th>
+        </tr>
+
+        <tr>
+            <td>x₁</td>
+            <td>Study Hours</td>
+        </tr>
+
+        <tr>
+            <td>x₂</td>
+            <td>Attendance</td>
+        </tr>
+
+    </table>
+
+    <p>Suppose:</p>
+
+    <div class="formula">
+        x₁ = 5
+        <br>
+        x₂ = 8
+        <br>
+        w₁ = 0.6
+        <br>
+        w₂ = 0.4
+        <br>
+        b = -5
+    </div>
+
+    <p>Calculate:</p>
+
+    <div class="formula">
+        z = (5 × 0.6) + (8 × 0.4) - 5
+    </div>
+
+    <div class="formula">
+        z = 3 + 3.2 - 5
+    </div>
+
+    <div class="formula">
+        z = 1.2
+    </div>
+
+    <p>
+        Since <strong>z &gt; 0</strong>, the step function produces:
+    </p>
+
+    <div class="formula">
+        Output = 1
+    </div>
+
+    <div class="success">
+        The perceptron therefore predicts the positive class.
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 4. HOW PERCEPTRON LEARNS -->
+    <!-- ===================================================== -->
+
+    <h2>4. How Does a Perceptron Learn?</h2>
+
+    <p>
+        A perceptron starts with initial weights. It then makes predictions
+        and compares those predictions with the correct target values.
+    </p>
+
+    <div class="diagram">
+
+Input
+  ↓
+Calculate Weighted Sum
+  ↓
+Activation
+  ↓
+Prediction
+  ↓
+Compare with Target
+  ↓
+Calculate Error
+  ↓
+Update Weights
+  ↓
+Next Training Example
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 5. PERCEPTRON LEARNING RULE -->
+    <!-- ===================================================== -->
+
+    <h2>5. Perceptron Learning Rule</h2>
+
+    <p>
+        A classical perceptron can update its weights using:
+    </p>
+
+    <div class="formula">
+        wᵢ(new) = wᵢ(old) + η × (target - prediction) × xᵢ
+    </div>
+
+    <p>The bias can be updated as:</p>
+
+    <div class="formula">
+        b(new) = b(old) + η × (target - prediction)
+    </div>
+
+    <p>Where:</p>
+
+    <ul>
+        <li><strong>η</strong> = learning rate</li>
+        <li><strong>target</strong> = correct answer</li>
+        <li><strong>prediction</strong> = model prediction</li>
+        <li><strong>xᵢ</strong> = input feature</li>
+    </ul>
+
+
+    <!-- ===================================================== -->
+    <!-- 6. PERCEPTRON BACKPROPAGATION -->
+    <!-- ===================================================== -->
+
+    <h2>6. Backpropagation in a Perceptron</h2>
+
+    <div class="important">
+
+        <strong>Important distinction:</strong>
+
+        In a single traditional perceptron, we usually describe learning
+        using the perceptron learning rule rather than modern
+        backpropagation.
+
+        Backpropagation becomes especially important for multilayer
+        neural networks.
+
+    </div>
+
+    <p>
+        Conceptually, however, the idea is similar:
+    </p>
+
+    <div class="diagram">
+
+Prediction
+    ↓
+Error
+    ↓
+Determine how weights contributed to error
+    ↓
+Update weights
+    ↓
+Better prediction
+
+    </div>
+
+    <p>
+        Modern gradient-based training requires differentiable operations.
+        A hard threshold activation is not suitable for ordinary
+        gradient-based backpropagation because its derivative is zero
+        almost everywhere.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 7. ANN -->
+    <!-- ===================================================== -->
+
+    <h2>7. What is an Artificial Neural Network (ANN)?</h2>
+
+    <div class="definition">
+
+        An Artificial Neural Network (ANN) is a network of interconnected
+        artificial neurons arranged into layers.
+
+    </div>
+
+    <p>A typical ANN contains:</p>
+
+    <ul>
+        <li>Input Layer</li>
+        <li>One or more Hidden Layers</li>
+        <li>Output Layer</li>
+    </ul>
+
+    <div class="diagram">
+
+Input Layer
+     ↓
+Hidden Layer 1
+     ↓
+Hidden Layer 2
+     ↓
+Output Layer
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 8. ANN EXAMPLE -->
+    <!-- ===================================================== -->
+
+    <h2>8. Example of an ANN</h2>
+
+    <div class="diagram">
+
+ x₁ ──┐
+ x₂ ──┼──► ○ ──┐
+ x₃ ──┘        │
+               ├──► ○ ──► Output
+ x₄ ─────────► ○ ──┘
+               │
+               └──► ○
+
+    </div>
+
+    <p>
+        Every connection has a weight, and every neuron may have a bias.
+        Hidden neurons normally use nonlinear activation functions.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 9. FORWARD PROPAGATION -->
+    <!-- ===================================================== -->
+
+    <h2>9. Forward Propagation in an ANN</h2>
+
+    <p>
+        The first phase of neural-network training is called
+        <strong>forward propagation</strong> or <strong>forward pass</strong>.
+    </p>
+
+    <div class="step">
+        <strong>Step 1:</strong> Input data enters the input layer.
+    </div>
+
+    <div class="step">
+        <strong>Step 2:</strong> Each neuron calculates a weighted sum.
+    </div>
+
+    <div class="step">
+        <strong>Step 3:</strong> The activation function is applied.
+    </div>
+
+    <div class="step">
+        <strong>Step 4:</strong> The result is passed to the next layer.
+    </div>
+
+    <div class="step">
+        <strong>Step 5:</strong> The output layer produces the prediction.
+    </div>
+
+    <div class="formula">
+        z = Wx + b
+    </div>
+
+    <div class="formula">
+        a = f(z)
+    </div>
+
+    <p>
+        Here <strong>a</strong> is the activation/output of a layer.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 10. LOSS -->
+    <!-- ===================================================== -->
+
+    <h2>10. Loss Function</h2>
+
+    <p>
+        After the ANN produces a prediction, the prediction is compared
+        with the actual target.
+    </p>
+
+    <div class="diagram">
+
+Actual Target
+      │
+      │
+      ▼
+    Compare
+      ▲
+      │
+Prediction
+      │
+      ▼
+     Loss
+
+    </div>
+
+    <p>
+        The loss function measures how far the prediction is from the
+        desired target.
+    </p>
+
+    <h3>Example: Mean Squared Error</h3>
+
+    <div class="formula">
+        MSE = (1/n) Σ(y - ŷ)²
+    </div>
+
+    <p>Where:</p>
+
+    <ul>
+        <li><strong>y</strong> = actual target</li>
+        <li><strong>ŷ</strong> = predicted value</li>
+        <li><strong>n</strong> = number of samples</li>
+    </ul>
+
+
+    <!-- ===================================================== -->
+    <!-- 11. BACKPROPAGATION -->
+    <!-- ===================================================== -->
+
+    <h2>11. What is Backpropagation?</h2>
+
+    <div class="definition">
+
+        Backpropagation is an algorithm used to calculate how much each
+        trainable parameter contributed to the network's loss.
+        These gradients are then used by an optimizer to update the
+        weights and biases.
+
+    </div>
+
+    <p>
+        Backpropagation works backward through the network, starting from
+        the output layer and moving toward the input layer.
+    </p>
+
+    <div class="diagram">
+
+Forward Pass
+──────────────────────────────►
+
+Input → Hidden → Hidden → Output
+                         ↓
+                       Loss
+
+Backward Pass
+◄──────────────────────────────
+
+Input ← Hidden ← Hidden ← Output
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 12. FOUR STEPS -->
+    <!-- ===================================================== -->
+
+    <h2>12. Four Main Steps of ANN Training</h2>
+
+    <div class="step">
+        <strong>1. Forward Propagation</strong><br>
+        Calculate the prediction using the current weights.
+    </div>
+
+    <div class="step">
+        <strong>2. Calculate Loss</strong><br>
+        Measure the difference between prediction and target.
+    </div>
+
+    <div class="step">
+        <strong>3. Backpropagation</strong><br>
+        Calculate gradients of the loss with respect to weights and biases.
+    </div>
+
+    <div class="step">
+        <strong>4. Update Parameters</strong><br>
+        The optimizer updates the weights and biases.
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 13. GRADIENT DESCENT -->
+    <!-- ===================================================== -->
+
+    <h2>13. Gradient Descent</h2>
+
+    <p>
+        After backpropagation calculates the gradients, an optimizer
+        such as gradient descent uses them to update the parameters.
+    </p>
+
+    <div class="formula">
+        w(new) = w(old) − η × ∂L/∂w
+    </div>
+
+    <div class="formula">
+        b(new) = b(old) − η × ∂L/∂b
+    </div>
+
+    <p>Where:</p>
+
+    <ul>
+        <li><strong>L</strong> = loss</li>
+        <li><strong>η</strong> = learning rate</li>
+        <li><strong>∂L/∂w</strong> = gradient of loss with respect to weight</li>
+        <li><strong>∂L/∂b</strong> = gradient of loss with respect to bias</li>
+    </ul>
+
+
+    <!-- ===================================================== -->
+    <!-- 14. CHAIN RULE -->
+    <!-- ===================================================== -->
+
+    <h2>14. Chain Rule in Backpropagation</h2>
+
+    <p>
+        The mathematical foundation of backpropagation is the
+        <strong>chain rule of calculus</strong>.
+    </p>
+
+    <p>
+        Suppose:
+    </p>
+
+    <div class="formula">
+        L → a → z → w
+    </div>
+
+    <p>
+        Then the gradient can be calculated as:
+    </p>
+
+    <div class="formula">
+        ∂L/∂w =
+        ∂L/∂a ×
+        ∂a/∂z ×
+        ∂z/∂w
+    </div>
+
+    <p>
+        This allows the network to determine how a small change in a
+        particular weight would affect the final loss.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 15. SIMPLE ANN BACKPROP EXAMPLE -->
+    <!-- ===================================================== -->
+
+    <h2>15. Simple Backpropagation Example</h2>
+
+    <p>
+        Consider a very small neural network:
+    </p>
+
+    <div class="diagram">
+
+Input
+  │
+  ▼
+Hidden Neuron
+  │
+  ▼
+Output Neuron
+  │
+  ▼
+Prediction
+  │
+  ▼
+Loss
+
+    </div>
+
+    <p>Suppose the network predicts:</p>
+
+    <div class="formula">
+        ŷ = 0.7
+    </div>
+
+    <p>But the actual target is:</p>
+
+    <div class="formula">
+        y = 1.0
+    </div>
+
+    <p>
+        The network has an error. The loss function calculates how large
+        that error is.
+    </p>
+
+    <div class="formula">
+        Loss = (1.0 - 0.7)²
+    </div>
+
+    <div class="formula">
+        Loss = 0.09
+    </div>
+
+    <p>
+        Backpropagation then calculates gradients for the output weight
+        and hidden-layer weights.
+    </p>
+
+    <p>
+        The optimizer uses those gradients to modify the weights so that
+        future predictions move closer to the target.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 16. ITERATIVE TRAINING -->
+    <!-- ===================================================== -->
+
+    <h2>16. Neural Network Training is Repeated</h2>
+
+    <div class="diagram">
+
+                ┌──────────────────────┐
+                │                      │
+                ▼                      │
+Input → Forward Pass → Prediction     │
+                     ↓                │
+                    Loss              │
+                     ↓                │
+               Backpropagation        │
+                     ↓                │
+               Gradient Calculation  │
+                     ↓                │
+                Update Weights ───────┘
+
+    </div>
+
+    <p>
+        This process is repeated many times over the training data.
+    </p>
+
+    <p>
+        One complete pass through the entire training dataset is called
+        an <strong>epoch</strong>.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <!-- 17. PERCEPTRON VS ANN -->
+    <!-- ===================================================== -->
+
+    <h2>17. Perceptron vs ANN</h2>
+
+    <table>
+
+        <tr>
+            <th>Feature</th>
+            <th>Perceptron</th>
+            <th>ANN</th>
+        </tr>
+
+        <tr>
+            <td>Structure</td>
+            <td>Usually a single computational layer</td>
+            <td>Input, hidden and output layers</td>
+        </tr>
+
+        <tr>
+            <td>Neurons</td>
+            <td>Simple neurons</td>
+            <td>Many interconnected neurons</td>
+        </tr>
+
+        <tr>
+            <td>Activation</td>
+            <td>Traditionally step function</td>
+            <td>ReLU, sigmoid, tanh, softmax, etc.</td>
+        </tr>
+
+        <tr>
+            <td>Learning</td>
+            <td>Perceptron learning rule</td>
+            <td>Backpropagation + optimizer</td>
+        </tr>
+
+        <tr>
+            <td>Nonlinear Problems</td>
+            <td>Limited</td>
+            <td>Can model complex nonlinear relationships</td>
+        </tr>
+
+        <tr>
+            <td>Hidden Layers</td>
+            <td>No</td>
+            <td>Can have one or many</td>
+        </tr>
+
+        <tr>
+            <td>Typical Capability</td>
+            <td>Simple classification</td>
+            <td>Complex classification and regression</td>
+        </tr>
+
+    </table>
+
+
+    <!-- ===================================================== -->
+    <!-- 18. PERCEPTRON LEARNING VS BACKPROP -->
+    <!-- ===================================================== -->
+
+    <h2>18. Perceptron Learning Rule vs Backpropagation</h2>
+
+    <table>
+
+        <tr>
+            <th>Feature</th>
+            <th>Perceptron Learning Rule</th>
+            <th>Backpropagation</th>
+        </tr>
+
+        <tr>
+            <td>Used mainly for</td>
+            <td>Single-layer perceptron</td>
+            <td>Multilayer neural networks</td>
+        </tr>
+
+        <tr>
+            <td>Basic idea</td>
+            <td>Correct weights based on prediction error</td>
+            <td>Calculate gradients through the network</td>
+        </tr>
+
+        <tr>
+            <td>Calculus</td>
+            <td>Does not require the modern chain-rule gradient procedure</td>
+            <td>Uses chain rule</td>
+        </tr>
+
+        <tr>
+            <td>Activation</td>
+            <td>Traditionally step</td>
+            <td>Usually differentiable activations</td>
+        </tr>
+
+        <tr>
+            <td>Hidden layers</td>
+            <td>No</td>
+            <td>Yes</td>
+        </tr>
+
+        <tr>
+            <td>Complexity</td>
+            <td>Simple</td>
+            <td>Much more general</td>
+        </tr>
+
+    </table>
+
+
+    <!-- ===================================================== -->
+    <!-- 19. COMPLETE TRAINING PIPELINE -->
+    <!-- ===================================================== -->
+
+    <h2>19. Complete ANN Training Pipeline</h2>
+
+    <div class="diagram">
+
+              TRAINING DATA
+                    │
+                    ▼
+             ┌─────────────┐
+             │ Forward     │
+             │ Propagation │
+             └─────────────┘
+                    │
+                    ▼
+               Prediction
+                    │
+                    ▼
+             ┌─────────────┐
+             │ Loss        │
+             │ Function    │
+             └─────────────┘
+                    │
+                    ▼
+             ┌─────────────┐
+             │ Backprop    │
+             │ agation      │
+             └─────────────┘
+                    │
+                    ▼
+               Gradients
+                    │
+                    ▼
+             ┌─────────────┐
+             │ Optimizer   │
+             └─────────────┘
+                    │
+                    ▼
+            Updated Weights
+                    │
+                    └──────────► Repeat
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 20. IMPORTANT TERMINOLOGY -->
+    <!-- ===================================================== -->
+
+    <h2>20. Important Terminology</h2>
+
+    <table>
+
+        <tr>
+            <th>Term</th>
+            <th>Meaning</th>
+        </tr>
+
+        <tr>
+            <td>Weight</td>
+            <td>Learnable parameter controlling the contribution of an input</td>
+        </tr>
+
+        <tr>
+            <td>Bias</td>
+            <td>Learnable parameter that shifts the activation</td>
+        </tr>
+
+        <tr>
+            <td>Activation Function</td>
+            <td>Transforms a neuron's weighted sum</td>
+        </tr>
+
+        <tr>
+            <td>Forward Propagation</td>
+            <td>Computing predictions from inputs</td>
+        </tr>
+
+        <tr>
+            <td>Loss Function</td>
+            <td>Measures prediction error</td>
+        </tr>
+
+        <tr>
+            <td>Backpropagation</td>
+            <td>Computes gradients of loss with respect to model parameters</td>
+        </tr>
+
+        <tr>
+            <td>Gradient</td>
+            <td>Indicates how the loss changes with a parameter</td>
+        </tr>
+
+        <tr>
+            <td>Optimizer</td>
+            <td>Uses gradients to update model parameters</td>
+        </tr>
+
+        <tr>
+            <td>Learning Rate</td>
+            <td>Controls the size of parameter updates</td>
+        </tr>
+
+        <tr>
+            <td>Epoch</td>
+            <td>One complete pass through the training dataset</td>
+        </tr>
+
+    </table>
+
+
+    <!-- ===================================================== -->
+    <!-- 21. EASY MEMORY -->
+    <!-- ===================================================== -->
+
+    <h2>21. Easy Way to Remember</h2>
+
+    <div class="success">
+
+        <h3>Perceptron</h3>
+
+        <p>
+            <strong>Input → Weighted Sum → Activation → Prediction → Error → Weight Update</strong>
+        </p>
+
+        <h3>ANN</h3>
+
+        <p>
+            <strong>Input → Forward Pass → Prediction → Loss → Backpropagation → Gradients → Optimizer → Updated Weights</strong>
+        </p>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- 22. FINAL CONCEPT -->
+    <!-- ===================================================== -->
+
+    <h2>22. Final Concept</h2>
+
+    <div class="diagram">
+
+                NEURAL NETWORK TRAINING
+
+                         │
+                         ▼
+                  Forward Pass
+                         │
+                         ▼
+                    Prediction
+                         │
+                         ▼
+                       Loss
+                         │
+                         ▼
+                  Backpropagation
+                         │
+                         ▼
+                     Gradients
+                         │
+                         ▼
+                     Optimizer
+                         │
+                         ▼
+                 Updated Weights
+                         │
+                         ▼
+                      Repeat
+
+    </div>
+
+    <div class="important">
+
+        <strong>Key Idea:</strong>
+
+        Backpropagation does not itself "update" the weights.
+        It calculates the gradients that tell us how the loss changes
+        with respect to the weights and biases. An optimizer such as
+        gradient descent then uses those gradients to update the
+        parameters.
+
+    </div>
+
+    <footer>
+        <p>
+            Deep Learning Notes | Perceptron, ANN & Backpropagation
+        </p>
+    </footer>
+
+</div>
+
+</body>
+</html>
+```
