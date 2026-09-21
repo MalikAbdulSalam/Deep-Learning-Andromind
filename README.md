@@ -29,7 +29,7 @@ ________________________________________________________________________________
 
 [Lecture 10 : Keras VS TensorFlow VS PyTorch ](https://malikabdulsalam.github.io/Deep-Learning-Andromind/9-Keras_TensorFlow_PyTorch_2026.html)
 
-[Lecture 11 : Keras VS TensorFlow VS PyTorch ](https://malikabdulsalam.github.io/Deep-Learning-Andromind/15-PyTorch_CNN_MNIST_Step_by_Step.html)
+[Lecture 11 : OCR](https://malikabdulsalam.github.io/Deep-Learning-Andromind/15-PyTorch_CNN_MNIST_Step_by_Step.html)
 ## AI Tree
 
 ![ML Tree](35-AI_tree.png)
