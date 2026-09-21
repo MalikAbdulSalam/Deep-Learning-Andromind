@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyTorch CNN - MNIST Step-by-Step Guide</title>
+<style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 1100px; margin: auto; padding: 30px; color: #222; }
+    h1, h2 { color: #17365d; }
+    h1 { border-bottom: 3px solid #17365d; padding-bottom: 10px; }
+    h2 { margin-top: 35px; }
+    h3 { color: #315f8c; }
+    pre { background: #f4f4f4; padding: 16px; overflow-x: auto; border-radius: 8px; border: 1px solid #ddd; }
+    code { font-family: Consolas, monospace; }
+    .box { background: #eef6ff; border-left: 5px solid #315f8c; padding: 12px 18px; margin: 15px 0; }
+    .warning { background: #fff7e6; border-left: 5px solid #d99a00; padding: 12px 18px; }
+    table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+    th, td { border: 1px solid #ccc; padding: 9px; text-align: left; }
+    th { background: #eee; }
+    .step { background: #f8f8f8; padding: 14px 18px; margin: 15px 0; border-radius: 8px; }
+</style>
+</head>
+<body>
+
+<h1>PyTorch CNN on MNIST — Complete Step-by-Step Guide</h1>
+
+<p>This guide demonstrates a complete CNN workflow using PyTorch:</p>
+
+<div class="box">
+<b>Download data → Load data → Inspect images → Create DataLoader → Build CNN → Train → Test → Save model → Load model → Inference on new data</b>
+</div>
+
+<h2>1. What is MNIST?</h2>
+<p>MNIST is a handwritten digit dataset containing:</p>
+<ul>
+<li>60,000 training images</li>
+<li>10,000 testing images</li>
+<li>10 classes: digits 0 through 9</li>
+<li>Each image is 28 × 28 pixels</li>
+<li>Images are grayscale, so they have 1 channel</li>
+</ul>
+
+<pre><code>Image shape = [1, 28, 28]
+
+1 = grayscale channel
+28 = height
+28 = width</code></pre>
+
+<h2>2. Step 1 — Download the MNIST Dataset</h2>
+
+<p>Download the four official MNIST files from the official dataset page:</p>
+
+<p><a href="https://yann.lecun.org/exdb/mnist/" target="_blank">Official MNIST Dataset Page</a></p>
+
+<p>Download:</p>
+
+<table>
+<tr><th>File</th><th>Purpose</th></tr>
+<tr><td>train-images-idx3-ubyte.gz</td><td>60,000 training images</td></tr>
+<tr><td>train-labels-idx1-ubyte.gz</td><td>60,000 training labels</td></tr>
+<tr><td>t10k-images-idx3-ubyte.gz</td><td>10,000 testing images</td></tr>
+<tr><td>t10k-labels-idx1-ubyte.gz</td><td>10,000 testing labels</td></tr>
+</table>
+
+<p>Do not extract the files for this example.</p>
+
+<h2>3. Step 2 — Create the Project</h2>
+
+<pre><code>CNN_MNIST/
+│
+├── data/
+│   ├── train-images-idx3-ubyte.gz
+│   ├── train-labels-idx1-ubyte.gz
+│   ├── t10k-images-idx3-ubyte.gz
+│   └── t10k-labels-idx1-ubyte.gz
+│
+├── new_data/
+│   └── digit.png
+│
+└── cnn_mnist.py</code></pre>
+
+<h2>4. Step 3 — Install Python Libraries</h2>
+
+<p>Open a terminal inside the project folder:</p>
+
+<pre><code>pip install torch torchvision matplotlib pillow</code></pre>
+
+<div class="box">
+<b>Note:</b> This example uses PyTorch directly to read the manually downloaded MNIST files. We use Pillow later for inference on a new image.
+</div>
+
+<h2>5. Step 4 — Load the Raw MNIST Files</h2>
+
+<p>MNIST stores images and labels in a special binary format. We use Python's <code>gzip</code> and <code>struct</code> libraries to read them.</p>
+
+<pre><code>import gzip
+import struct
+import torch
+
+def load_images(filename):
+    with gzip.open(filename, "rb") as f:
+        magic, num_images, rows, cols = struct.unpack(
+            "&gt;IIII", f.read(16)
+        )
+
+        data = f.read()
+
+        images = torch.tensor(
+            list(data),
+            dtype=torch.float32
+        )
+
+        images = images.reshape(
+            num_images, 1, rows, cols
+        )
+
+        images = images / 255.0
+
+    return images
+
+
+def load_labels(filename):
+    with gzip.open(filename, "rb") as f:
+        magic, num_labels = struct.unpack(
+            "&gt;II", f.read(8)
+        )
+
+        data = f.read()
+
+        labels = torch.tensor(
+            list(data),
+            dtype=torch.long
+        )
+
+    return labels</code></pre>
+
+<h2>6. Step 5 — Load Training and Testing Data</h2>
+
+<pre><code>x_train = load_images(
+    "data/train-images-idx3-ubyte.gz"
+)
+
+y_train = load_labels(
+    "data/train-labels-idx1-ubyte.gz"
+)
+
+x_test = load_images(
+    "data/t10k-images-idx3-ubyte.gz"
+)
+
+y_test = load_labels(
+    "data/t10k-labels-idx1-ubyte.gz"
+)
+
+print("Training images:", x_train.shape)
+print("Training labels:", y_train.shape)
+
+print("Testing images:", x_test.shape)
+print("Testing labels:", y_test.shape)</code></pre>
+
+<p>Expected output:</p>
+
+<pre><code>Training images: torch.Size([60000, 1, 28, 28])
+Training labels: torch.Size([60000])
+
+Testing images: torch.Size([10000, 1, 28, 28])
+Testing labels: torch.Size([10000])</code></pre>
+
+<h2>7. Step 6 — Display an Image</h2>
+
+<pre><code>import matplotlib.pyplot as plt
+
+image = x_train[0]
+label = y_train[0]
+
+plt.imshow(image.squeeze(), cmap="gray")
+plt.title(f"Label: {label.item()}")
+plt.axis("off")
+plt.show()</code></pre>
+
+<p>The image is a handwritten digit. The label tells us which digit it represents.</p>
+
+<div class="box">
+<b>Example:</b> If the displayed image is a handwritten 7, then its label is 7.
+</div>
+
+<h2>8. Step 7 — Create DataLoader</h2>
+
+<p>DataLoader divides the dataset into small batches. Here we use 64 images per batch.</p>
+
+<pre><code>from torch.utils.data import TensorDataset, DataLoader
+
+train_dataset = TensorDataset(
+    x_train, y_train
+)
+
+test_dataset = TensorDataset(
+    x_test, y_test
+)
+
+train_loader = DataLoader(
+    train_dataset,
+    batch_size=64,
+    shuffle=True
+)
+
+test_loader = DataLoader(
+    test_dataset,
+    batch_size=64,
+    shuffle=False
+)</code></pre>
+
+<p>Instead of giving the CNN all 60,000 images at once, training happens batch by batch.</p>
+
+<h2>9. Step 8 — Build the CNN</h2>
+
+<p>Our simple CNN contains:</p>
+
+<table>
+<tr><th>Layer</th><th>Purpose</th></tr>
+<tr><td>Conv2D</td><td>Extract image features</td></tr>
+<tr><td>ReLU</td><td>Add non-linearity</td></tr>
+<tr><td>MaxPooling</td><td>Reduce spatial size</td></tr>
+<tr><td>Flatten</td><td>Convert feature maps into a vector</td></tr>
+<tr><td>Dense / Linear</td><td>Learn classification features</td></tr>
+<tr><td>Output layer</td><td>Produce 10 digit scores</td></tr>
+</table>
+
+<pre><code>class CNN(torch.nn.Module):
+
+    def __init__(self):
+        super().__init__()
+
+        self.conv1 = torch.nn.Conv2d(
+            in_channels=1,
+            out_channels=32,
+            kernel_size=3
+        )
+
+        self.pool = torch.nn.MaxPool2d(2)
+
+        self.fc1 = torch.nn.Linear(
+            32 * 13 * 13,
+            64
+        )
+
+        self.fc2 = torch.nn.Linear(
+            64,
+            10
+        )
+
+    def forward(self, x):
+
+        x = self.conv1(x)
+        x = torch.relu(x)
+        x = self.pool(x)
+
+        x = x.view(x.size(0), -1)
+
+        x = torch.relu(self.fc1(x))
+
+        x = self.fc2(x)
+
+        return x</code></pre>
+
+<h2>10. Step 9 — Understand the Shape Changes</h2>
+
+<pre><code>Input
+1 × 28 × 28
+
+      ↓ Conv2D(32, 3×3)
+
+32 × 26 × 26
+
+      ↓ MaxPool 2×2
+
+32 × 13 × 13
+
+      ↓ Flatten
+
+5408 values
+
+      ↓ Linear
+
+64 values
+
+      ↓ Linear
+
+10 values
+
+      ↓
+
+0 1 2 3 4 5 6 7 8 9</code></pre>
+
+<h2>11. Step 10 — Loss Function and Optimizer</h2>
+
+<pre><code>model = CNN()
+
+criterion = torch.nn.CrossEntropyLoss()
+
+optimizer = torch.optim.Adam(
+    model.parameters(),
+    lr=0.001
+)</code></pre>
+
+<p><b>CrossEntropyLoss</b> measures how different the prediction is from the correct digit.</p>
+
+<p><b>Adam</b> updates the CNN weights to reduce the loss.</p>
+
+<h2>12. Step 11 — Train the CNN</h2>
+
+<pre><code>epochs = 5
+
+for epoch in range(epochs):
+
+    model.train()
+
+    total_loss = 0
+
+    for images, labels in train_loader:
+
+        outputs = model(images)
+
+        loss = criterion(
+            outputs,
+            labels
+        )
+
+        optimizer.zero_grad()
+
+        loss.backward()
+
+        optimizer.step()
+
+        total_loss += loss.item()
+
+    average_loss = (
+        total_loss / len(train_loader)
+    )
+
+    print(
+        f"Epoch {epoch + 1}/{epochs} "
+        f"Loss: {average_loss:.4f}"
+    )</code></pre>
+
+<h3>What happens during training?</h3>
+
+<pre><code>Image
+  ↓
+CNN prediction
+  ↓
+Calculate Loss
+  ↓
+Backpropagation
+  ↓
+Update weights
+  ↓
+Next batch
+  ↓
+Repeat</code></pre>
+
+<h2>13. Step 12 — Test the Model</h2>
+
+<p>Testing uses images that were not used to train the CNN.</p>
+
+<pre><code>model.eval()
+
+correct = 0
+total = 0
+
+with torch.no_grad():
+
+    for images, labels in test_loader:
+
+        outputs = model(images)
+
+        _, predicted = torch.max(
+            outputs, 1
+        )
+
+        total += labels.size(0)
+
+        correct += (
+            predicted == labels
+        ).sum().item()
+
+accuracy = 100 * correct / total
+
+print(f"Test Accuracy: {accuracy:.2f}%")</code></pre>
+
+<div class="box">
+<b>Important:</b> Test accuracy measures how well the trained model generalizes to the separate MNIST test set.
+</div>
+
+<h2>14. Step 13 — Save the Trained Model</h2>
+
+<p>After training, save the model weights:</p>
+
+<pre><code>torch.save(
+    model.state_dict(),
+    "mnist_cnn.pth"
+)
+
+print("Model saved!")</code></pre>
+
+<p>You now have:</p>
+
+<pre><code>mnist_cnn.pth</code></pre>
+
+<h2>15. Step 14 — Load the Trained Model</h2>
+
+<p>For inference, we do not train again. We create the same CNN architecture and load the saved weights.</p>
+
+<pre><code>model = CNN()
+
+model.load_state_dict(
+    torch.load(
+        "mnist_cnn.pth",
+        weights_only=True
+    )
+)
+
+model.eval()
+
+print("Model loaded!")</code></pre>
+
+<h2>16. Step 15 — Inference on a New Image</h2>
+
+<p>Now we want to give the CNN an image it has never seen before.</p>
+
+<p>Put your new digit image here:</p>
+
+<pre><code>new_data/
+└── digit.png</code></pre>
+
+<p>The image should contain one handwritten digit. For the simplest example, use a roughly square image with a black background and a white digit, similar to MNIST.</p>
+
+<h3>Load the new image</h3>
+
+<pre><code>from PIL import Image
+
+image = Image.open(
+    "new_data/digit.png"
+).convert("L")
+
+image = image.resize((28, 28))</code></pre>
+
+<h3>Convert it to a PyTorch tensor</h3>
+
+<pre><code>import torchvision.transforms as transforms
+
+transform = transforms.ToTensor()
+
+image_tensor = transform(image)</code></pre>
+
+<h3>Normalize the image</h3>
+
+<p>MNIST training images were normalized by dividing pixel values by 255. <code>ToTensor()</code> already converts the PIL image to the range 0–1.</p>
+
+<h3>Add the batch dimension</h3>
+
+<pre><code>image_tensor = image_tensor.unsqueeze(0)
+
+print(image_tensor.shape)</code></pre>
+
+<p>Expected:</p>
+
+<pre><code>torch.Size([1, 1, 28, 28])</code></pre>
+
+<p>The dimensions mean:</p>
+
+<pre><code>1 = one image
+1 = grayscale channel
+28 = height
+28 = width</code></pre>
+
+<h2>17. Step 16 — Make the Prediction</h2>
+
+<pre><code>with torch.no_grad():
+
+    output = model(
+        image_tensor
+    )
+
+    prediction = torch.argmax(
+        output,
+        dim=1
+    ).item()
+
+print("Predicted digit:", prediction)</code></pre>
+
+<p>For example:</p>
+
+<pre><code>Predicted digit: 7</code></pre>
+
+<h2>18. Step 17 — Display the New Image and Prediction</h2>
+
+<pre><code>plt.imshow(
+    image,
+    cmap="gray"
+)
+
+plt.title(
+    f"Predicted Digit: {prediction}"
+)
+
+plt.axis("off")
+plt.show()</code></pre>
+
+<h2>19. Complete Inference Code</h2>
+
+<p>Once the model has been trained and <code>mnist_cnn.pth</code> exists, the inference script can be very small:</p>
+
+<pre><code>import torch
+from PIL import Image
+import torchvision.transforms as transforms
+
+# Same CNN definition must exist
+# class CNN(nn.Module):
+#     ...
+
+# Load model
+model = CNN()
+
+model.load_state_dict(
+    torch.load(
+        "mnist_cnn.pth",
+        weights_only=True
+    )
+)
+
+model.eval()
+
+# Load new image
+image = Image.open(
+    "new_data/digit.png"
+).convert("L")
+
+# Resize
+image = image.resize((28, 28))
+
+# Convert to tensor
+transform = transforms.ToTensor()
+
+image_tensor = transform(image)
+
+# Add batch dimension
+image_tensor = image_tensor.unsqueeze(0)
+
+# Prediction
+with torch.no_grad():
+
+    output = model(
+        image_tensor
+    )
+
+    prediction = torch.argmax(
+        output,
+        dim=1
+    ).item()
+
+print("Predicted digit:", prediction)</code></pre>
+
+<h2>20. Complete Project Flow</h2>
+
+<pre><code>             MNIST DATASET
+                   │
+                   ▼
+       Download 4 .gz files
+                   │
+                   ▼
+              Load Images
+                   │
+                   ▼
+             Normalize 0-1
+                   │
+                   ▼
+             DataLoader
+                   │
+                   ▼
+             ┌─────────┐
+             │   CNN   │
+             └─────────┘
+                   │
+          ┌────────┴────────┐
+          ▼                 ▼
+       Training           Testing
+          │                 │
+          ▼                 ▼
+    Update weights      Accuracy
+          │
+          ▼
+     Save .pth model
+          │
+          ▼
+     Load trained model
+          │
+          ▼
+      NEW IMAGE
+          │
+          ▼
+     Resize 28×28
+          │
+          ▼
+      Tensor 1×28×28
+          │
+          ▼
+          CNN
+          │
+          ▼
+       Prediction
+          │
+          ▼
+      Digit: 7</code></pre>
+
+<h2>21. Important Difference: Testing vs Inference</h2>
+
+<table>
+<tr><th>Testing</th><th>Inference</th></tr>
+<tr><td>Uses the official MNIST test dataset</td><td>Uses a new image supplied by you</td></tr>
+<tr><td>Has known labels</td><td>Usually has no label</td></tr>
+<tr><td>Used to calculate accuracy</td><td>Used to make a prediction</td></tr>
+<tr><td>10,000 test images</td><td>One or more new images</td></tr>
+</table>
+
+<h2>22. Final Learning Concept</h2>
+
+<p>The key idea students should remember is:</p>
+
+<pre><code>TRAINING
+
+Images + Correct Labels
+          ↓
+         CNN
+          ↓
+   Calculate Loss
+          ↓
+  Backpropagation
+          ↓
+   Update Weights
+          ↓
+      Trained CNN
+
+
+INFERENCE
+
+New Image
+    ↓
+Trained CNN
+    ↓
+Prediction
+    ↓
+Digit = 7</code></pre>
+
+<div class="warning">
+<b>Common issue with new images:</b> MNIST has a particular visual format. A phone/photo image or a digit with the opposite foreground/background may not work well without preprocessing. For the first inference exercise, use a simple 28×28-style handwritten digit image that resembles MNIST.
+</div>
+
+</body>
+</html>
