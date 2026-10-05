@@ -49,4 +49,14 @@ ________________________________________________________________________________
 ![ML Tree](35-AI_tree.png)
 
 
-![ML Tree](1-neuron.PNG)
+![Neuron](1-neuron.PNG)
+
+![ANN](2-ANN.PNG)
+
+![Deep learning](3-learning_deep.PNG)
+
+![Human Face Features](4-human_face_features.PNG)
+
+![Image features](5-features_of_images.PNG)
+
+![Probabibility](6-probability_conditions.PNG)
