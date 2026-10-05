@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLO Custom Dataset Training - Step-by-Step Notes</title>
+
+```
+<style>
+    :root {
+        --primary: #2563eb;
+        --secondary: #0f172a;
+        --light: #f8fafc;
+        --border: #e2e8f0;
+        --text: #1e293b;
+        --muted: #64748b;
+        --code: #0f172a;
+        --success: #166534;
+        --warning: #92400e;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.7;
+        color: var(--text);
+        background: #f1f5f9;
+    }
+
+    header {
+        background: linear-gradient(135deg, #0f172a, #1d4ed8);
+        color: white;
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0 0 15px;
+        font-size: 42px;
+    }
+
+    header p {
+        margin: 0;
+        font-size: 19px;
+        opacity: 0.9;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    section {
+        background: white;
+        margin-bottom: 25px;
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+    }
+
+    h2 {
+        color: var(--primary);
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 10px;
+        margin-top: 0;
+    }
+
+    h3 {
+        color: var(--secondary);
+        margin-top: 28px;
+    }
+
+    code {
+        background: #e2e8f0;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    pre {
+        background: var(--code);
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        line-height: 1.5;
+        font-size: 14px;
+    }
+
+    .note,
+    .warning,
+    .success {
+        padding: 16px 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+
+    .note {
+        background: #eff6ff;
+        border-left: 5px solid var(--primary);
+    }
+
+    .warning {
+        background: #fff7ed;
+        border-left: 5px solid #f97316;
+        color: var(--warning);
+    }
+
+    .success {
+        background: #f0fdf4;
+        border-left: 5px solid #22c55e;
+        color: var(--success);
+    }
+
+    .workflow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin: 25px 0;
+    }
+
+    .workflow div {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th,
+    td {
+        border: 1px solid var(--border);
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background: #eff6ff;
+        color: #1e40af;
+    }
+
+    ul,
+    ol {
+        padding-left: 25px;
+    }
+
+    .toc {
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        padding: 20px 30px;
+        border-radius: 10px;
+    }
+
+    .toc a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .toc a:hover {
+        text-decoration: underline;
+    }
+
+    .formula {
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        padding: 15px;
+        text-align: center;
+        font-family: monospace;
+        font-size: 17px;
+        border-radius: 8px;
+        margin: 15px 0;
+    }
+
+    .badge {
+        display: inline-block;
+        background: #dbeafe;
+        color: #1e40af;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: bold;
+        margin: 3px;
+    }
+
+    footer {
+        text-align: center;
+        padding: 35px;
+        color: var(--muted);
+    }
+
+    @media (max-width: 700px) {
+        header h1 {
+            font-size: 30px;
+        }
+
+        section {
+            padding: 20px;
+        }
+
+        pre {
+            font-size: 12px;
+        }
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<header>
+    <h1>YOLO Custom Dataset Training</h1>
+    <p>Complete Step-by-Step Computer Vision Training Notes</p>
+</header>
+
+<div class="container">
+
+```
+<!-- TABLE OF CONTENTS -->
+<section>
+    <h2>Table of Contents</h2>
+
+    <div class="toc">
+        <ol>
+            <li><a href="#intro">What is YOLO?</a></li>
+            <li><a href="#workflow">Complete Workflow</a></li>
+            <li><a href="#classes">Define Classes</a></li>
+            <li><a href="#collect">Collect Images</a></li>
+            <li><a href="#annotation">Annotate Images</a></li>
+            <li><a href="#format">YOLO Label Format</a></li>
+            <li><a href="#structure">Dataset Structure</a></li>
+            <li><a href="#split">Train / Validation / Test Split</a></li>
+            <li><a href="#yaml">Create data.yaml</a></li>
+            <li><a href="#install">Install Ultralytics</a></li>
+            <li><a href="#gpu">Check GPU</a></li>
+            <li><a href="#model">Select YOLO Model</a></li>
+            <li><a href="#training">Train the Model</a></li>
+            <li><a href="#metrics">Training Metrics</a></li>
+            <li><a href="#validation">Validate the Model</a></li>
+            <li><a href="#image">Inference on Image</a></li>
+            <li><a href="#video">Inference on Video</a></li>
+            <li><a href="#webcam">Webcam Detection</a></li>
+            <li><a href="#errors">Common Dataset Problems</a></li>
+            <li><a href="#improve">Improve the Model</a></li>
+            <li><a href="#deployment">Deployment</a></li>
+            <li><a href="#project">Industrial Project Structure</a></li>
+            <li><a href="#checklist">Final Checklist</a></li>
+        </ol>
+    </div>
+</section>
+
+<!-- INTRODUCTION -->
+<section id="intro">
+    <h2>1. What is YOLO?</h2>
+
+    <p>
+        <strong>YOLO</strong> stands for <strong>You Only Look Once</strong>.
+        It is a family of real-time object detection models used to identify
+        objects and their locations in images and video.
+    </p>
+
+    <p>For example, a PPE detection system might detect:</p>
+
+    <span class="badge">Person</span>
+    <span class="badge">Helmet</span>
+    <span class="badge">Vest</span>
+    <span class="badge">Mask</span>
+    <span class="badge">Gloves</span>
+
+    <p>The model produces:</p>
+
+    <ul>
+        <li>Object class</li>
+        <li>Bounding box</li>
+        <li>Confidence score</li>
+    </ul>
+
+    <div class="note">
+        <strong>Example:</strong>
+        A YOLO model might detect a helmet with a confidence score of
+        <code>0.94</code> and draw a bounding box around it.
+    </div>
+</section>
+
+<!-- WORKFLOW -->
+<section id="workflow">
+    <h2>2. Complete YOLO Workflow</h2>
+
+    <div class="workflow">
+        <div>Problem Definition</div>
+        <div>Collect Images</div>
+        <div>Annotate</div>
+        <div>Dataset Preparation</div>
+        <div>Train</div>
+        <div>Validate</div>
+        <div>Test</div>
+        <div>Error Analysis</div>
+        <div>Improve</div>
+        <div>Deploy</div>
+    </div>
+
+    <p>The complete process is:</p>
+```
+
+<pre>
+Problem Definition
+        ↓
+Collect Images
+        ↓
+Clean Dataset
+        ↓
+Annotate Images
+        ↓
+Create YOLO Dataset
+        ↓
+Train / Validation / Test Split
+        ↓
+Create data.yaml
+        ↓
+Install YOLO
+        ↓
+Train Model
+        ↓
+Validate Model
+        ↓
+Test on New Images
+        ↓
+Test on Video
+        ↓
+Evaluate Metrics
+        ↓
+Error Analysis
+        ↓
+Improve Dataset
+        ↓
+Deploy
+</pre>
+
+```
+</section>
+
+<!-- CLASSES -->
+<section id="classes">
+    <h2>3. Define Your Classes</h2>
+
+    <p>
+        Before collecting and annotating data, clearly define what the
+        model needs to detect.
+    </p>
+
+    <h3>Example: PPE Detection</h3>
+```
+
+<pre>
+0 = person
+1 = helmet
+2 = vest
+3 = mask
+4 = gloves
+</pre>
+
+```
+    <div class="warning">
+        Class IDs start from <strong>0</strong>. Do not randomly change
+        class IDs after annotation.
+    </div>
+
+    <p>For three classes:</p>
+```
+
+<pre>
+0 → person
+1 → helmet
+2 → vest
+</pre>
+
+```
+</section>
+
+<!-- COLLECT -->
+<section id="collect">
+    <h2>4. Collect Images</h2>
+
+    <p>
+        Collect images that represent the real environment in which
+        your model will operate.
+    </p>
+
+    <p>Include variations in:</p>
+
+    <ul>
+        <li>Lighting</li>
+        <li>Camera angle</li>
+        <li>Object size</li>
+        <li>Distance</li>
+        <li>Background</li>
+        <li>Occlusion</li>
+        <li>Indoor and outdoor environments</li>
+        <li>Different object appearances</li>
+        <li>Different camera resolutions</li>
+    </ul>
+
+    <div class="warning">
+        Do not assume that 1,000 nearly identical frames are equivalent
+        to 1,000 diverse images.
+    </div>
+</section>
+
+<!-- ANNOTATION -->
+<section id="annotation">
+    <h2>5. Annotate Images</h2>
+
+    <p>
+        Object detection requires bounding-box annotations.
+        Common annotation tools include:
+    </p>
+
+    <ul>
+        <li>LabelImg</li>
+        <li>CVAT</li>
+        <li>Roboflow</li>
+        <li>Label Studio</li>
+    </ul>
+
+    <p>For an image:</p>
+```
+
+<pre>
+worker.jpg
+</pre>
+
+```
+    <p>There should be a corresponding label file:</p>
+```
+
+<pre>
+worker.txt
+</pre>
+
+```
+    <p>
+        The image and label should have the same base filename.
+    </p>
+```
+
+<pre>
+image001.jpg
+image001.txt
+
+image002.jpg
+image002.txt
+</pre>
+
+```
+</section>
+
+<!-- FORMAT -->
+<section id="format">
+    <h2>6. YOLO Label Format</h2>
+
+    <p>
+        YOLO uses the following annotation format:
+    </p>
+```
+
+<pre>
+class_id x_center y_center width height
+</pre>
+
+```
+    <p>Example:</p>
+```
+
+<pre>
+0 0.512 0.438 0.245 0.512
+1 0.530 0.215 0.120 0.160
+</pre>
+
+```
+    <table>
+        <tr>
+            <th>Value</th>
+            <th>Meaning</th>
+        </tr>
+        <tr>
+            <td>class_id</td>
+            <td>Object class number</td>
+        </tr>
+        <tr>
+            <td>x_center</td>
+            <td>Normalized center X coordinate</td>
+        </tr>
+        <tr>
+            <td>y_center</td>
+            <td>Normalized center Y coordinate</td>
+        </tr>
+        <tr>
+            <td>width</td>
+            <td>Normalized bounding-box width</td>
+        </tr>
+        <tr>
+            <td>height</td>
+            <td>Normalized bounding-box height</td>
+        </tr>
+    </table>
+
+    <div class="note">
+        Bounding-box coordinates are normalized between <strong>0 and 1</strong>.
+    </div>
+</section>
+
+<!-- DATASET STRUCTURE -->
+<section id="structure">
+    <h2>7. Dataset Structure</h2>
+
+    <p>A recommended YOLO dataset structure is:</p>
+```
+
+<pre>
+my_yolo_dataset/
+│
+├── images/
+│   ├── train/
+│   ├── val/
+│   └── test/
+│
+├── labels/
+│   ├── train/
+│   ├── val/
+│   └── test/
+│
+└── data.yaml
+</pre>
+
+```
+    <h3>Example</h3>
+```
+
+<pre>
+my_yolo_dataset/
+│
+├── images/
+│   ├── train/
+│   │   ├── image001.jpg
+│   │   ├── image002.jpg
+│   │   └── image003.jpg
+│   │
+│   ├── val/
+│   │   ├── image101.jpg
+│   │   └── image102.jpg
+│   │
+│   └── test/
+│       ├── image201.jpg
+│       └── image202.jpg
+│
+├── labels/
+│   ├── train/
+│   │   ├── image001.txt
+│   │   ├── image002.txt
+│   │   └── image003.txt
+│   │
+│   ├── val/
+│   │   ├── image101.txt
+│   │   └── image102.txt
+│   │
+│   └── test/
+│       ├── image201.txt
+│       └── image202.txt
+│
+└── data.yaml
+</pre>
+
+```
+</section>
+
+<!-- SPLIT -->
+<section id="split">
+    <h2>8. Train / Validation / Test Split</h2>
+
+    <p>A common dataset split is:</p>
+
+    <table>
+        <tr>
+            <th>Dataset</th>
+            <th>Typical Percentage</th>
+            <th>Purpose</th>
+        </tr>
+        <tr>
+            <td>Training</td>
+            <td>70–80%</td>
+            <td>Learning model parameters</td>
+        </tr>
+        <tr>
+            <td>Validation</td>
+            <td>10–20%</td>
+            <td>Monitoring model performance</td>
+        </tr>
+        <tr>
+            <td>Testing</td>
+            <td>10%</td>
+            <td>Final evaluation</td>
+        </tr>
+    </table>
+
+    <div class="warning">
+        When extracting many frames from the same video, avoid randomly
+        putting nearly identical frames into both training and validation.
+    </div>
+</section>
+
+<!-- YAML -->
+<section id="yaml">
+    <h2>9. Create data.yaml</h2>
+
+    <p>Create a file named:</p>
+```
+
+<pre>
+data.yaml
+</pre>
+
+```
+    <h3>Linux Example</h3>
+```
+
+<pre>
+path: /home/user/my_yolo_dataset
+
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: person
+  1: helmet
+  2: vest
+  3: mask
+</pre>
+
+```
+    <h3>Windows Example</h3>
+```
+
+<pre>
+path: D:/Projects/my_yolo_dataset
+
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: person
+  1: helmet
+  2: vest
+  3: mask
+</pre>
+
+```
+    <div class="warning">
+        The class IDs in your label files must match the class IDs
+        defined in <code>data.yaml</code>.
+    </div>
+</section>
+
+<!-- INSTALL -->
+<section id="install">
+    <h2>10. Install Ultralytics</h2>
+
+    <h3>Create a Python Environment</h3>
+```
+
+<pre>
+python -m venv yolo_env
+</pre>
+
+```
+    <h3>Windows</h3>
+```
+
+<pre>
+yolo_env\Scripts\activate
+</pre>
+
+```
+    <h3>Linux</h3>
+```
+
+<pre>
+source yolo_env/bin/activate
+</pre>
+
+```
+    <h3>Install Ultralytics</h3>
+```
+
+<pre>
+pip install ultralytics
+</pre>
+
+```
+    <h3>Check Installation</h3>
+```
+
+<pre>
+yolo checks
+</pre>
+
+```
+    <p>Or test using Python:</p>
+```
+
+<pre>
+from ultralytics import YOLO
+
+print("Ultralytics installed successfully")
+</pre>
+
+```
+</section>
+
+<!-- GPU -->
+<section id="gpu">
+    <h2>11. Check GPU</h2>
+
+    <p>If you have an NVIDIA GPU, check CUDA availability:</p>
+```
+
+<pre>
+import torch
+
+print("PyTorch:", torch.__version__)
+print("CUDA:", torch.version.cuda)
+print("CUDA available:", torch.cuda.is_available())
+
+if torch.cuda.is_available():
+    print("GPU:", torch.cuda.get_device_name(0))
+</pre>
+
+```
+    <p>Ideally, you should see:</p>
+```
+
+<pre>
+CUDA available: True
+GPU: NVIDIA ...
+</pre>
+
+```
+    <div class="warning">
+        If CUDA is unavailable, training may run on CPU and can be
+        significantly slower.
+    </div>
+</section>
+
+<!-- MODEL -->
+<section id="model">
+    <h2>12. Select a YOLO Model</h2>
+
+    <p>
+        YOLO model families commonly provide different model sizes.
+        Smaller models generally require fewer resources, while larger
+        models can provide stronger accuracy at higher computational cost.
+    </p>
+
+    <p>For initial experiments, a small model is a good starting point.</p>
+```
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("yolo26n.pt")
+</pre>
+
+```
+    <div class="note">
+        Model filenames depend on the Ultralytics version you install.
+        Use a model supported by your installed release.
+    </div>
+</section>
+
+<!-- TRAINING -->
+<section id="training">
+    <h2>13. Train the Model</h2>
+
+    <h3>Python Training</h3>
+```
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("yolo26n.pt")
+
+results = model.train(
+    data="data.yaml",
+    epochs=100,
+    imgsz=640,
+    batch=16,
+    device=0,
+    workers=4
+)
+</pre>
+
+```
+    <h3>Important Parameters</h3>
+
+    <table>
+        <tr>
+            <th>Parameter</th>
+            <th>Purpose</th>
+        </tr>
+        <tr>
+            <td>data</td>
+            <td>Dataset configuration file</td>
+        </tr>
+        <tr>
+            <td>epochs</td>
+            <td>Number of training epochs</td>
+        </tr>
+        <tr>
+            <td>imgsz</td>
+            <td>Training image size</td>
+        </tr>
+        <tr>
+            <td>batch</td>
+            <td>Number of images processed per batch</td>
+        </tr>
+        <tr>
+            <td>device</td>
+            <td>GPU or CPU device</td>
+        </tr>
+        <tr>
+            <td>workers</td>
+            <td>Data-loading workers</td>
+        </tr>
+    </table>
+
+    <h3>Command Line Training</h3>
+```
+
+<pre>
+yolo detect train model=yolo26n.pt data=data.yaml epochs=100 imgsz=640
+</pre>
+
+```
+    <p>For a specific NVIDIA GPU:</p>
+```
+
+<pre>
+yolo detect train model=yolo26n.pt data=data.yaml epochs=100 imgsz=640 device=0
+</pre>
+
+```
+</section>
+
+<!-- OUTPUT -->
+<section>
+    <h2>14. Training Output</h2>
+
+    <p>Ultralytics creates a training run directory containing results.</p>
+```
+
+<pre>
+runs/
+└── detect/
+    └── train/
+        ├── weights/
+        │   ├── best.pt
+        │   └── last.pt
+        │
+        ├── results.csv
+        ├── results.png
+        ├── confusion_matrix.png
+        ├── PR_curve.png
+        ├── F1_curve.png
+        └── ...
+</pre>
+
+```
+    <h3>best.pt</h3>
+
+    <p>
+        The best-performing checkpoint according to the validation
+        metrics tracked during training.
+    </p>
+
+    <h3>last.pt</h3>
+
+    <p>
+        The checkpoint from the final training epoch.
+    </p>
+
+    <div class="success">
+        For most inference and deployment workflows, start by evaluating
+        <code>best.pt</code>.
+    </div>
+</section>
+
+<!-- METRICS -->
+<section id="metrics">
+    <h2>15. Training Metrics</h2>
+
+    <h3>Precision</h3>
+
+    <p>
+        Precision measures how many predicted detections are correct.
+    </p>
+
+    <div class="formula">
+        Precision = TP / (TP + FP)
+    </div>
+
+    <h3>Recall</h3>
+
+    <p>
+        Recall measures how many of the actual objects were detected.
+    </p>
+
+    <div class="formula">
+        Recall = TP / (TP + FN)
+    </div>
+
+    <h3>IoU</h3>
+
+    <p>
+        Intersection over Union measures the overlap between the predicted
+        bounding box and the ground-truth bounding box.
+    </p>
+
+    <div class="formula">
+        IoU = Intersection Area / Union Area
+    </div>
+
+    <h3>mAP</h3>
+
+    <p>
+        Mean Average Precision is a major object-detection evaluation
+        metric.
+    </p>
+
+    <ul>
+        <li><strong>mAP50:</strong> evaluation at IoU threshold 0.50</li>
+        <li><strong>mAP50-95:</strong> evaluation across multiple IoU thresholds</li>
+    </ul>
+</section>
+
+<!-- VALIDATION -->
+<section id="validation">
+    <h2>16. Validate the Trained Model</h2>
+```
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("runs/detect/train/weights/best.pt")
+
+metrics = model.val()
+
+print(metrics)
+</pre>
+
+```
+    <p>Review metrics such as:</p>
+
+    <ul>
+        <li>Precision</li>
+        <li>Recall</li>
+        <li>mAP50</li>
+        <li>mAP50-95</li>
+    </ul>
+</section>
+
+<!-- IMAGE -->
+<section id="image">
+    <h2>17. Inference on a New Image</h2>
+```
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("runs/detect/train/weights/best.pt")
+
+results = model.predict(
+    source="test.jpg",
+    conf=0.5,
+    save=True
+)
+</pre>
+
+```
+    <h3>Display Results</h3>
+```
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("best.pt")
+
+results = model("test.jpg")
+
+results[0].show()
+</pre>
+
+```
+</section>
+
+<!-- VIDEO -->
+<section id="video">
+    <h2>18. Inference on Video</h2>
+```
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("best.pt")
+
+model.predict(
+    source="video.mp4",
+    conf=0.5,
+    save=True
+)
+</pre>
+
+```
+</section>
+
+<!-- WEBCAM -->
+<section id="webcam">
+    <h2>19. Webcam Detection</h2>
+```
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("best.pt")
+
+model.predict(
+    source=0,
+    show=True,
+    conf=0.5
+)
+</pre>
+
+```
+    <p>
+        Here <code>source=0</code> usually represents the default webcam.
+    </p>
+
+    <h3>OpenCV Real-Time Example</h3>
+```
+
+<pre>
+import cv2
+from ultralytics import YOLO
+
+model = YOLO("best.pt")
+
+cap = cv2.VideoCapture(0)
+
+while True:
+
+    ret, frame = cap.read()
+
+    if not ret:
+        break
+
+    results = model(frame, verbose=False)
+
+    annotated = results[0].plot()
+
+    cv2.imshow("YOLO Detection", annotated)
+
+    if cv2.waitKey(1) &amp; 0xFF == ord("q"):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+</pre>
+
+```
+</section>
+
+<!-- CONFIDENCE -->
+<section>
+    <h2>20. Confidence Threshold</h2>
+
+    <p>
+        The confidence threshold controls how confident the model must be
+        before returning a detection.
+    </p>
+```
+
+<pre>
+model.predict(
+    source="image.jpg",
+    conf=0.5
+)
+</pre>
+
+```
+    <table>
+        <tr>
+            <th>Confidence</th>
+            <th>General Effect</th>
+        </tr>
+        <tr>
+            <td>0.25</td>
+            <td>More detections, potentially more false positives</td>
+        </tr>
+        <tr>
+            <td>0.50</td>
+            <td>Balanced starting point</td>
+        </tr>
+        <tr>
+            <td>0.70</td>
+            <td>More selective detections</td>
+        </tr>
+    </table>
+</section>
+
+<!-- PROBLEMS -->
+<section id="errors">
+    <h2>21. Common Dataset Problems</h2>
+
+    <h3>Problem 1 — Missing Labels</h3>
+```
+
+<pre>
+image001.jpg
+</pre>
+
+```
+    <p>but there is no:</p>
+```
+
+<pre>
+image001.txt
+</pre>
+
+```
+    <p>
+        This can indicate a dataset preparation problem, depending on
+        whether the image is intended to contain annotated objects.
+    </p>
+
+    <h3>Problem 2 — Incorrect Class IDs</h3>
+```
+
+<pre>
+names:
+  0: helmet
+  1: person
+</pre>
+
+```
+    <p>but a label contains:</p>
+```
+
+<pre>
+2 0.5 0.5 0.2 0.3
+</pre>
+
+```
+    <p>
+        Class <code>2</code> does not exist in the YAML above.
+    </p>
+
+    <h3>Problem 3 — Incorrect Bounding Boxes</h3>
+
+    <p>
+        Bounding boxes should accurately cover the intended object.
+        Incorrect annotations teach the model incorrect visual patterns.
+    </p>
+
+    <h3>Problem 4 — Class Imbalance</h3>
+```
+
+<pre>
+person = 10,000 objects
+helmet = 500 objects
+</pre>
+
+```
+    <p>
+        The model receives much more training information about one class
+        than the other.
+    </p>
+</section>
+
+<!-- DATASET CHECKLIST -->
+<section>
+    <h2>22. Dataset Quality Checklist</h2>
+
+    <ul>
+        <li>✓ Images are readable</li>
+        <li>✓ Labels exist where required</li>
+        <li>✓ Image and label filenames match</li>
+        <li>✓ Class IDs are correct</li>
+        <li>✓ Bounding boxes are correct</li>
+        <li>✓ No corrupted images</li>
+        <li>✓ No unnecessary duplicates</li>
+        <li>✓ Train/validation/test split is correct</li>
+        <li>✓ data.yaml is correct</li>
+        <li>✓ Number of classes is correct</li>
+        <li>✓ Class names are correct</li>
+    </ul>
+</section>
+
+<!-- LEAKAGE -->
+<section>
+    <h2>23. Avoid Data Leakage</h2>
+
+    <p>
+        Data leakage happens when highly similar data appears in both
+        training and validation/testing datasets.
+    </p>
+
+    <p>For example, if one video produces:</p>
+```
+
+<pre>
+frame001
+frame002
+frame003
+...
+frame1000
+</pre>
+
+```
+    <p>
+        randomly splitting these frames can put almost identical scenes
+        into both training and validation.
+    </p>
+
+    <p>
+        For video-based datasets, consider splitting by:
+    </p>
+
+    <ul>
+        <li>Video</li>
+        <li>Scene</li>
+        <li>Camera</li>
+        <li>Recording session</li>
+    </ul>
+</section>
+
+<!-- IMPROVEMENT -->
+<section id="improve">
+    <h2>24. How to Improve a YOLO Model</h2>
+
+    <p>
+        If the model performs poorly, do not immediately increase the
+        number of epochs.
+    </p>
+```
+
+<pre>
+Dataset Quality
+      ↓
+Annotations
+      ↓
+Class Balance
+      ↓
+Image Diversity
+      ↓
+Image Resolution
+      ↓
+Model Size
+      ↓
+Training Parameters
+</pre>
+
+```
+    <div class="warning">
+        More epochs cannot completely compensate for poor annotations
+        or a poorly designed dataset.
+    </div>
+
+    <h3>Professional Improvement Cycle</h3>
+```
+
+<pre>
+Dataset v1
+    ↓
+Train
+    ↓
+Evaluate
+    ↓
+Find Failure Cases
+    ↓
+Collect More Images
+    ↓
+Correct Annotations
+    ↓
+Dataset v2
+    ↓
+Train Again
+    ↓
+Evaluate
+    ↓
+Deploy
+</pre>
+
+```
+</section>
+
+<!-- DEPLOYMENT -->
+<section id="deployment">
+    <h2>25. Deployment</h2>
+
+    <p>A trained YOLO model can be integrated into many applications.</p>
+
+    <h3>PC Application</h3>
+```
+
+<pre>
+Camera
+   ↓
+OpenCV
+   ↓
+YOLO
+   ↓
+Detection
+   ↓
+Application
+</pre>
+
+```
+    <h3>Web Application</h3>
+```
+
+<pre>
+Camera / Image
+      ↓
+YOLO
+      ↓
+Flask API
+      ↓
+Web Interface
+</pre>
+
+```
+    <h3>Jetson</h3>
+```
+
+<pre>
+Camera
+   ↓
+YOLO
+   ↓
+Optimization
+   ↓
+TensorRT
+   ↓
+NVIDIA Jetson
+</pre>
+
+```
+    <h3>Robotics</h3>
+```
+
+<pre>
+Camera
+   ↓
+OpenCV
+   ↓
+YOLO
+   ↓
+Object Detection
+   ↓
+ROS 2
+   ↓
+Robot Decision
+</pre>
+
+```
+    <h3>Drone</h3>
+```
+
+<pre>
+Camera
+   ↓
+YOLO
+   ↓
+Target Detection
+   ↓
+Tracking
+   ↓
+Autonomy / Flight System
+</pre>
+
+```
+</section>
+
+<!-- PROJECT STRUCTURE -->
+<section id="project">
+    <h2>26. Industrial YOLO Project Structure</h2>
+```
+
+<pre>
+helmet_detection/
+│
+├── dataset/
+│   ├── images/
+│   │   ├── train/
+│   │   ├── val/
+│   │   └── test/
+│   │
+│   ├── labels/
+│   │   ├── train/
+│   │   ├── val/
+│   │   └── test/
+│   │
+│   └── data.yaml
+│
+├── training/
+│   └── train.py
+│
+├── inference/
+│   ├── image.py
+│   ├── video.py
+│   └── webcam.py
+│
+├── models/
+│   └── best.pt
+│
+├── results/
+│
+├── requirements.txt
+│
+└── README.md
+</pre>
+
+```
+</section>
+
+<!-- COMPLETE SCRIPT -->
+<section>
+    <h2>27. Complete Training Script</h2>
+```
+
+<pre>
+from ultralytics import YOLO
+
+
+# ============================================================
+# CONFIGURATION
+# ============================================================
+
+MODEL = "yolo26n.pt"
+DATASET = "dataset/data.yaml"
+
+EPOCHS = 100
+IMAGE_SIZE = 640
+BATCH_SIZE = 16
+DEVICE = 0
+
+
+# ============================================================
+# LOAD MODEL
+# ============================================================
+
+model = YOLO(MODEL)
+
+
+# ============================================================
+# TRAIN
+# ============================================================
+
+results = model.train(
+    data=DATASET,
+    epochs=EPOCHS,
+    imgsz=IMAGE_SIZE,
+    batch=BATCH_SIZE,
+    device=DEVICE,
+    project="runs",
+    name="custom_yolo"
+)
+
+
+print("Training completed.")
+</pre>
+
+```
+</section>
+
+<!-- INFERENCE SCRIPT -->
+<section>
+    <h2>28. Complete Inference Script</h2>
+```
+
+<pre>
+from ultralytics import YOLO
+
+
+MODEL_PATH = "runs/custom_yolo/weights/best.pt"
+IMAGE_PATH = "test.jpg"
+
+
+model = YOLO(MODEL_PATH)
+
+results = model.predict(
+    source=IMAGE_PATH,
+    conf=0.5,
+    save=True
+)
+
+print("Inference completed.")
+</pre>
+
+```
+</section>
+
+<!-- ROADMAP -->
+<section>
+    <h2>29. YOLO Learning Roadmap</h2>
+```
+
+<pre>
+1. Object Detection Fundamentals
+        ↓
+2. YOLO Architecture
+        ↓
+3. Dataset Collection
+        ↓
+4. Image Annotation
+        ↓
+5. YOLO Label Format
+        ↓
+6. Dataset Organization
+        ↓
+7. data.yaml
+        ↓
+8. Install Ultralytics
+        ↓
+9. GPU Configuration
+        ↓
+10. Transfer Learning
+        ↓
+11. Custom Training
+        ↓
+12. Validation
+        ↓
+13. Precision / Recall / IoU / mAP
+        ↓
+14. Image Inference
+        ↓
+15. Video Inference
+        ↓
+16. Webcam Inference
+        ↓
+17. Error Analysis
+        ↓
+18. Dataset Improvement
+        ↓
+19. Model Optimization
+        ↓
+20. Deployment
+</pre>
+
+```
+</section>
+
+<!-- FINAL CHECKLIST -->
+<section id="checklist">
+    <h2>30. Final Project Checklist</h2>
+
+    <table>
+        <tr>
+            <th>Task</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>Define object classes</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Collect images</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Clean dataset</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Annotate images</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Verify annotations</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Create train/val/test split</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Create data.yaml</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Install Ultralytics</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Configure GPU</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Train model</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Evaluate metrics</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Test on unseen images</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Test on video</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Perform error analysis</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Improve dataset</td>
+            <td>☐</td>
+        </tr>
+        <tr>
+            <td>Deploy model</td>
+            <td>☐</td>
+        </tr>
+    </table>
+
+    <div class="success">
+        <strong>Key Principle:</strong>
+        Professional YOLO development is not simply running a training
+        command. The real workflow is
+        <strong>Dataset → Annotation → Training → Evaluation →
+        Error Analysis → Dataset Improvement → Deployment.</strong>
+    </div>
+</section>
+```
+
+</div>
+
+<footer>
+    <p>YOLO Custom Dataset Training Notes | Computer Vision &amp; Deep Learning</p>
+</footer>
+
+</body>
+</html>

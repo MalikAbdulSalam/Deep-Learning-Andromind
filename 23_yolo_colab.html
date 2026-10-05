@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOLO Custom Dataset Training on Google Colab</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.65;
+        margin: 0;
+        background: #f4f6f8;
+        color: #222;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+        background: white;
+        padding: 40px;
+    }
+
+    h1 {
+        color: #17365d;
+        border-bottom: 3px solid #17365d;
+        padding-bottom: 10px;
+    }
+
+    h2 {
+        color: #1f4e79;
+        margin-top: 40px;
+        border-left: 5px solid #1f4e79;
+        padding-left: 12px;
+    }
+
+    h3 {
+        color: #365f91;
+        margin-top: 25px;
+    }
+
+    code {
+        background: #eef1f4;
+        padding: 2px 5px;
+        border-radius: 4px;
+    }
+
+    pre {
+        background: #111827;
+        color: #f8fafc;
+        padding: 18px;
+        border-radius: 8px;
+        overflow-x: auto;
+        line-height: 1.5;
+    }
+
+    .note {
+        background: #e8f4ff;
+        border-left: 5px solid #2196f3;
+        padding: 15px;
+        margin: 20px 0;
+    }
+
+    .warning {
+        background: #fff3cd;
+        border-left: 5px solid #ffc107;
+        padding: 15px;
+        margin: 20px 0;
+    }
+
+    .success {
+        background: #eaf7ea;
+        border-left: 5px solid #28a745;
+        padding: 15px;
+        margin: 20px 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th, td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+    }
+
+    th {
+        background: #17365d;
+        color: white;
+    }
+
+    .step {
+        background: #f0f5fa;
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin: 20px 0;
+    }
+
+    .toc {
+        background: #f7f7f7;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .toc a {
+        text-decoration: none;
+        color: #1f4e79;
+    }
+
+    .flow {
+        background: #eef5ff;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .small {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .checklist li {
+        margin: 8px 0;
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>YOLO Custom Dataset Training on Google Colab</h1>
+
+<p>
+This guide explains the complete process of training a YOLO object-detection model
+using a custom dataset stored in Google Drive.
+</p>
+
+<div class="flow">
+    Google Drive Dataset
+    → Mount Drive in Colab
+    → Verify Dataset
+    → Install Ultralytics
+    → Train YOLO
+    → Validate
+    → Test
+    → Image/Video Inference
+    → Save best.pt
+    → Download / Deploy
+</div>
+
+<h2 id="toc">Table of Contents</h2>
+
+<div class="toc">
+<ol>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#drive">Prepare Google Drive</a></li>
+<li><a href="#dataset">Prepare YOLO Dataset</a></li>
+<li><a href="#colab">Create Google Colab Notebook</a></li>
+<li><a href="#gpu">Enable GPU</a></li>
+<li><a href="#mount">Mount Google Drive</a></li>
+<li><a href="#install">Install YOLO</a></li>
+<li><a href="#verify">Verify Dataset</a></li>
+<li><a href="#yaml">Check data.yaml</a></li>
+<li><a href="#train">Train YOLO</a></li>
+<li><a href="#results">Training Results</a></li>
+<li><a href="#validate">Validation</a></li>
+<li><a href="#test">Test Dataset</a></li>
+<li><a href="#image">Image Inference</a></li>
+<li><a href="#video">Video Inference</a></li>
+<li><a href="#webcam">Webcam Inference</a></li>
+<li><a href="#best">Find best.pt</a></li>
+<li><a href="#download">Download Trained Model</a></li>
+<li><a href="#drive-save">Save Results to Google Drive</a></li>
+<li><a href="#deploy">Deploy Trained Model</a></li>
+<li><a href="#troubleshoot">Troubleshooting</a></li>
+<li><a href="#checklist">Final Checklist</a></li>
+</ol>
+</div>
+
+<h2 id="requirements">1. Requirements</h2>
+
+<p>You need:</p>
+
+<ul>
+<li>Google account</li>
+<li>Google Drive</li>
+<li>Google Colab</li>
+<li>YOLO-compatible custom dataset</li>
+<li>Internet connection</li>
+<li>GPU runtime in Google Colab</li>
+</ul>
+
+<p>
+A free Colab GPU may be sufficient for small and medium datasets.
+For larger datasets, GPU availability and VRAM may vary.
+</p>
+
+<h2 id="drive">2. Prepare Google Drive</h2>
+
+<p>
+Open Google Drive and create a folder for your project.
+For example:
+</p>
+
+<pre>
+My Drive/
+└── YOLO_Project/
+    └── dataset/
+</pre>
+
+<p>
+Inside the <code>dataset</code> folder, place your YOLO dataset.
+</p>
+
+<h2 id="dataset">3. Prepare YOLO Dataset</h2>
+
+<p>
+A standard YOLO detection dataset should look like this:
+</p>
+
+<pre>
+dataset/
+│
+├── data.yaml
+│
+├── train/
+│   ├── images/
+│   │   ├── image001.jpg
+│   │   ├── image002.jpg
+│   │   └── image003.jpg
+│   │
+│   └── labels/
+│       ├── image001.txt
+│       ├── image002.txt
+│       └── image003.txt
+│
+├── val/
+│   ├── images/
+│   │   ├── image101.jpg
+│   │   └── image102.jpg
+│   │
+│   └── labels/
+│       ├── image101.txt
+│       └── image102.txt
+│
+└── test/
+    ├── images/
+    │   ├── image201.jpg
+    │   └── image202.jpg
+    │
+    └── labels/
+        ├── image201.txt
+        └── image202.txt
+</pre>
+
+<div class="note">
+<strong>Important:</strong>
+Every image should have a corresponding YOLO label file when annotations exist.
+</div>
+
+<h2>4. YOLO Label Format</h2>
+
+<p>
+Each object annotation is stored in a <code>.txt</code> file.
+</p>
+
+<p>Example:</p>
+
+<pre>
+0 0.512 0.432 0.240 0.310
+1 0.720 0.580 0.150 0.220
+</pre>
+
+<p>The format is:</p>
+
+<pre>
+class_id x_center y_center width height
+</pre>
+
+<p>
+All coordinates are normalized between 0 and 1.
+</p>
+
+<table>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+<tr>
+<td>class_id</td>
+<td>Object class number</td>
+</tr>
+<tr>
+<td>x_center</td>
+<td>Center X coordinate</td>
+</tr>
+<tr>
+<td>y_center</td>
+<td>Center Y coordinate</td>
+</tr>
+<tr>
+<td>width</td>
+<td>Bounding-box width</td>
+</tr>
+<tr>
+<td>height</td>
+<td>Bounding-box height</td>
+</tr>
+</table>
+
+<h2 id="colab">5. Create Google Colab Notebook</h2>
+
+<p>
+Open Google Colab and create a new notebook.
+</p>
+
+<p>
+Recommended notebook name:
+</p>
+
+<pre>
+YOLO_Custom_Training.ipynb
+</pre>
+
+<h2 id="gpu">6. Enable GPU</h2>
+
+<p>In Colab:</p>
+
+<pre>
+Runtime
+→ Change runtime type
+→ Hardware accelerator
+→ GPU
+→ Save
+</pre>
+
+<p>Then run:</p>
+
+<pre>
+!nvidia-smi
+</pre>
+
+<p>
+You should see information about the available NVIDIA GPU.
+</p>
+
+<h2 id="mount">7. Mount Google Drive</h2>
+
+<p>
+This is the most important step for connecting your Google Drive dataset
+with Colab.
+</p>
+
+<pre>
+from google.colab import drive
+
+drive.mount('/content/drive')
+</pre>
+
+<p>
+Colab will display an authorization link.
+Sign in with your Google account and authorize access.
+</p>
+
+<p>
+After mounting, your Google Drive is normally available at:
+</p>
+
+<pre>
+/content/drive/MyDrive/
+</pre>
+
+<h3>Check Google Drive</h3>
+
+<pre>
+import os
+
+print(os.listdir('/content/drive/MyDrive'))
+</pre>
+
+<p>
+If your folder is named <code>YOLO_Project</code>:
+</p>
+
+<pre>
+print(os.listdir('/content/drive/MyDrive/YOLO_Project'))
+</pre>
+
+<h2 id="path">8. Set Dataset Path</h2>
+
+<p>
+Suppose your dataset is located here:
+</p>
+
+<pre>
+My Drive/
+└── YOLO_Project/
+    └── dataset/
+        ├── data.yaml
+        ├── train/
+        ├── val/
+        └── test/
+</pre>
+
+<p>
+The Colab path becomes:
+</p>
+
+<pre>
+/content/drive/MyDrive/YOLO_Project/dataset
+</pre>
+
+<p>Set the path:</p>
+
+<pre>
+DATASET_DIR = "/content/drive/MyDrive/YOLO_Project/dataset"
+DATA_YAML = f"{DATASET_DIR}/data.yaml"
+
+print(DATA_YAML)
+</pre>
+
+<h2 id="verify">9. Verify Dataset</h2>
+
+<p>
+Before training, verify that the folders exist.
+</p>
+
+<pre>
+import os
+
+folders = [
+    DATASET_DIR,
+    f"{DATASET_DIR}/train/images",
+    f"{DATASET_DIR}/train/labels",
+    f"{DATASET_DIR}/val/images",
+    f"{DATASET_DIR}/val/labels",
+    f"{DATASET_DIR}/test/images",
+    f"{DATASET_DIR}/test/labels"
+]
+
+for folder in folders:
+    print(folder, "=>", os.path.exists(folder))
+</pre>
+
+<p>
+You should see <code>True</code> for the folders that exist.
+</p>
+
+<h3>Count Images</h3>
+
+<pre>
+from glob import glob
+
+train_images = glob(f"{DATASET_DIR}/train/images/*")
+val_images = glob(f"{DATASET_DIR}/val/images/*")
+test_images = glob(f"{DATASET_DIR}/test/images/*")
+
+print("Train images:", len(train_images))
+print("Validation images:", len(val_images))
+print("Test images:", len(test_images))
+</pre>
+
+<h2 id="yaml">10. Check data.yaml</h2>
+
+<p>
+Your <code>data.yaml</code> contains the dataset configuration.
+</p>
+
+<p>Example:</p>
+
+<pre>
+path: /content/drive/MyDrive/YOLO_Project/dataset
+
+train: train/images
+val: val/images
+test: test/images
+
+names:
+  0: helmet
+  1: mask
+  2: vest
+</pre>
+
+<p>
+Another valid approach is to use a relative dataset path:
+</p>
+
+<pre>
+path: /content/drive/MyDrive/YOLO_Project/dataset
+
+train: train/images
+val: val/images
+test: test/images
+
+names:
+  0: person
+  1: helmet
+</pre>
+
+<div class="warning">
+<strong>Important:</strong>
+The number of classes and class IDs must match your label files.
+</div>
+
+<h3>Read data.yaml</h3>
+
+<pre>
+with open(DATA_YAML, "r") as f:
+    print(f.read())
+</pre>
+
+<h2 id="install">11. Install Ultralytics</h2>
+
+<p>Run:</p>
+
+<pre>
+!pip install -q -U ultralytics
+</pre>
+
+<p>Check installation:</p>
+
+<pre>
+import ultralytics
+
+print(ultralytics.__version__)
+</pre>
+
+<h2>12. Check PyTorch GPU</h2>
+
+<pre>
+import torch
+
+print("PyTorch version:", torch.__version__)
+print("CUDA available:", torch.cuda.is_available())
+
+if torch.cuda.is_available():
+    print("GPU:", torch.cuda.get_device_name(0))
+</pre>
+
+<div class="success">
+If <code>CUDA available: True</code> is displayed, your notebook can use the GPU.
+</div>
+
+<h2 id="train">13. Load YOLO Model</h2>
+
+<p>
+For example, start with a small YOLO model when testing your pipeline.
+</p>
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("yolo26n.pt")
+</pre>
+
+<p>
+The model will download its pretrained weights if required.
+</p>
+
+<div class="note">
+For production work, select the currently supported Ultralytics model
+that matches your accuracy, speed, and hardware requirements.
+</div>
+
+<h2>14. Train the Custom YOLO Model</h2>
+
+<p>
+Basic training:
+</p>
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("yolo26n.pt")
+
+results = model.train(
+    data=DATA_YAML,
+    epochs=100,
+    imgsz=640,
+    batch=16,
+    device=0
+)
+</pre>
+
+<h3>Recommended training configuration</h3>
+
+<pre>
+results = model.train(
+    data=DATA_YAML,
+    epochs=100,
+    imgsz=640,
+    batch=16,
+    device=0,
+    workers=2,
+    project="/content/runs",
+    name="custom_yolo"
+)
+</pre>
+
+<p>
+Training results will be created under:
+</p>
+
+<pre>
+/content/runs/custom_yolo/
+</pre>
+
+<h2>15. What Happens During Training?</h2>
+
+<p>
+During training YOLO performs the following process:
+</p>
+
+<ol>
+<li>Loads training images.</li>
+<li>Loads bounding-box labels.</li>
+<li>Resizes images.</li>
+<li>Applies data augmentation.</li>
+<li>Runs the neural network.</li>
+<li>Calculates losses.</li>
+<li>Updates model weights.</li>
+<li>Evaluates the validation dataset.</li>
+<li>Saves checkpoints.</li>
+<li>Generates training graphs and metrics.</li>
+</ol>
+
+<h2 id="results">16. Training Results</h2>
+
+<p>
+After training, you should see a structure similar to:
+</p>
+
+<pre>
+runs/
+└── custom_yolo/
+    ├── weights/
+    │   ├── best.pt
+    │   └── last.pt
+    │
+    ├── results.csv
+    ├── results.png
+    ├── confusion_matrix.png
+    ├── confusion_matrix_normalized.png
+    └── args.yaml
+</pre>
+
+<h3>Important files</h3>
+
+<table>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+<tr>
+<td>best.pt</td>
+<td>Best checkpoint based on validation performance</td>
+</tr>
+<tr>
+<td>last.pt</td>
+<td>Checkpoint from the final training epoch</td>
+</tr>
+<tr>
+<td>results.csv</td>
+<td>Training metrics</td>
+</tr>
+<tr>
+<td>results.png</td>
+<td>Training curves</td>
+</tr>
+<tr>
+<td>confusion_matrix.png</td>
+<td>Class prediction analysis</td>
+</tr>
+</table>
+
+<h2 id="validate">17. Validate the Trained Model</h2>
+
+<p>
+Load the best checkpoint:
+</p>
+
+<pre>
+from ultralytics import YOLO
+
+best_model = YOLO("/content/runs/custom_yolo/weights/best.pt")
+</pre>
+
+<p>Run validation:</p>
+
+<pre>
+metrics = best_model.val(
+    data=DATA_YAML,
+    imgsz=640
+)
+</pre>
+
+<h2>18. Understand YOLO Metrics</h2>
+
+<table>
+<tr>
+<th>Metric</th>
+<th>Meaning</th>
+</tr>
+
+<tr>
+<td>Precision</td>
+<td>How many predicted objects are actually correct</td>
+</tr>
+
+<tr>
+<td>Recall</td>
+<td>How many real objects were successfully detected</td>
+</tr>
+
+<tr>
+<td>IoU</td>
+<td>Overlap between predicted and ground-truth bounding boxes</td>
+</tr>
+
+<tr>
+<td>mAP50</td>
+<td>Mean average precision at IoU threshold 0.50</td>
+</tr>
+
+<tr>
+<td>mAP50-95</td>
+<td>Mean average precision across multiple IoU thresholds</td>
+</tr>
+</table>
+
+<h2 id="test">19. Test Dataset</h2>
+
+<p>
+If you have a separate test dataset, run:
+</p>
+
+<pre>
+test_metrics = best_model.val(
+    data=DATA_YAML,
+    split="test",
+    imgsz=640
+)
+</pre>
+
+<div class="note">
+The test dataset should ideally remain unseen during training and model tuning.
+</div>
+
+<h2 id="image">20. Image Inference</h2>
+
+<p>
+Upload an image directly to Colab:
+</p>
+
+<pre>
+from google.colab import files
+
+uploaded = files.upload()
+</pre>
+
+<p>
+Then run inference:
+</p>
+
+<pre>
+results = best_model.predict(
+    source="/content/test.jpg",
+    conf=0.25,
+    imgsz=640,
+    save=True
+)
+</pre>
+
+<p>
+The annotated image will be saved in a prediction directory under
+the Ultralytics runs folder.
+</p>
+
+<h3>Display the Result</h3>
+
+<pre>
+from IPython.display import Image, display
+
+display(Image(filename="/content/runs/detect/predict/test.jpg"))
+</pre>
+
+<p>
+If the output directory has a different name, check it with:
+</p>
+
+<pre>
+!find /content/runs -type f | head -50
+</pre>
+
+<h2>21. Run Inference Directly from Google Drive</h2>
+
+<p>
+You can also use an image stored in Google Drive.
+</p>
+
+<pre>
+IMAGE_PATH = "/content/drive/MyDrive/YOLO_Project/test_images/test1.jpg"
+
+results = best_model.predict(
+    source=IMAGE_PATH,
+    conf=0.25,
+    imgsz=640,
+    save=True
+)
+</pre>
+
+<h2 id="video">22. Video Inference</h2>
+
+<p>
+Upload a video:
+</p>
+
+<pre>
+from google.colab import files
+
+uploaded = files.upload()
+</pre>
+
+<p>
+Run YOLO on the video:
+</p>
+
+<pre>
+results = best_model.predict(
+    source="/content/test_video.mp4",
+    conf=0.25,
+    imgsz=640,
+    save=True
+)
+</pre>
+
+<p>
+The processed video will be saved under the prediction output directory.
+</p>
+
+<h3>Video from Google Drive</h3>
+
+<pre>
+VIDEO_PATH = "/content/drive/MyDrive/YOLO_Project/videos/test_video.mp4"
+
+results = best_model.predict(
+    source=VIDEO_PATH,
+    conf=0.25,
+    imgsz=640,
+    save=True
+)
+</pre>
+
+<h2 id="webcam">23. Webcam Inference in Google Colab</h2>
+
+<p>
+Google Colab does not behave like a normal desktop application for direct
+OpenCV webcam access. For simple testing, it is easier to upload an image
+or video.
+</p>
+
+<p>
+For real-time webcam inference, run the trained model locally on your PC:
+</p>
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("best.pt")
+
+model.predict(
+    source=0,
+    show=True,
+    conf=0.25
+)
+</pre>
+
+<p>
+Here <code>source=0</code> normally refers to the first webcam.
+</p>
+
+<h2 id="best">24. Locate best.pt</h2>
+
+<p>
+The trained model is normally located at:
+</p>
+
+<pre>
+/content/runs/custom_yolo/weights/best.pt
+</pre>
+
+<p>
+Check:
+</p>
+
+<pre>
+import os
+
+BEST_MODEL = "/content/runs/custom_yolo/weights/best.pt"
+
+print("Exists:", os.path.exists(BEST_MODEL))
+print("Path:", BEST_MODEL)
+</pre>
+
+<h2 id="download">25. Download best.pt to Your Computer</h2>
+
+<pre>
+from google.colab import files
+
+files.download("/content/runs/custom_yolo/weights/best.pt")
+</pre>
+
+<p>
+Your browser will download the trained YOLO model.
+</p>
+
+<h2 id="drive-save">26. Copy best.pt Back to Google Drive</h2>
+
+<p>
+Instead of downloading the model immediately, you can save it permanently
+in Google Drive.
+</p>
+
+<pre>
+import os
+import shutil
+
+SOURCE = "/content/runs/custom_yolo/weights/best.pt"
+
+DEST_DIR = "/content/drive/MyDrive/YOLO_Project/trained_model"
+
+os.makedirs(DEST_DIR, exist_ok=True)
+
+shutil.copy(
+    SOURCE,
+    f"{DEST_DIR}/best.pt"
+)
+
+print("Model saved to:", DEST_DIR)
+</pre>
+
+<p>
+Your Google Drive will then contain:
+</p>
+
+<pre>
+YOLO_Project/
+│
+├── dataset/
+│
+└── trained_model/
+    └── best.pt
+</pre>
+
+<h2>27. Save Complete Training Results to Google Drive</h2>
+
+<p>
+You can copy the entire training folder:
+</p>
+
+<pre>
+import shutil
+import os
+
+SOURCE = "/content/runs/custom_yolo"
+
+DEST = "/content/drive/MyDrive/YOLO_Project/training_results"
+
+if os.path.exists(DEST):
+    shutil.rmtree(DEST)
+
+shutil.copytree(SOURCE, DEST)
+
+print("Training results saved to:")
+print(DEST)
+</pre>
+
+<h2>28. Test best.pt After Training</h2>
+
+<pre>
+from ultralytics import YOLO
+
+MODEL_PATH = "/content/drive/MyDrive/YOLO_Project/trained_model/best.pt"
+
+model = YOLO(MODEL_PATH)
+
+results = model.predict(
+    source="/content/test.jpg",
+    conf=0.25,
+    imgsz=640,
+    save=True
+)
+</pre>
+
+<h2>29. Run Inference on Multiple Images</h2>
+
+<p>
+You can provide an entire folder:
+</p>
+
+<pre>
+IMAGE_FOLDER = "/content/drive/MyDrive/YOLO_Project/test_images"
+
+results = model.predict(
+    source=IMAGE_FOLDER,
+    conf=0.25,
+    imgsz=640,
+    save=True
+)
+</pre>
+
+<h2>30. Run Inference on an Entire Folder of Videos</h2>
+
+<pre>
+VIDEO_FOLDER = "/content/drive/MyDrive/YOLO_Project/videos"
+
+results = model.predict(
+    source=VIDEO_FOLDER,
+    conf=0.25,
+    imgsz=640,
+    save=True
+)
+</pre>
+
+<h2>31. Change Confidence Threshold</h2>
+
+<p>
+The confidence threshold controls how confident YOLO must be before displaying
+a detection.
+</p>
+
+<pre>
+results = model.predict(
+    source="/content/test.jpg",
+    conf=0.50
+)
+</pre>
+
+<p>Examples:</p>
+
+<pre>
+conf=0.20
+conf=0.25
+conf=0.50
+conf=0.70
+</pre>
+
+<p>
+A lower value generally produces more detections but can increase false positives.
+A higher value produces fewer detections but can miss weak detections.
+</p>
+
+<h2>32. Change Image Size</h2>
+
+<p>Example:</p>
+
+<pre>
+results = model.predict(
+    source="/content/test.jpg",
+    imgsz=640
+)
+</pre>
+
+<p>
+For larger objects or higher-resolution requirements, you can experiment with
+larger image sizes, provided your GPU has sufficient memory.
+</p>
+
+<h2>33. Resume Training</h2>
+
+<p>
+If training is interrupted and you have the final checkpoint:
+</p>
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("/content/runs/custom_yolo/weights/last.pt")
+
+model.train(
+    resume=True
+)
+</pre>
+
+<h2>34. Training with a Smaller Batch Size</h2>
+
+<p>
+If Colab reports CUDA out-of-memory, reduce the batch size.
+</p>
+
+<pre>
+results = model.train(
+    data=DATA_YAML,
+    epochs=100,
+    imgsz=640,
+    batch=8,
+    device=0
+)
+</pre>
+
+<p>
+If necessary:</p>
+
+<pre>
+batch=4
+</pre>
+
+<p>or:</p>
+
+<pre>
+batch=2
+</pre>
+
+<h2>35. Complete Colab Training Cell</h2>
+
+<p>
+After the dataset has been prepared, the essential training cell can be:
+</p>
+
+<pre>
+from google.colab import drive
+drive.mount('/content/drive')
+
+from ultralytics import YOLO
+
+DATASET_DIR = "/content/drive/MyDrive/YOLO_Project/dataset"
+DATA_YAML = f"{DATASET_DIR}/data.yaml"
+
+model = YOLO("yolo26n.pt")
+
+results = model.train(
+    data=DATA_YAML,
+    epochs=100,
+    imgsz=640,
+    batch=16,
+    device=0,
+    workers=2,
+    project="/content/runs",
+    name="custom_yolo"
+)
+
+print("Training completed!")
+</pre>
+
+<h2>36. Complete Validation Cell</h2>
+
+<pre>
+from ultralytics import YOLO
+
+BEST_MODEL = "/content/runs/custom_yolo/weights/best.pt"
+
+model = YOLO(BEST_MODEL)
+
+metrics = model.val(
+    data=DATA_YAML,
+    imgsz=640
+)
+
+print("Validation completed!")
+</pre>
+
+<h2>37. Complete Test Cell</h2>
+
+<pre>
+test_metrics = model.val(
+    data=DATA_YAML,
+    split="test",
+    imgsz=640
+)
+
+print("Test evaluation completed!")
+</pre>
+
+<h2>38. Complete Image Inference Cell</h2>
+
+<pre>
+from google.colab import files
+
+uploaded = files.upload()
+
+IMAGE_PATH = list(uploaded.keys())[0]
+
+results = model.predict(
+    source=IMAGE_PATH,
+    conf=0.25,
+    imgsz=640,
+    save=True
+)
+
+print("Inference completed!")
+</pre>
+
+<h2>39. Copy Model to Google Drive</h2>
+
+<pre>
+import os
+import shutil
+
+SOURCE = "/content/runs/custom_yolo/weights/best.pt"
+
+DEST_DIR = "/content/drive/MyDrive/YOLO_Project/trained_model"
+
+os.makedirs(DEST_DIR, exist_ok=True)
+
+shutil.copy(
+    SOURCE,
+    os.path.join(DEST_DIR, "best.pt")
+)
+
+print("Saved model:")
+print(os.path.join(DEST_DIR, "best.pt"))
+</pre>
+
+<h2>40. Recommended Google Drive Project Structure</h2>
+
+<p>
+For a professional project, organize your Drive like this:
+</p>
+
+<pre>
+YOLO_Project/
+│
+├── dataset/
+│   │
+│   ├── data.yaml
+│   │
+│   ├── train/
+│   │   ├── images/
+│   │   └── labels/
+│   │
+│   ├── val/
+│   │   ├── images/
+│   │   └── labels/
+│   │
+│   └── test/
+│       ├── images/
+│       └── labels/
+│
+├── trained_model/
+│   └── best.pt
+│
+├── training_results/
+│   ├── weights/
+│   ├── results.csv
+│   ├── results.png
+│   └── confusion_matrix.png
+│
+├── test_images/
+│
+└── videos/
+</pre>
+
+<h2>41. Complete Workflow</h2>
+
+<div class="flow">
+    Step 1: Collect Images
+    ↓
+    Step 2: Annotate Images
+    ↓
+    Step 3: Convert to YOLO Format
+    ↓
+    Step 4: Split Dataset
+    ↓
+    Step 5: Upload Dataset to Google Drive
+    ↓
+    Step 6: Open Google Colab
+    ↓
+    Step 7: Enable GPU
+    ↓
+    Step 8: Mount Google Drive
+    ↓
+    Step 9: Verify data.yaml
+    ↓
+    Step 10: Install Ultralytics
+    ↓
+    Step 11: Train YOLO
+    ↓
+    Step 12: Validate
+    ↓
+    Step 13: Test
+    ↓
+    Step 14: Image Inference
+    ↓
+    Step 15: Video Inference
+    ↓
+    Step 16: Save best.pt
+    ↓
+    Step 17: Download / Deploy
+</div>
+
+<h2>42. Industrial Training Workflow</h2>
+
+<table>
+<tr>
+<th>Stage</th>
+<th>Activity</th>
+</tr>
+
+<tr>
+<td>Dataset</td>
+<td>Collect representative real-world images</td>
+</tr>
+
+<tr>
+<td>Annotation</td>
+<td>Accurately label objects and classes</td>
+</tr>
+
+<tr>
+<td>Quality Control</td>
+<td>Check missing and incorrect annotations</td>
+</tr>
+
+<tr>
+<td>Training</td>
+<td>Train YOLO using GPU</td>
+</tr>
+
+<tr>
+<td>Validation</td>
+<td>Measure precision, recall and mAP</td>
+</tr>
+
+<tr>
+<td>Testing</td>
+<td>Evaluate on unseen data</td>
+</tr>
+
+<tr>
+<td>Inference</td>
+<td>Run image/video predictions</td>
+</tr>
+
+<tr>
+<td>Deployment</td>
+<td>Deploy model to PC, server, Jetson or edge device</td>
+</tr>
+
+<tr>
+<td>Monitoring</td>
+<td>Collect difficult cases and retrain</td>
+</tr>
+</table>
+
+<h2>43. Common Problems</h2>
+
+<h3>Problem 1: CUDA Out of Memory</h3>
+
+<pre>
+batch=8
+</pre>
+
+<p>
+If still insufficient:
+</p>
+
+<pre>
+batch=4
+</pre>
+
+<p>
+You can also reduce <code>imgsz</code>.
+</p>
+
+<h3>Problem 2: data.yaml Not Found</h3>
+
+<p>Check the path:</p>
+
+<pre>
+import os
+
+print(os.path.exists(DATA_YAML))
+print(DATA_YAML)
+</pre>
+
+<p>
+If it returns <code>False</code>, correct the Google Drive path.
+</p>
+
+<h3>Problem 3: Labels Not Found</h3>
+
+<p>
+Check that:
+</p>
+
+<pre>
+train/images/
+train/labels/
+
+val/images/
+val/labels/
+</pre>
+
+<p>
+exist and that image and label filenames match.
+</p>
+
+<p>Example:</p>
+
+<pre>
+image001.jpg
+image001.txt
+</pre>
+
+<h3>Problem 4: Wrong Number of Classes</h3>
+
+<p>
+If <code>data.yaml</code> contains:
+</p>
+
+<pre>
+names:
+  0: helmet
+  1: mask
+  2: vest
+</pre>
+
+<p>
+then your class IDs must use:
+</p>
+
+<pre>
+0
+1
+2
+</pre>
+
+<h3>Problem 5: Poor Accuracy</h3>
+
+<p>Check:</p>
+
+<ul>
+<li>Annotation quality</li>
+<li>Number of training images</li>
+<li>Class balance</li>
+<li>Image diversity</li>
+<li>Lighting conditions</li>
+<li>Object size</li>
+<li>Camera angles</li>
+<li>Background variation</li>
+<li>Training epochs</li>
+<li>Image resolution</li>
+</ul>
+
+<h2>44. Dataset Quality Checklist</h2>
+
+<ul class="checklist">
+<li>☐ Images are clear enough for the task</li>
+<li>☐ Bounding boxes tightly surround objects</li>
+<li>☐ No incorrect class IDs</li>
+<li>☐ No missing label files</li>
+<li>☐ Training and validation images are separated</li>
+<li>☐ Test data is kept unseen</li>
+<li>☐ All classes are represented</li>
+<li>☐ Similar duplicate images are avoided across splits</li>
+<li>☐ Different lighting conditions are included</li>
+<li>☐ Different object sizes are included</li>
+<li>☐ Different backgrounds are included</li>
+</ul>
+
+<h2>45. Final Model Deployment</h2>
+
+<p>
+After successful training, the main file you normally need is:
+</p>
+
+<pre>
+best.pt
+</pre>
+
+<p>
+You can use it on your local PC:
+</p>
+
+<pre>
+from ultralytics import YOLO
+
+model = YOLO("best.pt")
+
+results = model.predict(
+    source="test.jpg",
+    conf=0.25
+)
+</pre>
+
+<p>
+The same model can potentially be integrated into:
+</p>
+
+<ul>
+<li>Python applications</li>
+<li>Flask APIs</li>
+<li>FastAPI services</li>
+<li>Desktop applications</li>
+<li>Jetson devices</li>
+<li>Robotics systems</li>
+<li>Drone vision systems</li>
+<li>Industrial inspection systems</li>
+<li>Video analytics systems</li>
+</ul>
+
+<h2 id="checklist">46. Final Colab Checklist</h2>
+
+<table>
+<tr>
+<th>Step</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>Google Drive created</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Dataset uploaded</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>YOLO folder structure verified</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>data.yaml verified</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Colab GPU enabled</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Google Drive mounted</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Ultralytics installed</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Dataset path verified</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Training completed</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>best.pt generated</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Validation completed</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Test evaluation completed</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Image inference tested</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Video inference tested</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>best.pt backed up to Google Drive</td>
+<td>☐</td>
+</tr>
+
+<tr>
+<td>Model downloaded/deployed</td>
+<td>☐</td>
+</tr>
+</table>
+
+<h2>47. One-Line Project Pipeline</h2>
+
+<div class="flow">
+    Annotated Dataset
+    → Google Drive
+    → Google Colab
+    → GPU
+    → YOLO Training
+    → best.pt
+    → Validation
+    → Test
+    → Image/Video Inference
+    → Deployment
+</div>
+
+<p class="small">
+Note: Model names and Ultralytics APIs can change between releases. Always verify
+the model name supported by the installed Ultralytics version before starting a
+new project.
+</p>
+
+</div>
+
+</body>
+</html>

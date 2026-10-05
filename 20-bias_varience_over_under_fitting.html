@@ -1,0 +1,2583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Bias, Variance, Overfitting & Underfitting
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f3f4f6;
+            color: #222;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+            background: white;
+            padding: 40px 55px;
+        }
+
+        h1 {
+            color: #111827;
+            border-bottom: 4px solid #2563eb;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            margin-top: 50px;
+            color: #1d4ed8;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+        }
+
+        h3 {
+            margin-top: 30px;
+            color: #374151;
+        }
+
+        p {
+            font-size: 16px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #555;
+        }
+
+        .note {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        .important {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fef2f2;
+            border-left: 5px solid #ef4444;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        code {
+            font-family: Consolas, Monaco, monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 11px;
+            border: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .diagram {
+            background: #f8fafc;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            font-size: 17px;
+            line-height: 2;
+        }
+
+        .box {
+            display: inline-block;
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            padding: 8px 15px;
+            border-radius: 6px;
+            margin: 5px;
+        }
+
+        .arrow {
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .question {
+            background: #f3f4f6;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .comparison {
+            font-size: 15px;
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding: 25px;
+            background: #1f2937;
+            color: white;
+            text-align: center;
+        }
+
+        @media print {
+
+            body {
+                background: white;
+            }
+
+            .container {
+                width: 100%;
+                padding: 20px;
+            }
+
+            pre {
+                white-space: pre-wrap;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- ====================================================== -->
+
+    <h1>
+        Bias, Variance, Overfitting & Underfitting
+    </h1>
+
+    <p class="subtitle">
+        Complete Machine Learning and Neural Network Teaching Notes
+    </p>
+
+
+    <div class="note">
+
+        <strong>Learning Objective:</strong>
+
+        By the end of this lesson, students will understand:
+
+        <ul>
+
+            <li>Bias</li>
+
+            <li>Variance</li>
+
+            <li>Underfitting</li>
+
+            <li>Overfitting</li>
+
+            <li>Good fit</li>
+
+            <li>Training error vs validation error</li>
+
+            <li>Bias-variance tradeoff</li>
+
+            <li>How to detect overfitting</li>
+
+            <li>How to reduce overfitting</li>
+
+            <li>How to reduce underfitting</li>
+
+            <li>How these concepts apply to neural networks</li>
+
+        </ul>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        1. Why Do We Need These Concepts?
+    </h2>
+
+    <p>
+
+        When we train a machine learning model, our objective is not simply
+        to memorize the training data.
+
+    </p>
+
+    <p>
+
+        We want the model to learn useful patterns that allow it to make
+        accurate predictions on <strong>new, unseen data</strong>.
+
+    </p>
+
+    <div class="diagram">
+
+        Training Data
+
+        <div class="arrow">↓</div>
+
+        Machine Learning Model
+
+        <div class="arrow">↓</div>
+
+        Learned Pattern
+
+        <div class="arrow">↓</div>
+
+        New / Unseen Data
+
+        <div class="arrow">↓</div>
+
+        Good Prediction
+
+    </div>
+
+
+    <div class="important">
+
+        A model that performs extremely well on training data can still
+        perform poorly on new data.
+
+        This is one of the main reasons we study
+        <strong>bias, variance, overfitting and underfitting</strong>.
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        2. What is Model Generalization?
+    </h2>
+
+    <p>
+
+        <strong>Generalization</strong> means that a model can perform well
+        not only on training data but also on previously unseen data.
+
+    </p>
+
+    <div class="diagram">
+
+        Training Data
+
+        <div class="arrow">↓</div>
+
+        Model learns patterns
+
+        <div class="arrow">↓</div>
+
+        Unseen Data
+
+        <div class="arrow">↓</div>
+
+        Accurate Predictions
+
+    </div>
+
+    <p>
+
+        A good machine learning model should learn the
+        <strong>underlying pattern</strong>, rather than simply memorizing
+        individual training examples.
+
+    </p>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        3. Bias
+    </h2>
+
+    <p>
+
+        <strong>Bias</strong> is the error introduced when a model makes
+        overly simplistic assumptions about the underlying relationship
+        in the data.
+
+    </p>
+
+    <p>
+
+        A model with high bias is usually too simple to capture the
+        important patterns in the data.
+
+    </p>
+
+    <h3>
+        Example
+    </h3>
+
+    <p>
+
+        Suppose the real relationship between house size and price is
+        complex.
+
+    </p>
+
+    <p>
+
+        But we use an extremely simple model:
+
+    </p>
+
+    <pre><code>
+Price = w × Area + b
+    </code></pre>
+
+    <p>
+
+        If the actual relationship is much more complicated, the simple
+        model may fail to capture it.
+
+    </p>
+
+    <div class="warning">
+
+        <strong>High Bias → Model is usually too simple</strong>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        4. Variance
+    </h2>
+
+    <p>
+
+        <strong>Variance</strong> describes how much a model's predictions
+        change when the training dataset changes.
+
+    </p>
+
+    <p>
+
+        A high-variance model is very sensitive to the particular training
+        examples it sees.
+
+    </p>
+
+    <p>
+
+        It may learn not only useful patterns but also noise and random
+        fluctuations in the training data.
+
+    </p>
+
+    <div class="warning">
+
+        <strong>High Variance → Model is usually too sensitive to training data</strong>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        5. Variance Mathematical Concept
+    </h2>
+
+    <p>
+
+        Variance measures how far values are spread around their mean.
+
+    </p>
+
+    <pre><code>
+Var(X) = E[(X - μ)²]
+    </code></pre>
+
+    <p>
+
+        Another common representation is:
+
+    </p>
+
+    <pre><code>
+Var(X) = E(X²) - [E(X)]²
+    </code></pre>
+
+    <p>
+
+        In machine learning, the idea is that a high-variance model can
+        change substantially when the training data changes.
+
+    </p>
+
+    <div class="note">
+
+        The important machine-learning interpretation is:
+
+        <br><br>
+
+        <strong>
+        High variance = strong dependence on the training dataset.
+        </strong>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        6. Underfitting
+    </h2>
+
+    <p>
+
+        <strong>Underfitting</strong> occurs when a model is too simple
+        to learn the important patterns in the data.
+
+    </p>
+
+    <div class="diagram">
+
+        Data
+
+        <div class="arrow">↓</div>
+
+        <span class="box">
+            Too Simple Model
+        </span>
+
+        <div class="arrow">↓</div>
+
+        Poor Training Performance
+
+        <div class="arrow">↓</div>
+
+        Poor Testing Performance
+
+    </div>
+
+
+    <h3>
+        Typical Characteristics
+    </h3>
+
+    <table>
+
+        <tr>
+            <th>Training Error</th>
+            <th>Validation/Test Error</th>
+            <th>Typical Interpretation</th>
+        </tr>
+
+        <tr>
+            <td>High</td>
+            <td>High</td>
+            <td>Underfitting</td>
+        </tr>
+
+    </table>
+
+
+    <h3>
+        Example
+    </h3>
+
+    <p>
+
+        Imagine trying to predict house prices using only:
+
+    </p>
+
+    <pre><code>
+Price = Area × Constant
+    </code></pre>
+
+    <p>
+
+        The model may ignore:
+
+    </p>
+
+    <ul>
+
+        <li>Location</li>
+
+        <li>Bedrooms</li>
+
+        <li>Bathrooms</li>
+
+        <li>Age</li>
+
+        <li>Construction quality</li>
+
+    </ul>
+
+    <p>
+
+        Therefore, the model may be too simple.
+
+    </p>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        7. Causes of Underfitting
+    </h2>
+
+    <ul>
+
+        <li>Model is too simple</li>
+
+        <li>Too few features</li>
+
+        <li>Insufficient training</li>
+
+        <li>Excessive regularization</li>
+
+        <li>Model has too few layers</li>
+
+        <li>Model has too few neurons</li>
+
+        <li>Features do not represent the problem well</li>
+
+    </ul>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        8. How to Reduce Underfitting
+    </h2>
+
+    <ul>
+
+        <li>Use a more powerful model</li>
+
+        <li>Add useful features</li>
+
+        <li>Increase model complexity</li>
+
+        <li>Train for more epochs</li>
+
+        <li>Reduce excessive regularization</li>
+
+        <li>Improve feature engineering</li>
+
+    </ul>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        9. Overfitting
+    </h2>
+
+    <p>
+
+        <strong>Overfitting</strong> occurs when a model learns the training
+        data too closely, including noise or accidental patterns.
+
+    </p>
+
+    <div class="diagram">
+
+        Training Data
+
+        <div class="arrow">↓</div>
+
+        <span class="box">
+            Very Complex Model
+        </span>
+
+        <div class="arrow">↓</div>
+
+        Training Error Very Low
+
+        <div class="arrow">↓</div>
+
+        Test Error High
+
+    </div>
+
+
+    <h3>
+        Typical Characteristics
+    </h3>
+
+    <table>
+
+        <tr>
+            <th>Training Error</th>
+            <th>Validation/Test Error</th>
+            <th>Typical Interpretation</th>
+        </tr>
+
+        <tr>
+            <td>Very Low</td>
+            <td>High</td>
+            <td>Overfitting</td>
+        </tr>
+
+    </table>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        10. Real-World Example of Overfitting
+    </h2>
+
+    <p>
+
+        Imagine a student preparing for an exam.
+
+    </p>
+
+    <p>
+
+        The student memorizes every question from the practice paper.
+
+    </p>
+
+    <p>
+
+        On exactly the same questions:
+
+    </p>
+
+    <pre><code>
+Score = 100%
+    </code></pre>
+
+    <p>
+
+        But when the teacher gives new questions:
+
+    </p>
+
+    <pre><code>
+Score = 50%
+    </code></pre>
+
+    <p>
+
+        The student memorized the examples instead of learning the
+        underlying concepts.
+
+    </p>
+
+    <div class="important">
+
+        This is similar to overfitting in machine learning.
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        11. Causes of Overfitting
+    </h2>
+
+    <ul>
+
+        <li>Model is too complex</li>
+
+        <li>Too many parameters</li>
+
+        <li>Small training dataset</li>
+
+        <li>Training for too many epochs</li>
+
+        <li>Too many neural-network layers</li>
+
+        <li>Too many neurons</li>
+
+        <li>Noise in the training data</li>
+
+        <li>Insufficient regularization</li>
+
+    </ul>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        12. How to Reduce Overfitting
+    </h2>
+
+    <ul>
+
+        <li>Collect more training data</li>
+
+        <li>Use data augmentation</li>
+
+        <li>Use dropout</li>
+
+        <li>Use L1/L2 regularization</li>
+
+        <li>Reduce model complexity</li>
+
+        <li>Use early stopping</li>
+
+        <li>Remove irrelevant features</li>
+
+        <li>Use cross-validation where appropriate</li>
+
+    </ul>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        13. Underfitting vs Overfitting
+    </h2>
+
+    <table class="comparison">
+
+        <tr>
+
+            <th>Property</th>
+
+            <th>Underfitting</th>
+
+            <th>Good Fit</th>
+
+            <th>Overfitting</th>
+
+        </tr>
+
+        <tr>
+
+            <td>Model Complexity</td>
+
+            <td>Too Low</td>
+
+            <td>Appropriate</td>
+
+            <td>Too High</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Training Error</td>
+
+            <td>High</td>
+
+            <td>Low</td>
+
+            <td>Very Low</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Test Error</td>
+
+            <td>High</td>
+
+            <td>Low</td>
+
+            <td>High</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Bias</td>
+
+            <td>High</td>
+
+            <td>Low</td>
+
+            <td>Low</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Variance</td>
+
+            <td>Low</td>
+
+            <td>Moderate</td>
+
+            <td>High</td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        14. Bias-Variance Tradeoff
+    </h2>
+
+    <p>
+
+        Machine learning often involves balancing bias and variance.
+
+    </p>
+
+    <div class="diagram">
+
+        <span class="box">
+            High Bias
+        </span>
+
+        <span class="arrow">
+            ←
+        </span>
+
+        <span class="box">
+            Good Balance
+        </span>
+
+        <span class="arrow">
+            →
+        </span>
+
+        <span class="box">
+            High Variance
+        </span>
+
+    </div>
+
+    <p>
+
+        A very simple model may have:
+
+    </p>
+
+    <pre><code>
+High Bias
+Low Variance
+    </code></pre>
+
+    <p>
+
+        A very complex model may have:
+
+    </p>
+
+    <pre><code>
+Low Bias
+High Variance
+    </code></pre>
+
+    <p>
+
+        We want a model that provides a useful balance.
+
+    </p>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        15. Total Prediction Error
+    </h2>
+
+    <p>
+
+        A common conceptual decomposition of expected prediction error is:
+
+    </p>
+
+    <pre><code>
+Total Error ≈ Bias² + Variance + Irreducible Noise
+    </code></pre>
+
+    <p>
+
+        The three components are:
+
+    </p>
+
+    <table>
+
+        <tr>
+
+            <th>Component</th>
+
+            <th>Meaning</th>
+
+        </tr>
+
+        <tr>
+
+            <td>Bias²</td>
+
+            <td>
+                Error from overly simplistic assumptions
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Variance</td>
+
+            <td>
+                Error from sensitivity to the training data
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Irreducible Noise</td>
+
+            <td>
+                Random variation that cannot be completely eliminated
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        16. Model Complexity
+    </h2>
+
+    <p>
+
+        Model complexity describes how flexible a model is.
+
+    </p>
+
+    <div class="diagram">
+
+        Simple Model
+
+        <div class="arrow">→</div>
+
+        Moderate Model
+
+        <div class="arrow">→</div>
+
+        Complex Model
+
+    </div>
+
+    <p>
+
+        As model complexity increases:
+
+    </p>
+
+    <pre><code>
+Bias usually decreases
+
+Variance usually increases
+    </code></pre>
+
+    <p>
+
+        Therefore, increasing complexity does not automatically make
+        a model better.
+
+    </p>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        17. Training Error and Validation Error
+    </h2>
+
+    <p>
+
+        One of the easiest ways to detect overfitting is to monitor
+        training and validation performance.
+
+    </p>
+
+    <div class="diagram">
+
+        Training Dataset
+
+        <div class="arrow">→</div>
+
+        Model
+
+        <div class="arrow">→</div>
+
+        Training Error
+
+        <br><br>
+
+        Validation Dataset
+
+        <div class="arrow">→</div>
+
+        Model
+
+        <div class="arrow">→</div>
+
+        Validation Error
+
+    </div>
+
+
+    <h3>
+        Typical Overfitting Pattern
+    </h3>
+
+    <pre><code>
+Epoch      Training Loss      Validation Loss
+
+1              High                High
+10             ↓                   ↓
+20             ↓                   ↓
+30             ↓                   ↓
+40             ↓                   Lowest
+50             ↓                   Starts increasing
+60             ↓                   Higher
+70             ↓                   Higher
+80             Very Low            Very High
+    </code></pre>
+
+
+    <div class="warning">
+
+        If training loss continues decreasing while validation loss starts
+        increasing, this is a common sign that the model is overfitting.
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        18. Early Stopping
+    </h2>
+
+    <p>
+
+        Early stopping is a technique used to stop training when validation
+        performance stops improving.
+
+    </p>
+
+    <div class="diagram">
+
+        Training
+
+        <div class="arrow">↓</div>
+
+        Validation Loss Improves
+
+        <div class="arrow">↓</div>
+
+        Validation Loss Stops Improving
+
+        <div class="arrow">↓</div>
+
+        Stop Training
+
+    </div>
+
+    <p>
+
+        Instead of training for an unnecessarily large number of epochs,
+        we keep the model from continuing into a region where validation
+        performance is getting worse.
+
+    </p>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        19. Dropout</h2>
+
+    <p>
+
+        Dropout is a regularization technique commonly used in neural
+        networks.
+
+    </p>
+
+    <p>
+
+        During training, dropout randomly disables some neurons.
+
+    </p>
+
+    <pre><code>
+Input
+  ↓
+Linear Layer
+  ↓
+ReLU
+  ↓
+Dropout
+  ↓
+Linear Layer
+  ↓
+Output
+    </code></pre>
+
+
+    <h3>
+        PyTorch Example
+    </h3>
+
+    <pre><code>self.network = nn.Sequential(
+
+    nn.Linear(10, 64),
+
+    nn.ReLU(),
+
+    nn.Dropout(0.3),
+
+    nn.Linear(64, 32),
+
+    nn.ReLU(),
+
+    nn.Dropout(0.3),
+
+    nn.Linear(32, 1)
+)</code></pre>
+
+    <p>
+
+        A dropout value of <code>0.3</code> means that approximately 30%
+        of the eligible activations are randomly dropped during training.
+
+    </p>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        20. L2 Regularization / Weight Decay
+    </h2>
+
+    <p>
+
+        Another common method of controlling overfitting is regularization.
+
+    </p>
+
+    <p>
+
+        With the Adam optimizer, weight decay can be used:
+
+    </p>
+
+    <pre><code>optimizer = torch.optim.Adam(
+    model.parameters(),
+    lr=0.001,
+    weight_decay=0.0001
+)</code></pre>
+
+    <p>
+
+        Weight decay discourages excessively large weights and can help
+        control model complexity.
+
+    </p>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        21. Data Augmentation
+    </h2>
+
+    <p>
+
+        Data augmentation creates additional training examples by applying
+        suitable transformations.
+
+    </p>
+
+    <p>
+
+        It is particularly common in computer vision.
+
+    </p>
+
+    <h3>
+        Example
+    </h3>
+
+    <pre><code>
+Original Image
+      ↓
+Resize
+      ↓
+Flip
+      ↓
+Rotate
+      ↓
+Crop
+      ↓
+Brightness Change
+      ↓
+More Training Examples
+    </code></pre>
+
+    <p>
+
+        More diverse training examples can help a model generalize better.
+
+    </p>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        22. More Training Data
+    </h2>
+
+    <p>
+
+        A model trained on a very small dataset can easily memorize the
+        training examples.
+
+    </p>
+
+    <p>
+
+        Increasing the amount and diversity of high-quality training data
+        can help reduce this problem.
+
+    </p>
+
+    <div class="success">
+
+        More representative data generally gives the model more information
+        from which to learn general patterns.
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        23. Neural Network Example of Overfitting
+    </h2>
+
+    <p>
+
+        Consider a neural network for image classification.
+
+    </p>
+
+    <pre><code>
+Input Image
+     ↓
+Conv Layer
+     ↓
+Conv Layer
+     ↓
+Conv Layer
+     ↓
+Many Fully Connected Layers
+     ↓
+Output
+    </code></pre>
+
+    <p>
+
+        If the dataset contains only a small number of images while the
+        network has millions of parameters, the model may have enough
+        capacity to memorize the training examples.
+
+    </p>
+
+    <p>
+
+        Possible solutions include:
+
+    </p>
+
+    <ul>
+
+        <li>More training images</li>
+
+        <li>Data augmentation</li>
+
+        <li>Dropout</li>
+
+        <li>Weight decay</li>
+
+        <li>Transfer learning</li>
+
+        <li>Early stopping</li>
+
+    </ul>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        24. PyTorch Demonstration
+    </h2>
+
+    <p>
+
+        The following example demonstrates how model complexity can affect
+        training and validation performance.
+
+    </p>
+
+    <h3>
+        Import Libraries
+    </h3>
+
+    <pre><code>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+import numpy as np
+import matplotlib.pyplot as plt</code></pre>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        25. Create Synthetic Data
+    </h2>
+
+    <pre><code>np.random.seed(42)
+
+X = np.linspace(
+    -3,
+    3,
+    100
+)
+
+y = (
+    np.sin(X)
+    + 0.2 * np.random.randn(100)
+)</code></pre>
+
+    <p>
+
+        Here we create data based on a nonlinear function:
+
+    </p>
+
+    <pre><code>
+y = sin(x) + noise
+    </code></pre>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        26. Convert Data to PyTorch Tensors
+    </h2>
+
+    <pre><code>X = torch.tensor(
+    X,
+    dtype=torch.float32
+).view(-1, 1)
+
+y = torch.tensor(
+    y,
+    dtype=torch.float32
+).view(-1, 1)</code></pre>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        27. Split Training and Validation Data
+    </h2>
+
+    <pre><code>train_size = 80
+
+X_train = X[:train_size]
+y_train = y[:train_size]
+
+X_val = X[train_size:]
+y_val = y[train_size:]</code></pre>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        28. Build a Neural Network
+    </h2>
+
+    <pre><code>class RegressionModel(nn.Module):
+
+    def __init__(self):
+
+        super().__init__()
+
+        self.network = nn.Sequential(
+
+            nn.Linear(1, 64),
+
+            nn.ReLU(),
+
+            nn.Linear(64, 64),
+
+            nn.ReLU(),
+
+            nn.Linear(64, 64),
+
+            nn.ReLU(),
+
+            nn.Linear(64, 1)
+        )
+
+    def forward(self, x):
+
+        return self.network(x)</code></pre>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        29. Create Model, Loss and Optimizer
+    </h2>
+
+    <pre><code>model = RegressionModel()
+
+criterion = nn.MSELoss()
+
+optimizer = optim.Adam(
+    model.parameters(),
+    lr=0.001
+)</code></pre>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        30. Training with Validation Loss
+    </h2>
+
+    <pre><code>epochs = 1000
+
+train_losses = []
+val_losses = []
+
+for epoch in range(epochs):
+
+    # Training mode
+    model.train()
+
+    # Forward pass
+    train_prediction = model(X_train)
+
+    # Training loss
+    train_loss = criterion(
+        train_prediction,
+        y_train
+    )
+
+    # Clear gradients
+    optimizer.zero_grad()
+
+    # Backpropagation
+    train_loss.backward()
+
+    # Update weights
+    optimizer.step()
+
+
+    # Validation
+    model.eval()
+
+    with torch.no_grad():
+
+        val_prediction = model(X_val)
+
+        val_loss = criterion(
+            val_prediction,
+            y_val
+        )
+
+
+    train_losses.append(
+        train_loss.item()
+    )
+
+    val_losses.append(
+        val_loss.item()
+    )
+
+
+    if (epoch + 1) % 100 == 0:
+
+        print(
+            f"Epoch: {epoch+1}, "
+            f"Train Loss: {train_loss.item():.4f}, "
+            f"Validation Loss: {val_loss.item():.4f}"
+        )</code></pre>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        31. Plot Training and Validation Loss
+    </h2>
+
+    <pre><code>plt.figure(figsize=(10, 6))
+
+plt.plot(
+    train_losses,
+    label="Training Loss"
+)
+
+plt.plot(
+    val_losses,
+    label="Validation Loss"
+)
+
+plt.xlabel("Epoch")
+
+plt.ylabel("MSE Loss")
+
+plt.title(
+    "Training vs Validation Loss"
+)
+
+plt.legend()
+
+plt.show()</code></pre>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        32. How to Read the Loss Graph</h2>
+
+    <h3>
+        Case 1 — Underfitting
+    </h3>
+
+    <pre><code>
+Training Loss     High
+Validation Loss   High
+    </code></pre>
+
+    <p>
+
+        The model has not learned enough of the underlying pattern.
+
+    </p>
+
+
+    <h3>
+        Case 2 — Good Fit
+    </h3>
+
+    <pre><code>
+Training Loss     Low
+Validation Loss   Low
+
+Both improve and remain reasonably close.
+    </code></pre>
+
+
+    <h3>
+        Case 3 — Overfitting
+    </h3>
+
+    <pre><code>
+Training Loss     ↓ continues decreasing
+
+Validation Loss  ↓ initially decreases
+                  ↑ then starts increasing
+    </code></pre>
+
+
+    <div class="warning">
+
+        The gap between training and validation performance is an important
+        diagnostic signal.
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        33. Underfitting vs Good Fit vs Overfitting
+    </h2>
+
+    <div class="diagram">
+
+        <strong>UNDERFITTING</strong>
+
+        <br>
+
+        Model too simple
+
+        <br>
+
+        High training error
+
+        <br>
+
+        High validation error
+
+
+        <hr>
+
+
+        <strong>GOOD FIT</strong>
+
+        <br>
+
+        Appropriate complexity
+
+        <br>
+
+        Low training error
+
+        <br>
+
+        Low validation error
+
+
+        <hr>
+
+
+        <strong>OVERFITTING</strong>
+
+        <br>
+
+        Model too complex
+
+        <br>
+
+        Very low training error
+
+        <br>
+
+        High validation error
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        34. Bias vs Variance
+    </h2>
+
+    <table>
+
+        <tr>
+
+            <th>Concept</th>
+
+            <th>Meaning</th>
+
+            <th>Typical Model</th>
+
+        </tr>
+
+        <tr>
+
+            <td>High Bias</td>
+
+            <td>
+                Model makes overly simple assumptions
+            </td>
+
+            <td>
+                Too simple
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Low Bias</td>
+
+            <td>
+                Model can capture complex patterns
+            </td>
+
+            <td>
+                More flexible
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>High Variance</td>
+
+            <td>
+                Model is highly sensitive to training data
+            </td>
+
+            <td>
+                Very complex
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Low Variance</td>
+
+            <td>
+                Predictions are more stable across datasets
+            </td>
+
+            <td>
+                Simpler / more constrained
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        35. Quick Diagnosis Table
+    </h2>
+
+    <table>
+
+        <tr>
+
+            <th>Training Error</th>
+
+            <th>Validation Error</th>
+
+            <th>Likely Situation</th>
+
+        </tr>
+
+        <tr>
+
+            <td>High</td>
+
+            <td>High</td>
+
+            <td>Underfitting / high bias</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Low</td>
+
+            <td>Low</td>
+
+            <td>Good fit</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Very Low</td>
+
+            <td>High</td>
+
+            <td>Overfitting / high variance</td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        36. Practical Solutions
+    </h2>
+
+    <table>
+
+        <tr>
+
+            <th>Problem</th>
+
+            <th>Possible Solutions</th>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                Underfitting
+            </td>
+
+            <td>
+
+                Increase model capacity<br>
+                Add useful features<br>
+                Train longer<br>
+                Reduce excessive regularization
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                Overfitting
+            </td>
+
+            <td>
+
+                More data<br>
+                Data augmentation<br>
+                Dropout<br>
+                Weight decay<br>
+                Early stopping<br>
+                Reduce model complexity
+
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        37. Real-World Example — House Price Prediction
+    </h2>
+
+    <p>
+
+        Suppose we build three models.
+
+    </p>
+
+    <h3>
+        Model A — Too Simple
+    </h3>
+
+    <pre><code>
+Price = w × Area + b
+    </code></pre>
+
+    <p>
+
+        It ignores many important factors.
+
+    </p>
+
+    <strong>
+        Possible result: Underfitting / High Bias
+    </strong>
+
+
+    <h3>
+        Model B — Appropriate
+    </h3>
+
+    <pre><code>
+Area
+Bedrooms
+Bathrooms
+Age
+Location
+Quality
+       ↓
+Moderate Neural Network
+       ↓
+Price
+    </code></pre>
+
+    <strong>
+        Possible result: Good Generalization
+    </strong>
+
+
+    <h3>
+        Model C — Extremely Complex
+    </h3>
+
+    <pre><code>
+Hundreds of features
+Thousands of neurons
+Many layers
+Very small dataset
+       ↓
+Very Complex Model
+       ↓
+Memorizes Training Data
+    </code></pre>
+
+    <strong>
+        Possible result: Overfitting / High Variance
+    </strong>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        38. Practical Example — Image Classification
+    </h2>
+
+    <p>
+
+        Imagine we have only 500 images of cats and dogs.
+
+    </p>
+
+    <p>
+
+        We train a very large neural network.
+
+    </p>
+
+    <pre><code>
+Training Accuracy = 99%
+Validation Accuracy = 72%
+    </code></pre>
+
+    <p>
+
+        This large difference suggests that the model may be learning
+        patterns specific to the training set rather than general patterns.
+
+    </p>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        39. Practical Example — Insufficient Model
+    </h2>
+
+    <p>
+
+        Now suppose we use an extremely small neural network:
+
+    </p>
+
+    <pre><code>
+Input
+  ↓
+Linear(10 → 2)
+  ↓
+Output
+    </code></pre>
+
+    <p>
+
+        If the problem is highly complex, this model may not have enough
+        capacity to learn the required relationships.
+
+    </p>
+
+    <pre><code>
+Training Accuracy = 65%
+Validation Accuracy = 63%
+    </code></pre>
+
+    <p>
+
+        Both results are poor, which can indicate underfitting.
+
+    </p>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        40. How to Think About Model Complexity
+    </h2>
+
+    <div class="diagram">
+
+        <span class="box">
+            Too Simple
+        </span>
+
+        <span class="arrow">
+            →
+        </span>
+
+        <span class="box">
+            Appropriate
+        </span>
+
+        <span class="arrow">
+            →
+        </span>
+
+        <span class="box">
+            Too Complex
+        </span>
+
+        <br><br>
+
+        <span>
+            Underfitting
+        </span>
+
+        <span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            Good Generalization
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+
+        <span>
+            Overfitting
+        </span>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        41. Important Terminology
+    </h2>
+
+    <table>
+
+        <tr>
+
+            <th>Term</th>
+
+            <th>Definition</th>
+
+        </tr>
+
+        <tr>
+
+            <td>Bias</td>
+
+            <td>
+                Error caused by overly simplistic assumptions
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Variance</td>
+
+            <td>
+                Sensitivity of the model to training data
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Underfitting</td>
+
+            <td>
+                Model fails to learn enough of the underlying pattern
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Overfitting</td>
+
+            <td>
+                Model learns training data too closely
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Generalization</td>
+
+            <td>
+                Ability to perform well on unseen data
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Regularization</td>
+
+            <td>
+                Techniques used to control model complexity
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Dropout</td>
+
+            <td>
+                Randomly disables activations during training
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Early Stopping</td>
+
+            <td>
+                Stops training when validation performance stops improving
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        42. Student Practical Exercise
+    </h2>
+
+    <h3>
+        Exercise: Detect Overfitting in a Neural Network
+    </h3>
+
+    <p>
+
+        Students should create a regression model and compare training
+        and validation losses.
+
+    </p>
+
+    <h3>
+        Tasks
+    </h3>
+
+    <ol>
+
+        <li>Create or load a regression dataset.</li>
+
+        <li>Split the dataset into training and validation data.</li>
+
+        <li>Create a small neural network.</li>
+
+        <li>Train the model.</li>
+
+        <li>Plot training and validation loss.</li>
+
+        <li>Determine whether the model is underfitting.</li>
+
+        <li>Increase the model complexity.</li>
+
+        <li>Train again.</li>
+
+        <li>Determine whether the model starts overfitting.</li>
+
+        <li>Add dropout.</li>
+
+        <li>Add weight decay.</li>
+
+        <li>Train again.</li>
+
+        <li>Compare the results.</li>
+
+    </ol>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        43. Student Assignment
+    </h2>
+
+    <h3>
+        Compare Three Neural Networks
+    </h3>
+
+    <p>
+
+        Build three neural networks for the same regression problem.
+
+    </p>
+
+    <table>
+
+        <tr>
+
+            <th>Model</th>
+
+            <th>Architecture</th>
+
+            <th>Expected Goal</th>
+
+        </tr>
+
+        <tr>
+
+            <td>Model 1</td>
+
+            <td>
+                Very small network
+            </td>
+
+            <td>
+                Observe underfitting
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Model 2</td>
+
+            <td>
+                Medium network
+            </td>
+
+            <td>
+                Aim for good generalization
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>Model 3</td>
+
+            <td>
+                Very large network
+            </td>
+
+            <td>
+                Observe possible overfitting
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <h3>
+        Students Must Report
+    </h3>
+
+    <ol>
+
+        <li>Training loss</li>
+
+        <li>Validation loss</li>
+
+        <li>MAE</li>
+
+        <li>RMSE</li>
+
+        <li>Training vs validation graph</li>
+
+        <li>Model architecture</li>
+
+        <li>Number of parameters</li>
+
+        <li>Whether the model underfits or overfits</li>
+
+        <li>What technique was used to improve it</li>
+
+    </ol>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        44. Exam Questions
+    </h2>
+
+    <div class="question">
+
+        <strong>Q1.</strong>
+        What is bias in machine learning?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q2.</strong>
+        What is variance?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q3.</strong>
+        What is underfitting?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q4.</strong>
+        What is overfitting?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q5.</strong>
+        What is the difference between bias and variance?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q6.</strong>
+        How can you detect overfitting using training and validation loss?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q7.</strong>
+        What is dropout?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q8.</strong>
+        What is early stopping?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q9.</strong>
+        Give three techniques for reducing overfitting.
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q10.</strong>
+        Give three techniques for reducing underfitting.
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        45. Quick Revision
+    </h2>
+
+    <div class="success">
+
+        <h3>Underfitting</h3>
+
+        <p>
+            Model is too simple.
+        </p>
+
+        <pre><code>
+High Bias
+High Training Error
+High Validation Error
+        </code></pre>
+
+
+        <h3>Good Fit</h3>
+
+        <p>
+            Model learns useful patterns and generalizes reasonably well.
+        </p>
+
+        <pre><code>
+Low Training Error
+Low Validation Error
+        </code></pre>
+
+
+        <h3>Overfitting</h3>
+
+        <p>
+            Model learns the training data too closely.
+        </p>
+
+        <pre><code>
+Low Training Error
+High Validation Error
+High Variance
+        </code></pre>
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        46. Final Concept Map
+    </h2>
+
+    <div class="diagram">
+
+        <strong>MODEL COMPLEXITY</strong>
+
+        <br><br>
+
+        Too Simple
+
+        <div class="arrow">↓</div>
+
+        High Bias
+
+        <div class="arrow">↓</div>
+
+        Underfitting
+
+        <br><br>
+
+        ==========================
+
+        <br><br>
+
+        Appropriate Complexity
+
+        <div class="arrow">↓</div>
+
+        Good Bias / Variance Balance
+
+        <div class="arrow">↓</div>
+
+        Good Generalization
+
+        <br><br>
+
+        ==========================
+
+        <br><br>
+
+        Too Complex
+
+        <div class="arrow">↓</div>
+
+        High Variance
+
+        <div class="arrow">↓</div>
+
+        Overfitting
+
+    </div>
+
+
+    <!-- ====================================================== -->
+
+    <h2>
+        47. Final Summary
+    </h2>
+
+    <div class="note">
+
+        <p>
+
+            <strong>Bias</strong> represents error from overly simple
+            assumptions.
+
+        </p>
+
+        <p>
+
+            <strong>Variance</strong> represents sensitivity to the
+            particular training data.
+
+        </p>
+
+        <p>
+
+            <strong>Underfitting</strong> happens when the model is too
+            simple to learn the important patterns.
+
+        </p>
+
+        <p>
+
+            <strong>Overfitting</strong> happens when the model learns the
+            training data too closely and performs poorly on unseen data.
+
+        </p>
+
+        <p>
+
+            The goal is to find a model with appropriate complexity that
+            generalizes well to unseen data.
+
+        </p>
+
+    </div>
+
+
+    <div class="footer">
+
+        Bias, Variance, Overfitting & Underfitting<br>
+        Machine Learning / Deep Learning Teaching Notes
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

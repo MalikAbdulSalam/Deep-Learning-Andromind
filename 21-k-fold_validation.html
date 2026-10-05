@@ -1,0 +1,2641 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>K-Fold Cross-Validation in Neural Networks</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f3f4f6;
+            color: #222;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+            background: white;
+            padding: 40px 55px;
+        }
+
+        h1 {
+            color: #111827;
+            border-bottom: 4px solid #2563eb;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            margin-top: 50px;
+            color: #1d4ed8;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+        }
+
+        h3 {
+            margin-top: 30px;
+            color: #374151;
+        }
+
+        p {
+            font-size: 16px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #555;
+        }
+
+        .note {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        .important {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fef2f2;
+            border-left: 5px solid #ef4444;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        code {
+            font-family: Consolas, Monaco, monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 11px;
+            border: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .diagram {
+            background: #f8fafc;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            font-size: 16px;
+            line-height: 2;
+        }
+
+        .fold {
+            display: inline-block;
+            padding: 10px 16px;
+            margin: 4px;
+            border-radius: 5px;
+            border: 1px solid #93c5fd;
+            background: #dbeafe;
+        }
+
+        .validation {
+            background: #fed7aa;
+            border-color: #fb923c;
+        }
+
+        .question {
+            background: #f3f4f6;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding: 25px;
+            background: #1f2937;
+            color: white;
+            text-align: center;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ===================================================== -->
+
+    <h1>
+        K-Fold Cross-Validation in Neural Networks
+    </h1>
+
+    <p class="subtitle">
+        Complete Machine Learning & Deep Learning Teaching Notes with PyTorch
+    </p>
+
+
+    <div class="note">
+
+        <strong>Learning Objectives</strong>
+
+        <p>After completing this lesson, students will understand:</p>
+
+        <ul>
+            <li>What cross-validation is</li>
+            <li>Why cross-validation is needed</li>
+            <li>What K-Fold Cross-Validation means</li>
+            <li>How K-Fold works step by step</li>
+            <li>Training set vs validation set</li>
+            <li>How K-Fold helps detect overfitting</li>
+            <li>How to implement K-Fold with PyTorch</li>
+            <li>How to calculate average validation performance</li>
+            <li>How to use cross-validation for model comparison</li>
+        </ul>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        1. What is Cross-Validation?
+    </h2>
+
+    <p>
+
+        <strong>Cross-validation</strong> is a model evaluation technique
+        used to estimate how well a machine learning model will perform
+        on unseen data.
+
+    </p>
+
+    <p>
+
+        Instead of relying on only one training-validation split, we
+        repeatedly train and validate the model using different portions
+        of the dataset.
+
+    </p>
+
+
+    <div class="diagram">
+
+        Complete Dataset
+
+        <div>↓</div>
+
+        Split into Multiple Parts
+
+        <div>↓</div>
+
+        Train on Some Parts
+
+        <div>↓</div>
+
+        Validate on Another Part
+
+        <div>↓</div>
+
+        Repeat
+
+        <div>↓</div>
+
+        Calculate Average Performance
+
+    </div>
+
+
+    <div class="important">
+
+        Cross-validation is especially useful when the dataset is
+        relatively small and we want a more reliable estimate of
+        model performance.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        2. Why Do We Need Cross-Validation?
+    </h2>
+
+    <p>
+
+        Suppose we have only 100 samples.
+
+    </p>
+
+    <p>
+
+        We split them as:
+
+    </p>
+
+    <pre><code>
+80 samples → Training
+20 samples → Validation
+    </code></pre>
+
+    <p>
+
+        The validation score may depend strongly on which 20 samples
+        happened to be selected.
+
+    </p>
+
+    <p>
+
+        For example:
+
+    </p>
+
+    <pre><code>
+Split 1 → Validation Accuracy = 86%
+
+Split 2 → Validation Accuracy = 91%
+
+Split 3 → Validation Accuracy = 79%
+    </code></pre>
+
+    <p>
+
+        This tells us that the particular split can influence the
+        measured performance.
+
+    </p>
+
+    <p>
+
+        K-Fold Cross-Validation addresses this by using multiple
+        validation splits.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        3. What Does "K" Mean?
+    </h2>
+
+    <p>
+
+        In K-Fold Cross-Validation, the dataset is divided into
+        <strong>K approximately equal-sized folds</strong>.
+
+    </p>
+
+    <p>
+
+        Common choices are:
+
+    </p>
+
+    <ul>
+
+        <li>K = 3</li>
+        <li>K = 5</li>
+        <li>K = 10</li>
+
+    </ul>
+
+    <p>
+
+        For teaching and practical machine learning, <strong>K = 5</strong>
+        is a very common choice.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        4. Basic K-Fold Example
+    </h2>
+
+    <p>
+
+        Suppose we have 100 samples and choose:
+
+    </p>
+
+    <pre><code>
+K = 5
+    </code></pre>
+
+    <p>
+
+        The dataset will be divided into approximately:
+
+    </p>
+
+    <pre><code>
+100 / 5 = 20 samples per fold
+    </code></pre>
+
+
+    <div class="diagram">
+
+        <span class="fold">Fold 1</span>
+        <span class="fold">Fold 2</span>
+        <span class="fold">Fold 3</span>
+        <span class="fold">Fold 4</span>
+        <span class="fold">Fold 5</span>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        5. How K-Fold Works
+    </h2>
+
+    <p>
+
+        The important idea is that each fold becomes the validation set
+        exactly once.
+
+    </p>
+
+
+    <h3>
+        Round 1
+    </h3>
+
+    <div class="diagram">
+
+        <span class="fold validation">
+            Validation
+        </span>
+
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+
+    </div>
+
+
+    <h3>
+        Round 2
+    </h3>
+
+    <div class="diagram">
+
+        <span class="fold">Train</span>
+
+        <span class="fold validation">
+            Validation
+        </span>
+
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+
+    </div>
+
+
+    <h3>
+        Round 3
+    </h3>
+
+    <div class="diagram">
+
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+
+        <span class="fold validation">
+            Validation
+        </span>
+
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+
+    </div>
+
+
+    <h3>
+        Round 4
+    </h3>
+
+    <div class="diagram">
+
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+
+        <span class="fold validation">
+            Validation
+        </span>
+
+        <span class="fold">Train</span>
+
+    </div>
+
+
+    <h3>
+        Round 5
+    </h3>
+
+    <div class="diagram">
+
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+        <span class="fold">Train</span>
+
+        <span class="fold validation">
+            Validation
+        </span>
+
+    </div>
+
+
+    <div class="success">
+
+        Every sample gets an opportunity to be part of the validation
+        set, while the remaining samples are used for training.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        6. Complete K-Fold Process
+    </h2>
+
+    <ol>
+
+        <li>Collect the dataset.</li>
+
+        <li>Shuffle the dataset when appropriate.</li>
+
+        <li>Divide the dataset into K folds.</li>
+
+        <li>Select Fold 1 as validation data.</li>
+
+        <li>Use the remaining folds for training.</li>
+
+        <li>Train the neural network.</li>
+
+        <li>Evaluate the model on Fold 1.</li>
+
+        <li>Repeat using Fold 2 as validation.</li>
+
+        <li>Continue until every fold has been used for validation.</li>
+
+        <li>Calculate the average validation performance.</li>
+
+    </ol>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        7. Example with K = 5
+    </h2>
+
+    <table>
+
+        <tr>
+
+            <th>Round</th>
+
+            <th>Training Folds</th>
+
+            <th>Validation Fold</th>
+
+        </tr>
+
+        <tr>
+
+            <td>1</td>
+
+            <td>2, 3, 4, 5</td>
+
+            <td>1</td>
+
+        </tr>
+
+        <tr>
+
+            <td>2</td>
+
+            <td>1, 3, 4, 5</td>
+
+            <td>2</td>
+
+        </tr>
+
+        <tr>
+
+            <td>3</td>
+
+            <td>1, 2, 4, 5</td>
+
+            <td>3</td>
+
+        </tr>
+
+        <tr>
+
+            <td>4</td>
+
+            <td>1, 2, 3, 5</td>
+
+            <td>4</td>
+
+        </tr>
+
+        <tr>
+
+            <td>5</td>
+
+            <td>1, 2, 3, 4</td>
+
+            <td>5</td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        8. Mathematical Formula
+    </h2>
+
+    <p>
+
+        Suppose the validation scores from the K folds are:
+
+    </p>
+
+    <pre><code>
+S₁, S₂, S₃, ..., Sₖ
+    </code></pre>
+
+    <p>
+
+        The average cross-validation score is:
+
+    </p>
+
+    <pre><code>
+Average Score = (S₁ + S₂ + ... + Sₖ) / K
+    </code></pre>
+
+
+    <h3>
+        Example
+    </h3>
+
+    <pre><code>
+Fold 1 = 0.88
+Fold 2 = 0.91
+Fold 3 = 0.86
+Fold 4 = 0.90
+Fold 5 = 0.89
+    </code></pre>
+
+    <p>
+
+        Therefore:
+
+    </p>
+
+    <pre><code>
+Average =
+(0.88 + 0.91 + 0.86 + 0.90 + 0.89) / 5
+
+Average = 0.888
+    </code></pre>
+
+    <p>
+
+        Therefore, the average validation accuracy is approximately:
+
+    </p>
+
+    <pre><code>
+88.8%
+    </code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        9. Standard Deviation of Performance
+    </h2>
+
+    <p>
+
+        We can also calculate the standard deviation of the fold scores.
+
+    </p>
+
+    <p>
+
+        This tells us how much the performance changes between folds.
+
+    </p>
+
+    <pre><code>
+Mean Score = Average of fold scores
+
+Standard Deviation =
+Measure of variation among fold scores
+    </code></pre>
+
+
+    <p>
+
+        For example:
+
+    </p>
+
+    <pre><code>
+Fold 1 = 90%
+Fold 2 = 91%
+Fold 3 = 89%
+Fold 4 = 90%
+Fold 5 = 90%
+
+Mean = 90%
+
+Standard deviation = small
+    </code></pre>
+
+    <p>
+
+        The model is producing relatively consistent results across
+        different validation folds.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        10. K-Fold and Overfitting
+    </h2>
+
+    <p>
+
+        K-Fold Cross-Validation can help us obtain a more robust estimate
+        of how a model performs across different subsets of the data.
+
+    </p>
+
+    <div class="diagram">
+
+        Dataset
+
+        <div>↓</div>
+
+        Fold 1 → Train + Validate
+
+        <div>↓</div>
+
+        Fold 2 → Train + Validate
+
+        <div>↓</div>
+
+        Fold 3 → Train + Validate
+
+        <div>↓</div>
+
+        Fold 4 → Train + Validate
+
+        <div>↓</div>
+
+        Fold 5 → Train + Validate
+
+        <div>↓</div>
+
+        Average Performance
+
+    </div>
+
+
+    <div class="important">
+
+        Cross-validation does not automatically prevent a neural network
+        from overfitting. It provides a better way to evaluate and compare
+        models using different training/validation partitions.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        11. Real-World Example
+    </h2>
+
+    <h3>
+        House Price Prediction
+    </h3>
+
+    <p>
+
+        Suppose we have a dataset containing 500 houses.
+
+    </p>
+
+    <p>
+
+        Features include:
+
+    </p>
+
+    <ul>
+
+        <li>Area</li>
+
+        <li>Number of bedrooms</li>
+
+        <li>Number of bathrooms</li>
+
+        <li>Location</li>
+
+        <li>Age of house</li>
+
+        <li>Parking spaces</li>
+
+    </ul>
+
+    <p>
+
+        Target:
+
+    </p>
+
+    <pre><code>
+House Price
+    </code></pre>
+
+
+    <p>
+
+        We want to build a neural network to predict house prices.
+
+    </p>
+
+    <p>
+
+        Instead of using only one validation split, we can use:
+
+    </p>
+
+    <pre><code>
+K = 5
+    </code></pre>
+
+
+    <p>
+
+        The model is trained five times.
+
+    </p>
+
+
+    <table>
+
+        <tr>
+
+            <th>Fold</th>
+
+            <th>Validation RMSE</th>
+
+        </tr>
+
+        <tr>
+            <td>Fold 1</td>
+            <td>18,500</td>
+        </tr>
+
+        <tr>
+            <td>Fold 2</td>
+            <td>20,100</td>
+        </tr>
+
+        <tr>
+            <td>Fold 3</td>
+            <td>17,900</td>
+        </tr>
+
+        <tr>
+            <td>Fold 4</td>
+            <td>19,200</td>
+        </tr>
+
+        <tr>
+            <td>Fold 5</td>
+            <td>18,800</td>
+        </tr>
+
+    </table>
+
+
+    <p>
+
+        We then calculate the average RMSE.
+
+    </p>
+
+    <p>
+
+        This provides an overall estimate based on all five validation
+        rounds rather than relying on one arbitrary validation split.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        12. Important Point for Neural Networks
+    </h2>
+
+    <p>
+
+        Traditional machine learning models can often use K-Fold
+        Cross-Validation relatively cheaply.
+
+    </p>
+
+    <p>
+
+        Neural networks can be much more computationally expensive because
+        the network needs to be trained again for every fold.
+
+    </p>
+
+    <pre><code>
+K = 5
+
+Model Training × 5
+    </code></pre>
+
+    <p>
+
+        If each training run takes one hour:
+
+    </p>
+
+    <pre><code>
+Approximately 5 training runs
+    </code></pre>
+
+    <p>
+
+        Therefore, K-Fold should be used thoughtfully for large and
+        computationally expensive neural networks.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        13. Required Python Libraries
+    </h2>
+
+    <pre><code>pip install torch
+pip install scikit-learn
+pip install pandas
+pip install numpy
+pip install matplotlib</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        14. Import Libraries
+    </h2>
+
+    <pre><code>import numpy as np
+import pandas as pd
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+from sklearn.datasets import load_diabetes
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import StandardScaler
+
+import matplotlib.pyplot as plt</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        15. Load a Real-World Dataset
+    </h2>
+
+    <p>
+
+        For this example, we will use the Diabetes regression dataset
+        available through scikit-learn.
+
+    </p>
+
+    <pre><code>data = load_diabetes()
+
+X = data.data
+y = data.target</code></pre>
+
+
+    <h3>
+        Check Dataset Shape
+    </h3>
+
+    <pre><code>print("X shape:", X.shape)
+print("y shape:", y.shape)</code></pre>
+
+
+    <p>
+
+        The features represent measurements used to predict a quantitative
+        diabetes disease progression target.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        16. Convert Data to NumPy Arrays
+    </h2>
+
+    <pre><code>X = np.asarray(X, dtype=np.float32)
+
+y = np.asarray(
+    y,
+    dtype=np.float32
+).reshape(-1, 1)</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        17. Define the Neural Network
+    </h2>
+
+    <pre><code>class RegressionModel(nn.Module):
+
+    def __init__(self, input_size):
+
+        super().__init__()
+
+        self.network = nn.Sequential(
+
+            nn.Linear(input_size, 64),
+
+            nn.ReLU(),
+
+            nn.Linear(64, 32),
+
+            nn.ReLU(),
+
+            nn.Linear(32, 1)
+        )
+
+
+    def forward(self, x):
+
+        return self.network(x)</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        18. Create K-Fold Object
+    </h2>
+
+    <pre><code>kfold = KFold(
+    n_splits=5,
+    shuffle=True,
+    random_state=42
+)</code></pre>
+
+
+    <p>
+
+        Here:
+
+    </p>
+
+    <ul>
+
+        <li><code>n_splits=5</code> means 5 folds.</li>
+
+        <li><code>shuffle=True</code> shuffles the samples before splitting.</li>
+
+        <li><code>random_state=42</code> makes the split reproducible.</li>
+
+    </ul>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        19. Prepare a List for Fold Scores
+    </h2>
+
+    <pre><code>fold_scores = []</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        20. Start the K-Fold Loop
+    </h2>
+
+    <pre><code>for fold, (train_idx, val_idx) in enumerate(
+    kfold.split(X)
+):
+
+    print()
+    print(
+        "=========================="
+    )
+
+    print(
+        f"Fold {fold + 1}"
+    )
+
+    print(
+        "=========================="
+    )</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        21. Extract Training and Validation Data
+    </h2>
+
+    <pre><code>X_train = X[train_idx]
+X_val = X[val_idx]
+
+y_train = y[train_idx]
+y_val = y[val_idx]</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        22. Feature Scaling
+    </h2>
+
+    <div class="warning">
+
+        Important:
+
+        The scaler should be fitted only on the training portion of each
+        fold. This prevents information from the validation fold from
+        influencing preprocessing.
+
+    </div>
+
+    <pre><code>scaler = StandardScaler()
+
+X_train = scaler.fit_transform(
+    X_train
+)
+
+X_val = scaler.transform(
+    X_val
+)</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        23. Convert to PyTorch Tensors
+    </h2>
+
+    <pre><code>X_train = torch.tensor(
+    X_train,
+    dtype=torch.float32
+)
+
+X_val = torch.tensor(
+    X_val,
+    dtype=torch.float32
+)
+
+y_train = torch.tensor(
+    y_train,
+    dtype=torch.float32
+)
+
+y_val = torch.tensor(
+    y_val,
+    dtype=torch.float32
+)</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        24. Create a New Model for Every Fold
+    </h2>
+
+    <pre><code>model = RegressionModel(
+    input_size=X.shape[1]
+)</code></pre>
+
+
+    <div class="important">
+
+        Very important:
+
+        <br><br>
+
+        We create a fresh neural network for each fold.
+
+        <br><br>
+
+        We do NOT continue training the model from the previous fold.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        25. Loss Function
+    </h2>
+
+    <pre><code>criterion = nn.MSELoss()</code></pre>
+
+
+    <p>
+
+        Mean Squared Error is commonly used for regression problems.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        26. Optimizer
+    </h2>
+
+    <pre><code>optimizer = optim.Adam(
+    model.parameters(),
+    lr=0.001
+)</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        27. Train the Neural Network
+    </h2>
+
+    <pre><code>epochs = 100
+
+for epoch in range(epochs):
+
+    model.train()
+
+    predictions = model(
+        X_train
+    )
+
+    loss = criterion(
+        predictions,
+        y_train
+    )
+
+    optimizer.zero_grad()
+
+    loss.backward()
+
+    optimizer.step()</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        28. Evaluate the Fold
+    </h2>
+
+    <pre><code>model.eval()
+
+with torch.no_grad():
+
+    predictions = model(
+        X_val
+    )
+
+    val_loss = criterion(
+        predictions,
+        y_val
+    )
+
+print(
+    f"Validation MSE: "
+    f"{val_loss.item():.4f}"
+)</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        29. Store the Fold Score
+    </h2>
+
+    <pre><code>fold_scores.append(
+    val_loss.item()
+)</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        30. Complete K-Fold Implementation
+    </h2>
+
+    <pre><code>import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+from sklearn.datasets import load_diabetes
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import StandardScaler
+
+
+# ============================================
+# 1. Load Dataset
+# ============================================
+
+data = load_diabetes()
+
+X = data.data.astype(
+    np.float32
+)
+
+y = data.target.astype(
+    np.float32
+).reshape(-1, 1)
+
+
+# ============================================
+# 2. Define Model
+# ============================================
+
+class RegressionModel(nn.Module):
+
+    def __init__(self, input_size):
+
+        super().__init__()
+
+        self.network = nn.Sequential(
+
+            nn.Linear(input_size, 64),
+
+            nn.ReLU(),
+
+            nn.Linear(64, 32),
+
+            nn.ReLU(),
+
+            nn.Linear(32, 1)
+        )
+
+
+    def forward(self, x):
+
+        return self.network(x)
+
+
+# ============================================
+# 3. K-Fold
+# ============================================
+
+kfold = KFold(
+    n_splits=5,
+    shuffle=True,
+    random_state=42
+)
+
+
+# ============================================
+# 4. Store Scores
+# ============================================
+
+fold_scores = []
+
+
+# ============================================
+# 5. K-Fold Loop
+# ============================================
+
+for fold, (train_idx, val_idx) in enumerate(
+    kfold.split(X)
+):
+
+    print()
+    print(
+        "=============================="
+    )
+
+    print(
+        f"Fold {fold + 1}"
+    )
+
+    print(
+        "=============================="
+    )
+
+
+    # ----------------------------------------
+    # Split
+    # ----------------------------------------
+
+    X_train = X[train_idx]
+
+    X_val = X[val_idx]
+
+    y_train = y[train_idx]
+
+    y_val = y[val_idx]
+
+
+    # ----------------------------------------
+    # Scale
+    # ----------------------------------------
+
+    scaler = StandardScaler()
+
+    X_train = scaler.fit_transform(
+        X_train
+    )
+
+    X_val = scaler.transform(
+        X_val
+    )
+
+
+    # ----------------------------------------
+    # Tensor Conversion
+    # ----------------------------------------
+
+    X_train = torch.tensor(
+        X_train,
+        dtype=torch.float32
+    )
+
+    X_val = torch.tensor(
+        X_val,
+        dtype=torch.float32
+    )
+
+    y_train = torch.tensor(
+        y_train,
+        dtype=torch.float32
+    )
+
+    y_val = torch.tensor(
+        y_val,
+        dtype=torch.float32
+    )
+
+
+    # ----------------------------------------
+    # New Model
+    # ----------------------------------------
+
+    model = RegressionModel(
+        input_size=X.shape[1]
+    )
+
+
+    # ----------------------------------------
+    # Loss
+    # ----------------------------------------
+
+    criterion = nn.MSELoss()
+
+
+    # ----------------------------------------
+    # Optimizer
+    # ----------------------------------------
+
+    optimizer = optim.Adam(
+        model.parameters(),
+        lr=0.001
+    )
+
+
+    # ----------------------------------------
+    # Training
+    # ----------------------------------------
+
+    epochs = 100
+
+    for epoch in range(epochs):
+
+        model.train()
+
+        predictions = model(
+            X_train
+        )
+
+        loss = criterion(
+            predictions,
+            y_train
+        )
+
+        optimizer.zero_grad()
+
+        loss.backward()
+
+        optimizer.step()
+
+
+    # ----------------------------------------
+    # Validation
+    # ----------------------------------------
+
+    model.eval()
+
+    with torch.no_grad():
+
+        predictions = model(
+            X_val
+        )
+
+        val_loss = criterion(
+            predictions,
+            y_val
+        )
+
+
+    # ----------------------------------------
+    # Store Score
+    # ----------------------------------------
+
+    score = val_loss.item()
+
+    fold_scores.append(
+        score
+    )
+
+
+    print(
+        f"Validation MSE: {score:.4f}"
+    )
+
+
+# ============================================
+# 6. Final Results
+# ============================================
+
+print()
+print(
+    "Fold Scores:"
+)
+
+for i, score in enumerate(
+    fold_scores
+):
+
+    print(
+        f"Fold {i + 1}: "
+        f"{score:.4f}"
+    )
+
+
+mean_score = np.mean(
+    fold_scores
+)
+
+std_score = np.std(
+    fold_scores
+)
+
+
+print()
+
+print(
+    f"Mean MSE: {mean_score:.4f}"
+)
+
+print(
+    f"Standard Deviation: {std_score:.4f}"
+)</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        31. Understanding the Output
+    </h2>
+
+    <p>
+
+        You may see output similar to:
+
+    </p>
+
+    <pre><code>
+Fold 1
+Validation MSE: 3100
+
+Fold 2
+Validation MSE: 3400
+
+Fold 3
+Validation MSE: 2950
+
+Fold 4
+Validation MSE: 3250
+
+Fold 5
+Validation MSE: 3150
+
+Mean MSE: 3170
+Standard Deviation: 150
+    </code></pre>
+
+
+    <p>
+
+        The exact values will vary because the neural network is trained
+        from scratch and depends on the data split and optimization.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        32. Calculate RMSE
+    </h2>
+
+    <p>
+
+        MSE is useful, but RMSE is easier to interpret because it is in
+        the same units as the target variable.
+
+    </p>
+
+    <pre><code>
+RMSE = √MSE
+    </code></pre>
+
+
+    <p>
+
+        In Python:
+
+    </p>
+
+    <pre><code>rmse_scores = [
+    np.sqrt(score)
+    for score in fold_scores
+]
+
+mean_rmse = np.mean(
+    rmse_scores
+)
+
+print(
+    "Mean RMSE:",
+    mean_rmse
+)</code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        33. K-Fold Classification
+    </h2>
+
+    <p>
+
+        K-Fold can also be used for classification.
+
+    </p>
+
+    <p>
+
+        For classification, <strong>StratifiedKFold</strong> is often more
+        appropriate when class proportions need to be preserved across
+        folds.
+
+    </p>
+
+    <pre><code>from sklearn.model_selection import StratifiedKFold
+
+skf = StratifiedKFold(
+    n_splits=5,
+    shuffle=True,
+    random_state=42
+)</code></pre>
+
+
+    <div class="important">
+
+        For classification, especially with imbalanced classes,
+        stratified splitting can help maintain similar class proportions
+        across the folds.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        34. Example of Stratified K-Fold
+    </h2>
+
+    <p>
+
+        Suppose we have:
+
+    </p>
+
+    <pre><code>
+Class 0 = 800 samples
+
+Class 1 = 200 samples
+    </code></pre>
+
+    <p>
+
+        With ordinary K-Fold, class proportions can vary between folds.
+
+    </p>
+
+    <p>
+
+        Stratified K-Fold attempts to preserve the class distribution
+        in each fold.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        35. K-Fold vs Train-Test Split
+    </h2>
+
+    <table>
+
+        <tr>
+
+            <th>Feature</th>
+
+            <th>Train-Test Split</th>
+
+            <th>K-Fold</th>
+
+        </tr>
+
+        <tr>
+
+            <td>Number of Training Runs</td>
+
+            <td>Usually 1</td>
+
+            <td>K times</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Validation Sets</td>
+
+            <td>One</td>
+
+            <td>K different folds</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Computational Cost</td>
+
+            <td>Lower</td>
+
+            <td>Higher</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Use of Data</td>
+
+            <td>Some data reserved for validation</td>
+
+            <td>Every sample is used for validation once</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Evaluation Stability</td>
+
+            <td>Can depend strongly on one split</td>
+
+            <td>Usually more robust across splits</td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        36. Advantages of K-Fold Cross-Validation
+    </h2>
+
+    <ul>
+
+        <li>Uses different validation subsets.</li>
+
+        <li>Every sample is used for validation once.</li>
+
+        <li>Provides an average performance estimate.</li>
+
+        <li>Can help compare models.</li>
+
+        <li>Useful for relatively small datasets.</li>
+
+        <li>Can reveal variation in model performance across data splits.</li>
+
+    </ul>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        37. Disadvantages of K-Fold Cross-Validation
+    </h2>
+
+    <ul>
+
+        <li>Training takes longer.</li>
+
+        <li>Neural networks must be trained multiple times.</li>
+
+        <li>Computational cost increases with K.</li>
+
+        <li>It can be impractical for very large deep-learning models.</li>
+
+        <li>Care must be taken to prevent data leakage.</li>
+
+    </ul>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        38. Choosing K
+    </h2>
+
+    <table>
+
+        <tr>
+
+            <th>K</th>
+
+            <th>Typical Use</th>
+
+        </tr>
+
+        <tr>
+
+            <td>3</td>
+
+            <td>
+                Faster evaluation
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>5</td>
+
+            <td>
+                Common practical choice
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>10</td>
+
+            <td>
+                More validation rounds, higher computational cost
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <div class="note">
+
+        There is no universally optimal value of K. The choice depends on
+        dataset size, computational resources, and the purpose of the
+        evaluation.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        39. Data Leakage
+    </h2>
+
+    <p>
+
+        <strong>Data leakage</strong> occurs when information from the
+        validation/test data improperly influences the training process.
+
+    </p>
+
+    <h3>
+        Incorrect Scaling
+    </h3>
+
+    <pre><code>
+scaler.fit_transform(X)
+
+Then split into folds
+    </code></pre>
+
+    <p>
+
+        This allows information from all samples to influence the scaler.
+
+    </p>
+
+    <h3>
+        Correct Approach
+    </h3>
+
+    <pre><code>
+For each fold:
+
+X_train
+   ↓
+Fit scaler
+
+X_val
+   ↓
+Transform using training scaler
+    </code></pre>
+
+
+    <div class="warning">
+
+        Never fit preprocessing transformations using the validation
+        portion of the fold.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        40. K-Fold Workflow for Neural Networks
+    </h2>
+
+    <div class="diagram">
+
+        Dataset
+
+        <div>↓</div>
+
+        K-Fold Split
+
+        <div>↓</div>
+
+        ┌─────────────────────────┐
+        <br>
+        │ Fold 1 → Train + Validate │
+        <br>
+        │ Fold 2 → Train + Validate │
+        <br>
+        │ Fold 3 → Train + Validate │
+        <br>
+        │ Fold 4 → Train + Validate │
+        <br>
+        │ Fold 5 → Train + Validate │
+        <br>
+        └─────────────────────────┘
+
+        <div>↓</div>
+
+        Calculate Mean Score
+
+        <div>↓</div>
+
+        Calculate Standard Deviation
+
+        <div>↓</div>
+
+        Evaluate Model
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        41. Important Neural Network Rule
+    </h2>
+
+    <div class="success">
+
+        For each fold:
+
+        <ol>
+
+            <li>Create a new neural network.</li>
+
+            <li>Initialize new weights.</li>
+
+            <li>Train only on that fold's training data.</li>
+
+            <li>Validate on that fold's validation data.</li>
+
+            <li>Store the validation score.</li>
+
+        </ol>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        42. K-Fold Does Not Mean Training One Model K Times Continuously
+    </h2>
+
+    <p>
+
+        This is an important concept.
+
+    </p>
+
+    <p>
+
+        We do not normally do:
+
+    </p>
+
+    <pre><code>
+Train Model
+     ↓
+Fold 1
+     ↓
+Continue same model
+     ↓
+Fold 2
+     ↓
+Continue same model
+    </code></pre>
+
+    <p>
+
+        Instead:
+
+    </p>
+
+    <pre><code>
+Fold 1
+  ↓
+New Model
+  ↓
+Train
+  ↓
+Evaluate
+
+Fold 2
+  ↓
+New Model
+  ↓
+Train
+  ↓
+Evaluate
+
+Fold 3
+  ↓
+New Model
+  ↓
+Train
+  ↓
+Evaluate
+    </code></pre>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        43. K-Fold for Model Comparison
+    </h2>
+
+    <p>
+
+        Suppose we have two neural networks.
+
+    </p>
+
+    <pre><code>
+Model A
+Model B
+    </code></pre>
+
+    <p>
+
+        We can evaluate both using the same folds.
+
+    </p>
+
+    <table>
+
+        <tr>
+
+            <th>Fold</th>
+
+            <th>Model A MSE</th>
+
+            <th>Model B MSE</th>
+
+        </tr>
+
+        <tr>
+
+            <td>1</td>
+
+            <td>3100</td>
+
+            <td>2950</td>
+
+        </tr>
+
+        <tr>
+
+            <td>2</td>
+
+            <td>3200</td>
+
+            <td>3010</td>
+
+        </tr>
+
+        <tr>
+
+            <td>3</td>
+
+            <td>3000</td>
+
+            <td>2980</td>
+
+        </tr>
+
+        <tr>
+
+            <td>4</td>
+
+            <td>3300</td>
+
+            <td>3050</td>
+
+        </tr>
+
+        <tr>
+
+            <td>5</td>
+
+            <td>3150</td>
+
+            <td>3000</td>
+
+        </tr>
+
+    </table>
+
+    <p>
+
+        We can compare the mean performance of the two models.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        44. Cross-Validation and Hyperparameter Tuning
+    </h2>
+
+    <p>
+
+        K-Fold can also be used when comparing different hyperparameters.
+
+    </p>
+
+    <p>
+
+        Example:
+
+    </p>
+
+    <pre><code>
+Learning Rate:
+
+0.1
+0.01
+0.001
+0.0001
+    </code></pre>
+
+    <p>
+
+        Or:
+
+    </p>
+
+    <pre><code>
+Hidden Neurons:
+
+16
+32
+64
+128
+    </code></pre>
+
+    <p>
+
+        Each configuration can be evaluated using the same cross-validation
+        procedure.
+
+    </p>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        45. Complete Concept
+    </h2>
+
+    <div class="diagram">
+
+        Dataset
+
+        <div>↓</div>
+
+        Choose K
+
+        <div>↓</div>
+
+        Split Dataset into K Folds
+
+        <div>↓</div>
+
+        For Each Fold
+
+        <div>↓</div>
+
+        Create New Neural Network
+
+        <div>↓</div>
+
+        Train
+
+        <div>↓</div>
+
+        Validate
+
+        <div>↓</div>
+
+        Save Score
+
+        <div>↓</div>
+
+        Repeat K Times
+
+        <div>↓</div>
+
+        Mean Score
+
+        <div>↓</div>
+
+        Standard Deviation
+
+        <div>↓</div>
+
+        Final Evaluation
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        46. Student Practical Exercise
+    </h2>
+
+    <h3>
+        Task: Implement K-Fold Cross-Validation
+    </h3>
+
+    <ol>
+
+        <li>Load the Diabetes dataset.</li>
+
+        <li>Separate X and y.</li>
+
+        <li>Create a 5-fold cross-validation object.</li>
+
+        <li>Build a PyTorch regression neural network.</li>
+
+        <li>Create a new model for every fold.</li>
+
+        <li>Scale the training and validation data correctly.</li>
+
+        <li>Train each model.</li>
+
+        <li>Calculate validation MSE.</li>
+
+        <li>Calculate validation RMSE.</li>
+
+        <li>Calculate the mean score.</li>
+
+        <li>Calculate standard deviation.</li>
+
+        <li>Explain the results.</li>
+
+    </ol>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        47. Student Assignment
+    </h2>
+
+    <h3>
+        Compare Different K Values
+    </h3>
+
+    <p>
+
+        Students should evaluate the same neural network using:
+
+    </p>
+
+    <pre><code>
+K = 3
+K = 5
+K = 10
+    </code></pre>
+
+    <p>
+
+        Record:
+
+    </p>
+
+    <table>
+
+        <tr>
+
+            <th>K</th>
+
+            <th>Mean MSE</th>
+
+            <th>Mean RMSE</th>
+
+            <th>Std Dev</th>
+
+            <th>Training Time</th>
+
+        </tr>
+
+        <tr>
+
+            <td>3</td>
+
+            <td>_____</td>
+
+            <td>_____</td>
+
+            <td>_____</td>
+
+            <td>_____</td>
+
+        </tr>
+
+        <tr>
+
+            <td>5</td>
+
+            <td>_____</td>
+
+            <td>_____</td>
+
+            <td>_____</td>
+
+            <td>_____</td>
+
+        </tr>
+
+        <tr>
+
+            <td>10</td>
+
+            <td>_____</td>
+
+            <td>_____</td>
+
+            <td>_____</td>
+
+            <td>_____</td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        48. Exam Questions
+    </h2>
+
+    <div class="question">
+
+        <strong>Q1.</strong>
+        What is cross-validation?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q2.</strong>
+        What does K represent in K-Fold Cross-Validation?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q3.</strong>
+        Explain 5-Fold Cross-Validation.
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q4.</strong>
+        Why is a new neural network created for each fold?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q5.</strong>
+        What is the difference between K-Fold and train-test split?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q6.</strong>
+        What is Stratified K-Fold?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q7.</strong>
+        Why should preprocessing be fitted only on the training portion
+        of each fold?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q8.</strong>
+        What is the advantage of calculating the mean cross-validation
+        score?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q9.</strong>
+        What is one disadvantage of K-Fold Cross-Validation for neural
+        networks?
+
+    </div>
+
+    <div class="question">
+
+        <strong>Q10.</strong>
+        What is the difference between K-Fold and Stratified K-Fold?
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        49. Quick Revision
+    </h2>
+
+    <div class="success">
+
+        <p>
+
+            <strong>K-Fold Cross-Validation</strong> divides the dataset
+            into K folds.
+
+        </p>
+
+        <p>
+
+            Each fold is used as validation data exactly once.
+
+        </p>
+
+        <p>
+
+            The remaining folds are used for training.
+
+        </p>
+
+        <p>
+
+            The process is repeated K times.
+
+        </p>
+
+        <p>
+
+            Finally, the validation scores are averaged.
+
+        </p>
+
+        <pre><code>
+Dataset
+   ↓
+K Folds
+   ↓
+Train + Validate
+   ↓
+Repeat K Times
+   ↓
+Mean Score
+   ↓
+Standard Deviation
+   ↓
+Model Evaluation
+        </code></pre>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <h2>
+        50. Final Summary
+    </h2>
+
+    <div class="note">
+
+        <p>
+
+            <strong>Cross-validation</strong> is a technique for estimating
+            how a model performs on unseen data.
+
+        </p>
+
+        <p>
+
+            <strong>K-Fold Cross-Validation</strong> divides the dataset
+            into K folds.
+
+        </p>
+
+        <p>
+
+            Each fold becomes the validation set once.
+
+        </p>
+
+        <p>
+
+            The model is trained from scratch for each fold.
+
+        </p>
+
+        <p>
+
+            The validation scores are then combined, commonly using their
+            mean and standard deviation.
+
+        </p>
+
+        <p>
+
+            For classification, <strong>StratifiedKFold</strong> can be
+            useful when maintaining class proportions across folds is
+            important.
+
+        </p>
+
+        <p>
+
+            K-Fold provides a more extensive evaluation than relying on
+            one arbitrary train-validation split, but it requires
+            additional computation.
+
+        </p>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+
+    <div class="footer">
+
+        K-Fold Cross-Validation in Neural Networks
+        <br>
+        Machine Learning / Deep Learning Teaching Notes
+
+    </div>
+
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Regression-Based Neural Network with PyTorch</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+            background: white;
+            padding: 40px 55px;
+        }
+
+        h1 {
+            color: #1f2937;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            margin-top: 45px;
+            color: #1d4ed8;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+        }
+
+        h3 {
+            margin-top: 30px;
+            color: #374151;
+        }
+
+        p {
+            font-size: 16px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #555;
+        }
+
+        .note {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .important {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fef2f2;
+            border-left: 5px solid #ef4444;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        code {
+            font-family: Consolas, Monaco, monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 11px;
+            border: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .architecture {
+            background: #f8fafc;
+            border: 1px solid #ddd;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 17px;
+            line-height: 2;
+        }
+
+        .step {
+            display: inline-block;
+            background: #dbeafe;
+            padding: 8px 14px;
+            border-radius: 6px;
+            margin: 4px;
+        }
+
+        .arrow {
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .question {
+            background: #f3f4f6;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 6px;
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding: 25px;
+            text-align: center;
+            background: #1f2937;
+            color: white;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                width: 100%;
+                padding: 20px;
+            }
+
+            pre {
+                white-space: pre-wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Regression-Based Neural Network Using PyTorch</h1>
+
+    <p class="subtitle">
+        Complete Teaching Notes, Step-by-Step Implementation and Real-World Example
+    </p>
+
+    <div class="note">
+        <strong>Learning Objective:</strong>
+        By the end of this lesson, students will understand regression using neural
+        networks and will be able to build, train, evaluate, save and use a
+        regression neural network using PyTorch.
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>1. What is Regression?</h2>
+
+    <p>
+        Regression is a type of supervised machine learning problem where the
+        model predicts a continuous numerical value.
+    </p>
+
+    <p>
+        Unlike classification, where the output is a category, regression
+        produces a numerical value.
+    </p>
+
+    <table>
+        <tr>
+            <th>Problem</th>
+            <th>Input</th>
+            <th>Output</th>
+        </tr>
+
+        <tr>
+            <td>House Price Prediction</td>
+            <td>Area, bedrooms, bathrooms</td>
+            <td>Price</td>
+        </tr>
+
+        <tr>
+            <td>Salary Prediction</td>
+            <td>Experience, education</td>
+            <td>Salary</td>
+        </tr>
+
+        <tr>
+            <td>Temperature Prediction</td>
+            <td>Humidity, pressure, wind</td>
+            <td>Temperature</td>
+        </tr>
+
+        <tr>
+            <td>Electricity Consumption</td>
+            <td>Previous usage, temperature</td>
+            <td>Energy consumption</td>
+        </tr>
+
+        <tr>
+            <td>Car Price Prediction</td>
+            <td>Mileage, age, engine size</td>
+            <td>Car price</td>
+        </tr>
+    </table>
+
+
+    <!-- ===================================================== -->
+    <h2>2. Regression vs Classification</h2>
+
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>Classification</th>
+            <th>Regression</th>
+        </tr>
+
+        <tr>
+            <td>Output</td>
+            <td>Class/category</td>
+            <td>Continuous number</td>
+        </tr>
+
+        <tr>
+            <td>Example</td>
+            <td>Cat / Dog</td>
+            <td>House price</td>
+        </tr>
+
+        <tr>
+            <td>Common Loss</td>
+            <td>Cross Entropy</td>
+            <td>MSE</td>
+        </tr>
+
+        <tr>
+            <td>Common Metrics</td>
+            <td>Accuracy, Precision, Recall</td>
+            <td>MAE, MSE, RMSE</td>
+        </tr>
+
+        <tr>
+            <td>Output Neurons</td>
+            <td>Depends on classes</td>
+            <td>Usually 1</td>
+        </tr>
+    </table>
+
+
+    <!-- ===================================================== -->
+    <h2>3. What is a Regression Neural Network?</h2>
+
+    <p>
+        A regression neural network is an artificial neural network designed
+        to predict a continuous numerical value.
+    </p>
+
+    <div class="architecture">
+
+        <div class="step">Input Features</div>
+        <div class="arrow">↓</div>
+
+        <div class="step">Input Layer</div>
+        <div class="arrow">↓</div>
+
+        <div class="step">Hidden Layer</div>
+        <div class="arrow">↓</div>
+
+        <div class="step">Hidden Layer</div>
+        <div class="arrow">↓</div>
+
+        <div class="step">Output Layer</div>
+        <div class="arrow">↓</div>
+
+        <div class="step">Continuous Numerical Value</div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>4. Real-World Example: House Price Prediction</h2>
+
+    <p>
+        In this lesson, we will build a neural network that predicts the price
+        of a house.
+    </p>
+
+    <p>
+        Our input features will be:
+    </p>
+
+    <ul>
+        <li>Area</li>
+        <li>Number of bedrooms</li>
+        <li>Number of bathrooms</li>
+        <li>House age</li>
+    </ul>
+
+    <p>
+        Our target/output will be:
+    </p>
+
+    <strong>House Price</strong>
+
+    <div class="architecture">
+
+        Area<br>
+        Bedrooms<br>
+        Bathrooms<br>
+        Age
+
+        <div class="arrow">↓</div>
+
+        Neural Network
+
+        <div class="arrow">↓</div>
+
+        House Price
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>5. Example Dataset</h2>
+
+    <table>
+        <tr>
+            <th>Area</th>
+            <th>Bedrooms</th>
+            <th>Bathrooms</th>
+            <th>Age</th>
+            <th>Price</th>
+        </tr>
+
+        <tr>
+            <td>1000</td>
+            <td>2</td>
+            <td>1</td>
+            <td>20</td>
+            <td>120000</td>
+        </tr>
+
+        <tr>
+            <td>1500</td>
+            <td>3</td>
+            <td>2</td>
+            <td>15</td>
+            <td>175000</td>
+        </tr>
+
+        <tr>
+            <td>2000</td>
+            <td>4</td>
+            <td>3</td>
+            <td>10</td>
+            <td>250000</td>
+        </tr>
+
+        <tr>
+            <td>2500</td>
+            <td>4</td>
+            <td>3</td>
+            <td>6</td>
+            <td>315000</td>
+        </tr>
+
+        <tr>
+            <td>3000</td>
+            <td>5</td>
+            <td>4</td>
+            <td>3</td>
+            <td>390000</td>
+        </tr>
+    </table>
+
+
+    <!-- ===================================================== -->
+    <h2>6. Mathematical Concept</h2>
+
+    <p>
+        A simple linear model can be represented as:
+    </p>
+
+    <pre><code>y = wx + b</code></pre>
+
+    <p>
+        For multiple input features:
+    </p>
+
+    <pre><code>z = w1x1 + w2x2 + w3x3 + ... + b</code></pre>
+
+    <p>
+        A neural network contains multiple neurons and multiple layers.
+    </p>
+
+    <div class="architecture">
+
+        Input
+
+        <div class="arrow">→</div>
+
+        Linear Layer
+
+        <div class="arrow">→</div>
+
+        ReLU
+
+        <div class="arrow">→</div>
+
+        Linear Layer
+
+        <div class="arrow">→</div>
+
+        ReLU
+
+        <div class="arrow">→</div>
+
+        Linear Layer
+
+        <div class="arrow">→</div>
+
+        Prediction
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>7. Neural Network Architecture</h2>
+
+    <p>
+        Our network will have four input features.
+    </p>
+
+    <pre><code>
+Input Layer
+    4 neurons
+       ↓
+Linear(4 → 16)
+       ↓
+ReLU
+       ↓
+Linear(16 → 16)
+       ↓
+ReLU
+       ↓
+Linear(16 → 1)
+       ↓
+House Price
+    </code></pre>
+
+    <h3>Why 4 input neurons?</h3>
+
+    <p>
+        Because our dataset has four input features:
+    </p>
+
+    <ol>
+        <li>Area</li>
+        <li>Bedrooms</li>
+        <li>Bathrooms</li>
+        <li>Age</li>
+    </ol>
+
+    <h3>Why one output neuron?</h3>
+
+    <p>
+        Because we are predicting one numerical value:
+    </p>
+
+    <pre><code>House Price</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>8. Why No Activation Function at the Output?</h2>
+
+    <p>
+        For ordinary regression, the final layer normally does not use an
+        activation function.
+    </p>
+
+    <pre><code>nn.Linear(16, 1)</code></pre>
+
+    <p>
+        This allows the network to produce continuous numerical values.
+    </p>
+
+    <div class="important">
+        <strong>Important:</strong>
+        ReLU is normally useful in the hidden layers, while the final
+        regression output is usually left without an activation function.
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>9. Complete Regression Pipeline</h2>
+
+    <pre><code>
+1. Import libraries
+        ↓
+2. Create / Load dataset
+        ↓
+3. Explore dataset
+        ↓
+4. Separate X and y
+        ↓
+5. Train/Test Split
+        ↓
+6. Feature Scaling
+        ↓
+7. Convert data to tensors
+        ↓
+8. Create neural network
+        ↓
+9. Define loss function
+        ↓
+10. Define optimizer
+        ↓
+11. Train model
+        ↓
+12. Evaluate model
+        ↓
+13. Calculate MAE / RMSE
+        ↓
+14. Make predictions
+        ↓
+15. Save model
+        ↓
+16. Load model
+    </code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>10. Install Required Libraries</h2>
+
+    <pre><code>pip install torch pandas numpy scikit-learn matplotlib</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>11. Step 1 — Import Libraries</h2>
+
+    <pre><code>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+import pandas as pd
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+from sklearn.metrics import (
+    mean_absolute_error,
+    mean_squared_error
+)</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>12. Step 2 — Create Dataset</h2>
+
+    <p>
+        For teaching purposes, we will create a small house-price dataset.
+    </p>
+
+    <pre><code>data = {
+    "area": [
+        1000, 1200, 1500, 1800, 2000,
+        2200, 2500, 2800, 3000, 3500
+    ],
+
+    "bedrooms": [
+        2, 2, 3, 3, 4,
+        4, 4, 5, 5, 6
+    ],
+
+    "bathrooms": [
+        1, 2, 2, 2, 3,
+        3, 3, 4, 4, 5
+    ],
+
+    "age": [
+        20, 18, 15, 12, 10,
+        8, 6, 5, 3, 2
+    ],
+
+    "price": [
+        120000, 140000, 175000, 210000, 250000,
+        275000, 315000, 350000, 390000, 450000
+    ]
+}
+
+df = pd.DataFrame(data)
+
+print(df)</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>13. Step 3 — Explore the Dataset</h2>
+
+    <h3>Display first rows</h3>
+
+    <pre><code>print(df.head())</code></pre>
+
+    <h3>Check shape</h3>
+
+    <pre><code>print(df.shape)</code></pre>
+
+    <h3>Check information</h3>
+
+    <pre><code>print(df.info())</code></pre>
+
+    <h3>Statistical summary</h3>
+
+    <pre><code>print(df.describe())</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>14. Step 4 — Separate Input and Target</h2>
+
+    <p>
+        The input features are stored in <strong>X</strong>.
+        The target is stored in <strong>y</strong>.
+    </p>
+
+    <pre><code>X = df[
+    [
+        "area",
+        "bedrooms",
+        "bathrooms",
+        "age"
+    ]
+]
+
+y = df["price"]</code></pre>
+
+    <div class="success">
+        <strong>X = Input Features</strong><br>
+        <strong>y = Target / Output</strong>
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>15. Step 5 — Train/Test Split</h2>
+
+    <p>
+        We split the dataset into training and testing data.
+    </p>
+
+    <pre><code>X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)</code></pre>
+
+    <p>
+        In this example:
+    </p>
+
+    <pre><code>80% → Training
+20% → Testing</code></pre>
+
+    <div class="note">
+        The training data is used to learn the patterns.
+        The testing data is used to evaluate the model on unseen data.
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>16. Step 6 — Feature Scaling</h2>
+
+    <p>
+        Our features have very different numerical ranges.
+    </p>
+
+    <pre><code>
+Area       → 1000 - 3500
+Bedrooms   → 2 - 6
+Bathrooms  → 1 - 5
+Age        → 2 - 20
+    </code></pre>
+
+    <p>
+        We can standardize the features using <code>StandardScaler</code>.
+    </p>
+
+    <pre><code>scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+
+X_test = scaler.transform(X_test)</code></pre>
+
+    <div class="warning">
+        <strong>Important:</strong>
+        Fit the scaler only on training data. Use transform on test and
+        new data.
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>17. Step 7 — Convert Data to PyTorch Tensors</h2>
+
+    <pre><code>X_train = torch.tensor(
+    X_train,
+    dtype=torch.float32
+)
+
+X_test = torch.tensor(
+    X_test,
+    dtype=torch.float32
+)
+
+y_train = torch.tensor(
+    y_train.values,
+    dtype=torch.float32
+).view(-1, 1)
+
+y_test = torch.tensor(
+    y_test.values,
+    dtype=torch.float32
+).view(-1, 1)</code></pre>
+
+    <h3>Why float32?</h3>
+
+    <p>
+        PyTorch neural networks commonly operate using floating-point tensors,
+        especially <code>torch.float32</code>.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <h2>18. Step 8 — Create the Neural Network</h2>
+
+    <pre><code>class HousePriceModel(nn.Module):
+
+    def __init__(self):
+        super().__init__()
+
+        self.network = nn.Sequential(
+
+            nn.Linear(4, 16),
+            nn.ReLU(),
+
+            nn.Linear(16, 16),
+            nn.ReLU(),
+
+            nn.Linear(16, 1)
+        )
+
+    def forward(self, x):
+        return self.network(x)</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>19. Understanding nn.Linear</h2>
+
+    <p>
+        Consider:
+    </p>
+
+    <pre><code>nn.Linear(4, 16)</code></pre>
+
+    <p>
+        It means:
+    </p>
+
+    <pre><code>
+4 input neurons
+      ↓
+16 output neurons
+    </code></pre>
+
+    <p>
+        The next layer:
+    </p>
+
+    <pre><code>nn.Linear(16, 16)</code></pre>
+
+    <p>
+        means:
+    </p>
+
+    <pre><code>
+16 input neurons
+      ↓
+16 output neurons
+    </code></pre>
+
+    <p>
+        Finally:
+    </p>
+
+    <pre><code>nn.Linear(16, 1)</code></pre>
+
+    <p>
+        means:
+    </p>
+
+    <pre><code>
+16 input neurons
+      ↓
+1 output neuron
+    </code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>20. Step 9 — Create Model</h2>
+
+    <pre><code>model = HousePriceModel()
+
+print(model)</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>21. Step 10 — Loss Function</h2>
+
+    <p>
+        For regression we commonly use Mean Squared Error.
+    </p>
+
+    <pre><code>criterion = nn.MSELoss()</code></pre>
+
+    <p>
+        MSE is mathematically represented as:
+    </p>
+
+    <pre><code>
+MSE = (1/n) × Σ(y - ŷ)²
+    </code></pre>
+
+    <p>
+        Where:
+    </p>
+
+    <ul>
+        <li><strong>y</strong> = actual value</li>
+        <li><strong>ŷ</strong> = predicted value</li>
+        <li><strong>n</strong> = number of samples</li>
+    </ul>
+
+
+    <!-- ===================================================== -->
+    <h2>22. Step 11 — Optimizer</h2>
+
+    <p>
+        We will use the Adam optimizer.
+    </p>
+
+    <pre><code>optimizer = optim.Adam(
+    model.parameters(),
+    lr=0.001
+)</code></pre>
+
+    <p>
+        The learning rate controls how much the model changes its weights
+        during training.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <h2>23. Step 12 — Train the Neural Network</h2>
+
+    <pre><code>epochs = 1000
+
+losses = []
+
+for epoch in range(epochs):
+
+    # Forward pass
+    predictions = model(X_train)
+
+    # Calculate loss
+    loss = criterion(
+        predictions,
+        y_train
+    )
+
+    # Clear old gradients
+    optimizer.zero_grad()
+
+    # Backpropagation
+    loss.backward()
+
+    # Update weights
+    optimizer.step()
+
+    losses.append(
+        loss.item()
+    )
+
+    if (epoch + 1) % 100 == 0:
+
+        print(
+            f"Epoch [{epoch+1}/{epochs}], "
+            f"Loss: {loss.item():.2f}"
+        )</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>24. Understand the Training Loop</h2>
+
+    <div class="architecture">
+
+        Input Data
+        <div class="arrow">↓</div>
+
+        Forward Pass
+        <div class="arrow">↓</div>
+
+        Prediction
+        <div class="arrow">↓</div>
+
+        Calculate Loss
+        <div class="arrow">↓</div>
+
+        Backpropagation
+        <div class="arrow">↓</div>
+
+        Calculate Gradients
+        <div class="arrow">↓</div>
+
+        Update Weights
+        <div class="arrow">↓</div>
+
+        Repeat
+
+    </div>
+
+
+    <h3>Forward Pass</h3>
+
+    <pre><code>predictions = model(X_train)</code></pre>
+
+    <p>
+        The model generates predictions.
+    </p>
+
+
+    <h3>Calculate Loss</h3>
+
+    <pre><code>loss = criterion(
+    predictions,
+    y_train
+)</code></pre>
+
+
+    <h3>Clear Gradients</h3>
+
+    <pre><code>optimizer.zero_grad()</code></pre>
+
+
+    <h3>Backpropagation</h3>
+
+    <pre><code>loss.backward()</code></pre>
+
+
+    <h3>Update Weights</h3>
+
+    <pre><code>optimizer.step()</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>25. Step 13 — Plot Training Loss</h2>
+
+    <pre><code>plt.plot(losses)
+
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Training Loss")
+
+plt.show()</code></pre>
+
+    <p>
+        The loss should generally decrease during training.
+    </p>
+
+    <pre><code>
+Loss
+ │\
+ │ \
+ │  \
+ │   \
+ │    \____
+ │
+ └──────────────── Epoch
+    </code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>26. Step 14 — Evaluate the Model</h2>
+
+    <p>
+        First put the model into evaluation mode.
+    </p>
+
+    <pre><code>model.eval()</code></pre>
+
+    <p>
+        Then disable gradient calculations:
+    </p>
+
+    <pre><code>with torch.no_grad():
+
+    predictions = model(X_test)</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>27. Step 15 — MAE</h2>
+
+    <p>
+        Mean Absolute Error measures the average absolute difference between
+        actual and predicted values.
+    </p>
+
+    <pre><code>mae = mean_absolute_error(
+    actual,
+    predictions
+)
+
+print("MAE:", mae)</code></pre>
+
+    <p>
+        Formula:
+    </p>
+
+    <pre><code>
+MAE = (1/n) × Σ |y - ŷ|
+    </code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>28. Step 16 — RMSE</h2>
+
+    <p>
+        Root Mean Squared Error is another common regression metric.
+    </p>
+
+    <pre><code>rmse = np.sqrt(
+    mean_squared_error(
+        actual,
+        predictions
+    )
+)
+
+print("RMSE:", rmse)</code></pre>
+
+    <p>
+        RMSE gives relatively greater importance to large errors.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <h2>29. Step 17 — Compare Actual vs Predicted</h2>
+
+    <pre><code>for actual_price, predicted_price in zip(
+    actual,
+    predictions
+):
+
+    print(
+        f"Actual: {actual_price[0]:.2f}, "
+        f"Predicted: {predicted_price[0]:.2f}"
+    )</code></pre>
+
+    <p>
+        Example output could look like:
+    </p>
+
+    <pre><code>
+Actual: 250000.00
+Predicted: 243500.00
+
+Actual: 315000.00
+Predicted: 309200.00
+    </code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>30. Step 18 — Predict a New House</h2>
+
+    <p>
+        Suppose a new house has:
+    </p>
+
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>Value</th>
+        </tr>
+
+        <tr>
+            <td>Area</td>
+            <td>2300</td>
+        </tr>
+
+        <tr>
+            <td>Bedrooms</td>
+            <td>4</td>
+        </tr>
+
+        <tr>
+            <td>Bathrooms</td>
+            <td>3</td>
+        </tr>
+
+        <tr>
+            <td>Age</td>
+            <td>7</td>
+        </tr>
+    </table>
+
+    <pre><code>new_house = np.array([
+    [2300, 4, 3, 7]
+])</code></pre>
+
+    <p>
+        Scale the new input using the same scaler:
+    </p>
+
+    <pre><code>new_house_scaled = scaler.transform(
+    new_house
+)</code></pre>
+
+    <p>
+        Convert it into a tensor:
+    </p>
+
+    <pre><code>new_house_tensor = torch.tensor(
+    new_house_scaled,
+    dtype=torch.float32
+)</code></pre>
+
+    <p>
+        Make the prediction:
+    </p>
+
+    <pre><code>model.eval()
+
+with torch.no_grad():
+
+    predicted_price = model(
+        new_house_tensor
+    )
+
+print(
+    "Predicted Price:",
+    predicted_price.item()
+)</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>31. Step 19 — Save the Model</h2>
+
+    <pre><code>torch.save(
+    model.state_dict(),
+    "house_price_model.pth"
+)</code></pre>
+
+    <p>
+        The file <code>house_price_model.pth</code> contains the learned model
+        parameters.
+    </p>
+
+
+    <!-- ===================================================== -->
+    <h2>32. Step 20 — Load the Model</h2>
+
+    <pre><code>loaded_model = HousePriceModel()
+
+loaded_model.load_state_dict(
+    torch.load(
+        "house_price_model.pth",
+        weights_only=True
+    )
+)
+
+loaded_model.eval()</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>33. Important PyTorch Concepts</h2>
+
+    <table>
+        <tr>
+            <th>PyTorch Component</th>
+            <th>Purpose</th>
+        </tr>
+
+        <tr>
+            <td><code>nn.Module</code></td>
+            <td>Base class for neural networks</td>
+        </tr>
+
+        <tr>
+            <td><code>nn.Linear</code></td>
+            <td>Fully connected layer</td>
+        </tr>
+
+        <tr>
+            <td><code>nn.ReLU</code></td>
+            <td>Activation function</td>
+        </tr>
+
+        <tr>
+            <td><code>nn.MSELoss</code></td>
+            <td>Regression loss function</td>
+        </tr>
+
+        <tr>
+            <td><code>optim.Adam</code></td>
+            <td>Optimizer</td>
+        </tr>
+
+        <tr>
+            <td><code>loss.backward()</code></td>
+            <td>Backpropagation</td>
+        </tr>
+
+        <tr>
+            <td><code>optimizer.step()</code></td>
+            <td>Updates model weights</td>
+        </tr>
+
+        <tr>
+            <td><code>model.eval()</code></td>
+            <td>Evaluation/inference mode</td>
+        </tr>
+
+        <tr>
+            <td><code>torch.no_grad()</code></td>
+            <td>Disables gradient calculation during inference</td>
+        </tr>
+    </table>
+
+
+    <!-- ===================================================== -->
+    <h2>34. Most Important PyTorch Training Pattern</h2>
+
+    <p>
+        Students should understand this pattern very well:
+    </p>
+
+    <pre><code>for epoch in range(epochs):
+
+    # 1. Prediction
+    prediction = model(X)
+
+    # 2. Calculate error
+    loss = criterion(
+        prediction,
+        y
+    )
+
+    # 3. Remove old gradients
+    optimizer.zero_grad()
+
+    # 4. Backpropagation
+    loss.backward()
+
+    # 5. Update weights
+    optimizer.step()</code></pre>
+
+    <div class="important">
+        This is the core PyTorch training loop used in many neural-network
+        applications.
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>35. Complete Code — Copy and Run</h2>
+
+    <p>
+        The following is the complete implementation in one Python file.
+    </p>
+
+    <pre><code>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+import pandas as pd
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+from sklearn.metrics import (
+    mean_absolute_error,
+    mean_squared_error
+)
+
+
+# ==========================================
+# 1. Create Dataset
+# ==========================================
+
+data = {
+    "area": [
+        1000, 1200, 1500, 1800, 2000,
+        2200, 2500, 2800, 3000, 3500
+    ],
+
+    "bedrooms": [
+        2, 2, 3, 3, 4,
+        4, 4, 5, 5, 6
+    ],
+
+    "bathrooms": [
+        1, 2, 2, 2, 3,
+        3, 3, 4, 4, 5
+    ],
+
+    "age": [
+        20, 18, 15, 12, 10,
+        8, 6, 5, 3, 2
+    ],
+
+    "price": [
+        120000, 140000, 175000, 210000, 250000,
+        275000, 315000, 350000, 390000, 450000
+    ]
+}
+
+df = pd.DataFrame(data)
+
+
+# ==========================================
+# 2. Separate Features and Target
+# ==========================================
+
+X = df[
+    [
+        "area",
+        "bedrooms",
+        "bathrooms",
+        "age"
+    ]
+]
+
+y = df["price"]
+
+
+# ==========================================
+# 3. Train/Test Split
+# ==========================================
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+
+# ==========================================
+# 4. Feature Scaling
+# ==========================================
+
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+
+X_test = scaler.transform(X_test)
+
+
+# ==========================================
+# 5. Convert to PyTorch Tensors
+# ==========================================
+
+X_train = torch.tensor(
+    X_train,
+    dtype=torch.float32
+)
+
+X_test = torch.tensor(
+    X_test,
+    dtype=torch.float32
+)
+
+y_train = torch.tensor(
+    y_train.values,
+    dtype=torch.float32
+).view(-1, 1)
+
+y_test = torch.tensor(
+    y_test.values,
+    dtype=torch.float32
+).view(-1, 1)
+
+
+# ==========================================
+# 6. Define Neural Network
+# ==========================================
+
+class HousePriceModel(nn.Module):
+
+    def __init__(self):
+
+        super().__init__()
+
+        self.network = nn.Sequential(
+
+            nn.Linear(4, 16),
+
+            nn.ReLU(),
+
+            nn.Linear(16, 16),
+
+            nn.ReLU(),
+
+            nn.Linear(16, 1)
+        )
+
+    def forward(self, x):
+
+        return self.network(x)
+
+
+# ==========================================
+# 7. Create Model
+# ==========================================
+
+model = HousePriceModel()
+
+print(model)
+
+
+# ==========================================
+# 8. Loss Function
+# ==========================================
+
+criterion = nn.MSELoss()
+
+
+# ==========================================
+# 9. Optimizer
+# ==========================================
+
+optimizer = optim.Adam(
+    model.parameters(),
+    lr=0.001
+)
+
+
+# ==========================================
+# 10. Training
+# ==========================================
+
+epochs = 1000
+
+losses = []
+
+for epoch in range(epochs):
+
+    # Forward pass
+
+    predictions = model(X_train)
+
+    # Calculate loss
+
+    loss = criterion(
+        predictions,
+        y_train
+    )
+
+    # Clear old gradients
+
+    optimizer.zero_grad()
+
+    # Backpropagation
+
+    loss.backward()
+
+    # Update weights
+
+    optimizer.step()
+
+    # Store loss
+
+    losses.append(
+        loss.item()
+    )
+
+    if (epoch + 1) % 100 == 0:
+
+        print(
+            f"Epoch {epoch + 1}/{epochs} "
+            f"Loss: {loss.item():.2f}"
+        )
+
+
+# ==========================================
+# 11. Plot Training Loss
+# ==========================================
+
+plt.plot(losses)
+
+plt.xlabel("Epoch")
+
+plt.ylabel("MSE Loss")
+
+plt.title("Training Loss")
+
+plt.show()
+
+
+# ==========================================
+# 12. Evaluate Model
+# ==========================================
+
+model.eval()
+
+with torch.no_grad():
+
+    predictions = model(X_test)
+
+
+# ==========================================
+# 13. Convert Predictions
+# ==========================================
+
+predictions = predictions.numpy()
+
+actual = y_test.numpy()
+
+
+# ==========================================
+# 14. Calculate MAE
+# ==========================================
+
+mae = mean_absolute_error(
+    actual,
+    predictions
+)
+
+print("MAE:", mae)
+
+
+# ==========================================
+# 15. Calculate RMSE
+# ==========================================
+
+rmse = np.sqrt(
+    mean_squared_error(
+        actual,
+        predictions
+    )
+)
+
+print("RMSE:", rmse)
+
+
+# ==========================================
+# 16. Actual vs Predicted
+# ==========================================
+
+print("\nActual vs Predicted")
+
+for actual_price, predicted_price in zip(
+    actual,
+    predictions
+):
+
+    print(
+        f"Actual: {actual_price[0]:.2f} | "
+        f"Predicted: {predicted_price[0]:.2f}"
+    )
+
+
+# ==========================================
+# 17. Predict New House
+# ==========================================
+
+new_house = np.array([
+    [2300, 4, 3, 7]
+])
+
+
+# Scale new data
+
+new_house_scaled = scaler.transform(
+    new_house
+)
+
+
+# Convert to tensor
+
+new_house_tensor = torch.tensor(
+    new_house_scaled,
+    dtype=torch.float32
+)
+
+
+# Prediction
+
+model.eval()
+
+with torch.no_grad():
+
+    predicted_price = model(
+        new_house_tensor
+    )
+
+
+print(
+    "\nPredicted House Price:",
+    predicted_price.item()
+)
+
+
+# ==========================================
+# 18. Save Model
+# ==========================================
+
+torch.save(
+    model.state_dict(),
+    "house_price_model.pth"
+)
+
+print(
+    "\nModel saved successfully!"
+)</code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>36. Other Real-World Applications</h2>
+
+    <h3>1. Car Price Prediction</h3>
+
+    <pre><code>
+Car Age
+Mileage
+Engine Size
+Horsepower
+Number of Owners
+       ↓
+Neural Network
+       ↓
+Car Price
+    </code></pre>
+
+
+    <h3>2. Salary Prediction</h3>
+
+    <pre><code>
+Experience
+Education
+Skills
+Job Level
+       ↓
+Neural Network
+       ↓
+Salary
+    </code></pre>
+
+
+    <h3>3. Electricity Consumption</h3>
+
+    <pre><code>
+Previous Usage
+Temperature
+Humidity
+Time
+Day
+       ↓
+Neural Network
+       ↓
+Electricity Consumption
+    </code></pre>
+
+
+    <h3>4. Industrial Prediction</h3>
+
+    <pre><code>
+Temperature
+Pressure
+RPM
+Vibration
+Machine Load
+       ↓
+Neural Network
+       ↓
+Energy Consumption
+    </code></pre>
+
+
+    <h3>5. Weather Prediction</h3>
+
+    <pre><code>
+Humidity
+Pressure
+Wind Speed
+Previous Temperature
+       ↓
+Neural Network
+       ↓
+Future Temperature
+    </code></pre>
+
+
+    <!-- ===================================================== -->
+    <h2>37. Student Assignment</h2>
+
+    <h3>Used Car Price Prediction Using PyTorch</h3>
+
+    <p>
+        Build a regression neural network that predicts the price of a used car.
+    </p>
+
+    <h3>Input Features</h3>
+
+    <ul>
+        <li>Car Age</li>
+        <li>Mileage</li>
+        <li>Engine Size</li>
+        <li>Horsepower</li>
+        <li>Number of Owners</li>
+    </ul>
+
+    <h3>Target</h3>
+
+    <pre><code>Car Price</code></pre>
+
+    <h3>Requirements</h3>
+
+    <ol>
+        <li>Load the dataset.</li>
+        <li>Explore the dataset.</li>
+        <li>Check missing values.</li>
+        <li>Separate features and target.</li>
+        <li>Perform train/test split.</li>
+        <li>Perform feature scaling.</li>
+        <li>Convert data into PyTorch tensors.</li>
+        <li>Create a neural network using <code>nn.Module</code>.</li>
+        <li>Use at least two hidden layers.</li>
+        <li>Use ReLU activation.</li>
+        <li>Use MSE loss.</li>
+        <li>Use Adam optimizer.</li>
+        <li>Train the model.</li>
+        <li>Plot training loss.</li>
+        <li>Calculate MAE.</li>
+        <li>Calculate RMSE.</li>
+        <li>Predict the price of a new car.</li>
+        <li>Save the trained model.</li>
+    </ol>
+
+
+    <!-- ===================================================== -->
+    <h2>38. Recommended Assignment Architecture</h2>
+
+    <div class="architecture">
+
+        Input Features: 5
+
+        <div class="arrow">↓</div>
+
+        Linear(5 → 32)
+
+        <div class="arrow">↓</div>
+
+        ReLU
+
+        <div class="arrow">↓</div>
+
+        Linear(32 → 16)
+
+        <div class="arrow">↓</div>
+
+        ReLU
+
+        <div class="arrow">↓</div>
+
+        Linear(16 → 1)
+
+        <div class="arrow">↓</div>
+
+        Car Price
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>39. Questions for Students</h2>
+
+    <div class="question">
+        <strong>Q1.</strong> What is regression?
+    </div>
+
+    <div class="question">
+        <strong>Q2.</strong> What is the difference between regression and classification?
+    </div>
+
+    <div class="question">
+        <strong>Q3.</strong> Why does our regression network have one output neuron?
+    </div>
+
+    <div class="question">
+        <strong>Q4.</strong> Why do we use MSELoss?
+    </div>
+
+    <div class="question">
+        <strong>Q5.</strong> What does ReLU do?
+    </div>
+
+    <div class="question">
+        <strong>Q6.</strong> What is the purpose of the optimizer?
+    </div>
+
+    <div class="question">
+        <strong>Q7.</strong> What does <code>loss.backward()</code> do?
+    </div>
+
+    <div class="question">
+        <strong>Q8.</strong> What does <code>optimizer.step()</code> do?
+    </div>
+
+    <div class="question">
+        <strong>Q9.</strong> Why do we scale the input features?
+    </div>
+
+    <div class="question">
+        <strong>Q10.</strong> What is the difference between MAE and RMSE?
+    </div>
+
+
+    <!-- ===================================================== -->
+    <h2>40. Final Summary</h2>
+
+    <div class="success">
+
+        <p>
+            A regression neural network learns the relationship between input
+            features and a continuous numerical target.
+        </p>
+
+        <p>
+            The complete workflow is:
+        </p>
+
+        <pre><code>
+Dataset
+   ↓
+Data Preprocessing
+   ↓
+Train/Test Split
+   ↓
+Feature Scaling
+   ↓
+PyTorch Tensors
+   ↓
+Neural Network
+   ↓
+MSE Loss
+   ↓
+Adam Optimizer
+   ↓
+Forward Pass
+   ↓
+Backpropagation
+   ↓
+Weight Update
+   ↓
+Evaluation
+   ↓
+MAE / RMSE
+   ↓
+Prediction
+   ↓
+Save Model
+        </code></pre>
+
+        <p>
+            The most important PyTorch training pattern is:
+        </p>
+
+        <pre><code>prediction = model(X)
+
+loss = criterion(
+    prediction,
+    y
+)
+
+optimizer.zero_grad()
+
+loss.backward()
+
+optimizer.step()</code></pre>
+
+    </div>
+
+
+    <div class="footer">
+        Regression-Based Neural Network | PyTorch Teaching Notes
+    </div>
+
+</div>
+
+</body>
+</html>

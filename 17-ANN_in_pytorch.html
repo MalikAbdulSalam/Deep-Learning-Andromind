@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNN Image Classification Using PyTorch - CIFAR-10</title>
+
+```
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.7;
+        background-color: #f4f6f8;
+        color: #222;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1100px;
+        margin: 30px auto;
+        background: white;
+        padding: 35px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        color: #1f4e79;
+        border-bottom: 3px solid #1f4e79;
+        padding-bottom: 10px;
+    }
+
+    h2 {
+        color: #2f75b5;
+        margin-top: 35px;
+    }
+
+    h3 {
+        color: #444;
+    }
+
+    .info-box {
+        background: #eef6ff;
+        border-left: 5px solid #2f75b5;
+        padding: 15px;
+        margin: 20px 0;
+    }
+
+    .success-box {
+        background: #eef8ee;
+        border-left: 5px solid #4caf50;
+        padding: 15px;
+        margin: 20px 0;
+    }
+
+    .warning-box {
+        background: #fff8e5;
+        border-left: 5px solid #e6a700;
+        padding: 15px;
+        margin: 20px 0;
+    }
+
+    pre {
+        background: #f4f4f4;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 18px;
+        overflow-x: auto;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, "Courier New", monospace;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th, td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+    }
+
+    th {
+        background: #eaf2f8;
+    }
+
+    .workflow {
+        background: #fafafa;
+        border: 1px solid #ddd;
+        padding: 20px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .step {
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CNN Image Classification Using PyTorch</h1>
+
+<div class="info-box">
+    <strong>Project:</strong> CIFAR-10 Image Classification<br>
+    <strong>Framework:</strong> PyTorch<br>
+    <strong>Problem Type:</strong> Multi-Class Image Classification
+</div>
+
+<h2>1. What Problem Are We Solving?</h2>
+
+<p>
+In this project, we build a Convolutional Neural Network (CNN) that can look at
+an image and predict what category the image belongs to.
+</p>
+
+<p>For example:</p>
+
+<pre><code>
+Input Image
+     |
+     v
+    CNN
+     |
+     v
+Prediction
+     |
+     v
+    Cat
+</code></pre>
+
+<p>
+The CNN will classify images into 10 different categories.
+</p>
+
+<h2>2. Dataset Used: CIFAR-10</h2>
+
+<p>
+We will use the <strong>CIFAR-10</strong> dataset. PyTorch provides this dataset
+through the <code>torchvision</code> library.
+</p>
+
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+
+```
+<tr>
+    <td>Total Images</td>
+    <td>60,000</td>
+</tr>
+
+<tr>
+    <td>Training Images</td>
+    <td>50,000</td>
+</tr>
+
+<tr>
+    <td>Test Images</td>
+    <td>10,000</td>
+</tr>
+
+<tr>
+    <td>Image Size</td>
+    <td>32 × 32 pixels</td>
+</tr>
+
+<tr>
+    <td>Image Type</td>
+    <td>RGB / Color</td>
+</tr>
+
+<tr>
+    <td>Number of Classes</td>
+    <td>10</td>
+</tr>
+```
+
+</table>
+
+<h3>CIFAR-10 Classes</h3>
+
+<table>
+    <tr>
+        <th>Class ID</th>
+        <th>Class Name</th>
+    </tr>
+
+```
+<tr><td>0</td><td>Airplane</td></tr>
+<tr><td>1</td><td>Automobile</td></tr>
+<tr><td>2</td><td>Bird</td></tr>
+<tr><td>3</td><td>Cat</td></tr>
+<tr><td>4</td><td>Deer</td></tr>
+<tr><td>5</td><td>Dog</td></tr>
+<tr><td>6</td><td>Frog</td></tr>
+<tr><td>7</td><td>Horse</td></tr>
+<tr><td>8</td><td>Ship</td></tr>
+<tr><td>9</td><td>Truck</td></tr>
+```
+
+</table>
+
+<h2>3. Complete CNN Workflow</h2>
+
+<div class="workflow">
+
+```
+Download Dataset
+→
+Load Dataset
+→
+Preprocess Data
+→
+Build CNN
+→
+Train CNN
+→
+Evaluate CNN
+→
+Inference on Test Image
+```
+
+</div>
+
+<h2>4. Install Required Libraries</h2>
+
+<p>Open Command Prompt or Terminal and run:</p>
+
+<pre><code>pip install torch torchvision matplotlib</code></pre>
+
+<h2>5. Create Project Folder</h2>
+
+<pre><code>
+cnn_project/
+│
+├── cnn_cifar10.py
+│
+└── data/
+</code></pre>
+
+<p>
+The <code>data</code> folder will be created automatically when CIFAR-10 is downloaded.
+</p>
+
+<h2>6. Import Required Libraries</h2>
+
+<pre><code>
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+import matplotlib.pyplot as plt
+
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+</code></pre>
+
+<h2>7. Define Configuration</h2>
+
+<pre><code>
+BATCH_SIZE = 64
+EPOCHS = 10
+LEARNING_RATE = 0.001
+
+MODEL_PATH = "cnn_cifar10.pth"
+</code></pre>
+
+<h3>Explanation</h3>
+
+<table>
+    <tr>
+        <th>Parameter</th>
+        <th>Meaning</th>
+    </tr>
+
+```
+<tr>
+    <td>BATCH_SIZE</td>
+    <td>Number of images processed at one time</td>
+</tr>
+
+<tr>
+    <td>EPOCHS</td>
+    <td>Number of complete passes through the training dataset</td>
+</tr>
+
+<tr>
+    <td>LEARNING_RATE</td>
+    <td>Controls how much the model weights change during training</td>
+</tr>
+```
+
+</table>
+
+<h2>8. Select CPU or GPU</h2>
+
+<pre><code>
+device = torch.device(
+    "cuda" if torch.cuda.is_available() else "cpu"
+)
+
+print("Using device:", device)
+</code></pre>
+
+<p>
+If an NVIDIA GPU with CUDA support is available, PyTorch will use the GPU.
+Otherwise, it will use the CPU.
+</p>
+
+<h2>9. Data Preprocessing</h2>
+
+<pre><code>
+transform = transforms.Compose([
+
+    transforms.ToTensor(),
+
+    transforms.Normalize(
+        (0.5, 0.5, 0.5),
+        (0.5, 0.5, 0.5)
+    )
+])
+</code></pre>
+
+<h3>What does ToTensor() do?</h3>
+
+<p>
+It converts the image into a PyTorch tensor.
+</p>
+
+<pre><code>
+Image
+  |
+  v
+Tensor
+  |
+  v
+[C, H, W]
+</code></pre>
+
+<p>
+For CIFAR-10:
+</p>
+
+<pre><code>
+3 × 32 × 32
+</code></pre>
+
+<h3>What does Normalize() do?</h3>
+
+<p>
+Normalization scales the image values so that training can be more stable.
+</p>
+
+<h2>10. Download and Load CIFAR-10</h2>
+
+<h3>Training Dataset</h3>
+
+<pre><code>
+train_dataset = datasets.CIFAR10(
+    root="./data",
+    train=True,
+    download=True,
+    transform=transform
+)
+</code></pre>
+
+<h3>Test Dataset</h3>
+
+<pre><code>
+test_dataset = datasets.CIFAR10(
+    root="./data",
+    train=False,
+    download=True,
+    transform=transform
+)
+</code></pre>
+
+<p>
+The first time you run the program, PyTorch downloads CIFAR-10.
+If the dataset already exists, it does not need to download it again.
+</p>
+
+<h2>11. Create DataLoaders</h2>
+
+<pre><code>
+train_loader = DataLoader(
+    train_dataset,
+    batch_size=BATCH_SIZE,
+    shuffle=True
+)
+
+test_loader = DataLoader(
+    test_dataset,
+    batch_size=BATCH_SIZE,
+    shuffle=False
+)
+</code></pre>
+
+<h3>Why use DataLoader?</h3>
+
+<p>
+Instead of sending all 50,000 training images to the CNN at once,
+DataLoader sends them in batches.
+</p>
+
+<pre><code>
+50,000 Training Images
+
+       |
+       v
+
+Batch 1 = 64 images
+       |
+       v
+Batch 2 = 64 images
+       |
+       v
+Batch 3 = 64 images
+       |
+       v
+...
+</code></pre>
+
+<h2>12. Check Dataset Size</h2>
+
+<pre><code>
+print("Training images:", len(train_dataset))
+print("Testing images :", len(test_dataset))
+</code></pre>
+
+<p>Expected output:</p>
+
+<pre><code>
+Training images: 50000
+Testing images : 10000
+</code></pre>
+
+<h2>13. Display Sample Images</h2>
+
+<pre><code>
+classes = [
+    "airplane",
+    "automobile",
+    "bird",
+    "cat",
+    "deer",
+    "dog",
+    "frog",
+    "horse",
+    "ship",
+    "truck"
+]
+
+images, labels = next(iter(train_loader))
+
+plt.figure(figsize=(10, 5))
+
+for i in range(10):
+
+    image = images[i]
+
+    # Convert C,H,W to H,W,C
+    image = image.permute(1, 2, 0)
+
+    # Undo normalization
+    image = image / 2 + 0.5
+
+    plt.subplot(2, 5, i + 1)
+
+    plt.imshow(image)
+
+    plt.title(classes[labels[i]])
+
+    plt.axis("off")
+
+plt.tight_layout()
+
+plt.show()
+</code></pre>
+
+<h2>14. Implement the CNN</h2>
+
+<p>
+Now we create our Convolutional Neural Network.
+</p>
+
+<pre><code>
+class CNN(nn.Module):
+
+    def __init__(self):
+
+        super(CNN, self).__init__()
+
+        # First convolution layer
+        self.conv1 = nn.Conv2d(
+            in_channels=3,
+            out_channels=32,
+            kernel_size=3,
+            padding=1
+        )
+
+        # Second convolution layer
+        self.conv2 = nn.Conv2d(
+            in_channels=32,
+            out_channels=64,
+            kernel_size=3,
+            padding=1
+        )
+
+        # Max pooling
+        self.pool = nn.MaxPool2d(
+            kernel_size=2,
+            stride=2
+        )
+
+        # Fully connected layer
+        self.fc1 = nn.Linear(
+            64 * 8 * 8,
+            128
+        )
+
+        # Output layer
+        self.fc2 = nn.Linear(
+            128,
+            10
+        )
+
+
+    def forward(self, x):
+
+        # First convolution block
+        x = self.conv1(x)
+
+        x = torch.relu(x)
+
+        x = self.pool(x)
+
+
+        # Second convolution block
+        x = self.conv2(x)
+
+        x = torch.relu(x)
+
+        x = self.pool(x)
+
+
+        # Flatten
+        x = x.view(
+            x.size(0),
+            -1
+        )
+
+
+        # Fully connected layer
+        x = self.fc1(x)
+
+        x = torch.relu(x)
+
+
+        # Output layer
+        x = self.fc2(x)
+
+        return x
+</code></pre>
+
+<h2>15. Understand the CNN Architecture</h2>
+
+<p>The input CIFAR-10 image is:</p>
+
+<pre><code>
+32 × 32 × 3
+</code></pre>
+
+<p>After the first convolution:</p>
+
+<pre><code>
+32 × 32 × 32
+</code></pre>
+
+<p>After MaxPooling:</p>
+
+<pre><code>
+16 × 16 × 32
+</code></pre>
+
+<p>After the second convolution:</p>
+
+<pre><code>
+16 × 16 × 64
+</code></pre>
+
+<p>After the second MaxPooling:</p>
+
+<pre><code>
+8 × 8 × 64
+</code></pre>
+
+<p>Flatten:</p>
+
+<pre><code>
+8 × 8 × 64
+
+= 4096
+</code></pre>
+
+<p>Then:</p>
+
+<pre><code>
+4096
+  |
+  v
+128 neurons
+  |
+  v
+10 output neurons
+</code></pre>
+
+<h2>16. CNN Architecture Diagram</h2>
+
+<pre><code>
+Input Image
+32 × 32 × 3
+      |
+      v
+Conv2D
+32 Filters
+      |
+      v
+ReLU
+      |
+      v
+MaxPool
+16 × 16 × 32
+      |
+      v
+Conv2D
+64 Filters
+      |
+      v
+ReLU
+      |
+      v
+MaxPool
+8 × 8 × 64
+      |
+      v
+Flatten
+4096
+      |
+      v
+Linear
+128
+      |
+      v
+ReLU
+      |
+      v
+Linear
+10
+      |
+      v
+Prediction
+</code></pre>
+
+<h2>17. Create the Model</h2>
+
+<pre><code>
+model = CNN().to(device)
+
+print(model)
+</code></pre>
+
+<h2>18. Define Loss Function</h2>
+
+<pre><code>
+criterion = nn.CrossEntropyLoss()
+</code></pre>
+
+<p>
+We use CrossEntropyLoss because this is a multi-class classification problem.
+</p>
+
+<p>
+The model produces 10 output scores, and the correct class is compared with
+those scores to calculate the loss.
+</p>
+
+<h2>19. Define Optimizer</h2>
+
+<pre><code>
+optimizer = optim.Adam(
+    model.parameters(),
+    lr=LEARNING_RATE
+)
+</code></pre>
+
+<p>
+The optimizer updates the CNN's weights based on the gradients calculated
+during backpropagation.
+</p>
+
+<h2>20. Train the CNN</h2>
+
+<pre><code>
+for epoch in range(EPOCHS):
+
+    model.train()
+
+    running_loss = 0.0
+
+    for images, labels in train_loader:
+
+        # Move images and labels to device
+        images = images.to(device)
+        labels = labels.to(device)
+
+        # Clear old gradients
+        optimizer.zero_grad()
+
+        # Forward pass
+        outputs = model(images)
+
+        # Calculate loss
+        loss = criterion(
+            outputs,
+            labels
+        )
+
+        # Backpropagation
+        loss.backward()
+
+        # Update weights
+        optimizer.step()
+
+        running_loss += loss.item()
+
+
+    average_loss = (
+        running_loss /
+        len(train_loader)
+    )
+
+    print(
+        f"Epoch [{epoch + 1}/{EPOCHS}] "
+        f"Loss: {average_loss:.4f}"
+    )
+</code></pre>
+
+<h2>21. What Happens During Training?</h2>
+
+<pre><code>
+Training Image
+      |
+      v
+     CNN
+      |
+      v
+ Prediction
+      |
+      v
+ Calculate Loss
+      |
+      v
+ Backpropagation
+      |
+      v
+ Update Weights
+      |
+      v
+ Next Batch
+</code></pre>
+
+<p>
+This process is repeated for many batches and epochs.
+The CNN gradually learns features that help it distinguish between the
+different image classes.
+</p>
+
+<h2>22. Save the Trained Model</h2>
+
+<pre><code>
+torch.save(
+    model.state_dict(),
+    "cnn_cifar10.pth"
+)
+</code></pre>
+
+<p>
+The file <code>cnn_cifar10.pth</code> contains the trained model parameters.
+</p>
+
+<h2>23. CNN Evaluation</h2>
+
+<p>
+After training, we evaluate the CNN on the 10,000 test images.
+These images were not used to train the model.
+</p>
+
+<pre><code>
+model.eval()
+
+correct = 0
+total = 0
+
+with torch.no_grad():
+
+    for images, labels in test_loader:
+
+        images = images.to(device)
+        labels = labels.to(device)
+
+        outputs = model(images)
+
+        _, predicted = torch.max(
+            outputs,
+            1
+        )
+
+        total += labels.size(0)
+
+        correct += (
+            predicted == labels
+        ).sum().item()
+
+
+accuracy = (
+    100 * correct / total
+)
+
+print(
+    f"Test Accuracy: {accuracy:.2f}%"
+)
+</code></pre>
+
+<h2>24. What is Accuracy?</h2>
+
+<p>
+Accuracy tells us the percentage of test images that the CNN classified
+correctly.
+</p>
+
+<pre><code>
+Accuracy =
+Correct Predictions
+------------------- × 100
+Total Predictions
+</code></pre>
+
+<p>For example:</p>
+
+<pre><code>
+Correct predictions = 8,000
+Total images        = 10,000
+
+Accuracy = 80%
+</code></pre>
+
+<h2>25. Class-Wise Evaluation</h2>
+
+<p>
+We can also calculate accuracy separately for each class.
+</p>
+
+<pre><code>
+class_correct = [0] * 10
+class_total = [0] * 10
+
+model.eval()
+
+with torch.no_grad():
+
+    for images, labels in test_loader:
+
+        images = images.to(device)
+        labels = labels.to(device)
+
+        outputs = model(images)
+
+        _, predicted = torch.max(
+            outputs,
+            1
+        )
+
+        for i in range(len(labels)):
+
+            label = labels[i].item()
+
+            class_total[label] += 1
+
+            if predicted[i] == labels[i]:
+
+                class_correct[label] += 1
+
+
+print("Class-wise Accuracy:")
+
+for i in range(10):
+
+    class_accuracy = (
+        100 *
+        class_correct[i] /
+        class_total[i]
+    )
+
+    print(
+        f"{classes[i]:12s}: "
+        f"{class_accuracy:.2f}%"
+    )
+</code></pre>
+
+<h2>26. Inference on Test Data</h2>
+
+<p>
+Inference means using the trained CNN to make a prediction.
+</p>
+
+<p>
+We will select one image from the test dataset and ask the CNN to classify it.
+</p>
+
+<pre><code>
+model.eval()
+
+image, actual_label = test_dataset[0]
+
+# Add batch dimension
+input_image = image.unsqueeze(0)
+
+# Move image to CPU/GPU
+input_image = input_image.to(device)
+
+with torch.no_grad():
+
+    output = model(input_image)
+
+    predicted_label = torch.argmax(
+        output,
+        dim=1
+    ).item()
+
+
+print(
+    "Actual class   :",
+    classes[actual_label]
+)
+
+print(
+    "Predicted class:",
+    classes[predicted_label]
+)
+</code></pre>
+
+<h2>27. Display the Test Image</h2>
+
+<pre><code>
+image_display = image.permute(
+    1, 2, 0
+)
+
+# Undo normalization
+image_display = (
+    image_display / 2 + 0.5
+)
+
+plt.figure(figsize=(5, 5))
+
+plt.imshow(image_display)
+
+plt.title(
+    f"Actual: {classes[actual_label]} | "
+    f"Predicted: {classes[predicted_label]}"
+)
+
+plt.axis("off")
+
+plt.show()
+</code></pre>
+
+<h2>28. Example Inference</h2>
+
+<pre><code>
+Actual class   : cat
+Predicted class: cat
+</code></pre>
+
+<p>
+If the actual class and predicted class are the same, the CNN correctly
+classified the image.
+</p>
+
+<h2>29. Training, Evaluation and Inference</h2>
+
+<table>
+    <tr>
+        <th>Stage</th>
+        <th>Important Code</th>
+        <th>Purpose</th>
+    </tr>
+
+```
+<tr>
+    <td>Training</td>
+    <td><code>model.train()</code></td>
+    <td>Learn model parameters</td>
+</tr>
+
+<tr>
+    <td>Evaluation</td>
+    <td><code>model.eval()</code></td>
+    <td>Measure model performance</td>
+</tr>
+
+<tr>
+    <td>Inference</td>
+    <td><code>model.eval()</code> + <code>torch.no_grad()</code></td>
+    <td>Make predictions</td>
+</tr>
+```
+
+</table>
+
+<h2>30. Complete Python File</h2>
+
+<p>
+The following is the complete code that can be saved directly as
+<code>cnn_cifar10.py</code>.
+</p>
+
+<pre><code>
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import matplotlib.pyplot as plt
+
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+
+
+# ============================================================
+# CONFIGURATION
+# ============================================================
+
+BATCH_SIZE = 64
+EPOCHS = 10
+LEARNING_RATE = 0.001
+
+MODEL_PATH = "cnn_cifar10.pth"
+
+
+# ============================================================
+# CIFAR-10 CLASSES
+# ============================================================
+
+classes = [
+    "airplane",
+    "automobile",
+    "bird",
+    "cat",
+    "deer",
+    "dog",
+    "frog",
+    "horse",
+    "ship",
+    "truck"
+]
+
+
+# ============================================================
+# DEVICE
+# ============================================================
+
+device = torch.device(
+    "cuda" if torch.cuda.is_available() else "cpu"
+)
+
+print("Using device:", device)
+
+
+# ============================================================
+# TRANSFORM
+# ============================================================
+
+transform = transforms.Compose([
+
+    transforms.ToTensor(),
+
+    transforms.Normalize(
+        (0.5, 0.5, 0.5),
+        (0.5, 0.5, 0.5)
+    )
+])
+
+
+# ============================================================
+# DOWNLOAD DATASET
+# ============================================================
+
+train_dataset = datasets.CIFAR10(
+    root="./data",
+    train=True,
+    download=True,
+    transform=transform
+)
+
+test_dataset = datasets.CIFAR10(
+    root="./data",
+    train=False,
+    download=True,
+    transform=transform
+)
+
+
+# ============================================================
+# DATALOADERS
+# ============================================================
+
+train_loader = DataLoader(
+    train_dataset,
+    batch_size=BATCH_SIZE,
+    shuffle=True
+)
+
+test_loader = DataLoader(
+    test_dataset,
+    batch_size=BATCH_SIZE,
+    shuffle=False
+)
+
+
+print("Training images:", len(train_dataset))
+print("Testing images :", len(test_dataset))
+
+
+# ============================================================
+# CNN MODEL
+# ============================================================
+
+class CNN(nn.Module):
+
+    def __init__(self):
+
+        super(CNN, self).__init__()
+
+        self.conv1 = nn.Conv2d(
+            in_channels=3,
+            out_channels=32,
+            kernel_size=3,
+            padding=1
+        )
+
+        self.conv2 = nn.Conv2d(
+            in_channels=32,
+            out_channels=64,
+            kernel_size=3,
+            padding=1
+        )
+
+        self.pool = nn.MaxPool2d(
+            kernel_size=2,
+            stride=2
+        )
+
+        self.fc1 = nn.Linear(
+            64 * 8 * 8,
+            128
+        )
+
+        self.fc2 = nn.Linear(
+            128,
+            10
+        )
+
+
+    def forward(self, x):
+
+        x = self.conv1(x)
+        x = torch.relu(x)
+        x = self.pool(x)
+
+        x = self.conv2(x)
+        x = torch.relu(x)
+        x = self.pool(x)
+
+        x = x.view(
+            x.size(0),
+            -1
+        )
+
+        x = self.fc1(x)
+        x = torch.relu(x)
+
+        x = self.fc2(x)
+
+        return x
+
+
+# ============================================================
+# CREATE MODEL
+# ============================================================
+
+model = CNN().to(device)
+
+print(model)
+
+
+# ============================================================
+# LOSS FUNCTION
+# ============================================================
+
+criterion = nn.CrossEntropyLoss()
+
+
+# ============================================================
+# OPTIMIZER
+# ============================================================
+
+optimizer = optim.Adam(
+    model.parameters(),
+    lr=LEARNING_RATE
+)
+
+
+# ============================================================
+# TRAINING
+# ============================================================
+
+for epoch in range(EPOCHS):
+
+    model.train()
+
+    running_loss = 0.0
+
+    for images, labels in train_loader:
+
+        images = images.to(device)
+        labels = labels.to(device)
+
+        optimizer.zero_grad()
+
+        outputs = model(images)
+
+        loss = criterion(
+            outputs,
+            labels
+        )
+
+        loss.backward()
+
+        optimizer.step()
+
+        running_loss += loss.item()
+
+
+    average_loss = (
+        running_loss /
+        len(train_loader)
+    )
+
+    print(
+        f"Epoch [{epoch + 1}/{EPOCHS}] "
+        f"Loss: {average_loss:.4f}"
+    )
+
+
+# ============================================================
+# SAVE MODEL
+# ============================================================
+
+torch.save(
+    model.state_dict(),
+    MODEL_PATH
+)
+
+print(
+    "Model saved as:",
+    MODEL_PATH
+)
+
+
+# ============================================================
+# EVALUATION
+# ============================================================
+
+model.eval()
+
+correct = 0
+total = 0
+
+with torch.no_grad():
+
+    for images, labels in test_loader:
+
+        images = images.to(device)
+        labels = labels.to(device)
+
+        outputs = model(images)
+
+        _, predicted = torch.max(
+            outputs,
+            1
+        )
+
+        total += labels.size(0)
+
+        correct += (
+            predicted == labels
+        ).sum().item()
+
+
+accuracy = (
+    100 * correct / total
+)
+
+print(
+    f"Test Accuracy: {accuracy:.2f}%"
+)
+
+
+# ============================================================
+# INFERENCE
+# ============================================================
+
+model.eval()
+
+image, actual_label = test_dataset[0]
+
+input_image = image.unsqueeze(0)
+
+input_image = input_image.to(device)
+
+with torch.no_grad():
+
+    output = model(input_image)
+
+    predicted_label = torch.argmax(
+        output,
+        dim=1
+    ).item()
+
+
+print(
+    "Actual class   :",
+    classes[actual_label]
+)
+
+print(
+    "Predicted class:",
+    classes[predicted_label]
+)
+
+
+# ============================================================
+# DISPLAY RESULT
+# ============================================================
+
+image_display = image.permute(
+    1, 2, 0
+)
+
+image_display = (
+    image_display / 2 + 0.5
+)
+
+plt.imshow(image_display)
+
+plt.title(
+    f"Actual: {classes[actual_label]} | "
+    f"Predicted: {classes[predicted_label]}"
+)
+
+plt.axis("off")
+
+plt.show()
+</code></pre>
+
+<h2>31. Expected Project Structure</h2>
+
+<pre><code>
+cnn_project/
+│
+├── cnn_cifar10.py
+│
+├── cnn_cifar10.pth
+│
+└── data/
+    └── cifar-10-batches-py/
+</code></pre>
+
+<h2>32. Important Terms</h2>
+
+<table>
+    <tr>
+        <th>Term</th>
+        <th>Meaning</th>
+    </tr>
+
+```
+<tr>
+    <td>CNN</td>
+    <td>Neural network designed to process image data</td>
+</tr>
+
+<tr>
+    <td>Convolution</td>
+    <td>Extracts visual features from images</td>
+</tr>
+
+<tr>
+    <td>Filter</td>
+    <td>Learnable kernel used to detect features</td>
+</tr>
+
+<tr>
+    <td>ReLU</td>
+    <td>Activation function that introduces non-linearity</td>
+</tr>
+
+<tr>
+    <td>MaxPooling</td>
+    <td>Reduces spatial dimensions</td>
+</tr>
+
+<tr>
+    <td>Flatten</td>
+    <td>Converts feature maps into a vector</td>
+</tr>
+
+<tr>
+    <td>Linear Layer</td>
+    <td>Performs classification using extracted features</td>
+</tr>
+
+<tr>
+    <td>Loss Function</td>
+    <td>Measures prediction error</td>
+</tr>
+
+<tr>
+    <td>Optimizer</td>
+    <td>Updates model weights</td>
+</tr>
+
+<tr>
+    <td>Epoch</td>
+    <td>One complete pass through the training dataset</td>
+</tr>
+
+<tr>
+    <td>Accuracy</td>
+    <td>Percentage of correctly classified samples</td>
+</tr>
+
+<tr>
+    <td>Inference</td>
+    <td>Using a trained model to make predictions</td>
+</tr>
+```
+
+</table>
+
+<h2>33. Final Summary</h2>
+
+<div class="success-box">
+
+<strong>Our CNN project solves an image classification problem.</strong>
+
+<br><br>
+
+We use the CIFAR-10 dataset containing 60,000 RGB images belonging to
+10 different classes.
+
+<br><br>
+
+The complete process is:
+
+<pre><code>
+CIFAR-10 Dataset
+       |
+       v
+Download Dataset
+       |
+       v
+Load Dataset
+       |
+       v
+Preprocessing
+       |
+       v
+DataLoader
+       |
+       v
+CNN
+       |
+       v
+Training
+       |
+       v
+Trained Model
+       |
+       v
+Evaluation
+       |
+       v
+Test Accuracy
+       |
+       v
+Inference
+       |
+       v
+Predicted Class
+</code></pre>
+
+</div>
+
+<h2>34. Student Practice Tasks</h2>
+
+<p>After running the basic CNN, try changing:</p>
+
+<ol>
+    <li>Number of convolution layers.</li>
+    <li>Number of filters.</li>
+    <li>Batch size.</li>
+    <li>Learning rate.</li>
+    <li>Number of epochs.</li>
+    <li>Number of neurons in the fully connected layer.</li>
+    <li>Add another MaxPooling layer.</li>
+    <li>Add Dropout to reduce overfitting.</li>
+</ol>
+
+<div class="warning-box">
+<strong>Learning objective:</strong>
+Do not only run the code. Change one parameter at a time and observe how
+training loss and test accuracy change.
+</div>
+
+</div>
+
+</body>
+</html>

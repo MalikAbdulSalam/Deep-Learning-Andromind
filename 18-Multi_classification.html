@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiclass Classification Using ANN - PyTorch</title>
+
+```
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #222;
+        line-height: 1.6;
+    }
+
+    header {
+        background: #1f2937;
+        color: white;
+        padding: 45px 20px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 38px;
+    }
+
+    header p {
+        font-size: 18px;
+        margin-top: 10px;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    section {
+        background: white;
+        margin-bottom: 25px;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        color: #1f2937;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 8px;
+    }
+
+    h3 {
+        color: #374151;
+    }
+
+    .info {
+        background: #eef6ff;
+        border-left: 5px solid #2563eb;
+        padding: 15px 20px;
+        margin: 15px 0;
+        border-radius: 6px;
+    }
+
+    .success {
+        background: #ecfdf5;
+        border-left: 5px solid #059669;
+        padding: 15px 20px;
+        margin: 15px 0;
+        border-radius: 6px;
+    }
+
+    .warning {
+        background: #fff7ed;
+        border-left: 5px solid #ea580c;
+        padding: 15px 20px;
+        margin: 15px 0;
+        border-radius: 6px;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 14px;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+    }
+
+    th, td {
+        border: 1px solid #d1d5db;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background: #f3f4f6;
+    }
+
+    .architecture {
+        background: #f9fafb;
+        padding: 25px;
+        border-radius: 10px;
+        text-align: center;
+        font-family: monospace;
+        font-size: 17px;
+        line-height: 2;
+    }
+
+    .step {
+        display: inline-block;
+        background: #e5e7eb;
+        padding: 8px 14px;
+        margin: 4px;
+        border-radius: 6px;
+    }
+
+    .arrow {
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    footer {
+        text-align: center;
+        padding: 30px;
+        color: #6b7280;
+    }
+
+    .toc a {
+        text-decoration: none;
+        color: #2563eb;
+    }
+
+    .toc li {
+        margin: 8px 0;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<header>
+    <h1>Multiclass Classification Using ANN</h1>
+    <p>Iris Dataset | Python | PyTorch</p>
+</header>
+
+<div class="container">
+
+```
+<!-- INTRODUCTION -->
+<section>
+    <h2>1. What is Multiclass Classification?</h2>
+
+    <p>
+        Multiclass classification is a machine learning problem where
+        the model has to select one class from more than two possible classes.
+    </p>
+
+    <p>For example, the Iris dataset contains three classes:</p>
+
+    <table>
+        <tr>
+            <th>Class Number</th>
+            <th>Flower</th>
+        </tr>
+        <tr>
+            <td>0</td>
+            <td>Iris Setosa</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Iris Versicolor</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Iris Virginica</td>
+        </tr>
+    </table>
+
+    <div class="info">
+        <strong>Key idea:</strong>
+        In multiclass classification, the neural network normally has
+        one output neuron for each class.
+    </div>
+</section>
+
+
+<!-- LEARNING OBJECTIVES -->
+<section>
+    <h2>2. Learning Objectives</h2>
+
+    <p>After completing this practical, students will understand:</p>
+
+    <ul>
+        <li>How to manually download a dataset</li>
+        <li>How to read a CSV dataset using Pandas</li>
+        <li>How to inspect and understand a dataset</li>
+        <li>How to visualize data</li>
+        <li>How to encode categorical classes</li>
+        <li>How to split data into training and testing sets</li>
+        <li>Why feature scaling is required</li>
+        <li>How to convert data into PyTorch tensors</li>
+        <li>How to build an ANN</li>
+        <li>How to train an ANN</li>
+        <li>How to evaluate a classification model</li>
+        <li>How to create a confusion matrix</li>
+        <li>How to predict a new sample</li>
+    </ul>
+</section>
+
+
+<!-- DATASET -->
+<section>
+    <h2>3. Dataset — Iris</h2>
+
+    <p>
+        We will use the famous Iris dataset.
+    </p>
+
+    <p>
+        The dataset contains 150 flower samples and four input features.
+    </p>
+
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>sepal_length</td>
+            <td>Sepal length</td>
+        </tr>
+        <tr>
+            <td>sepal_width</td>
+            <td>Sepal width</td>
+        </tr>
+        <tr>
+            <td>petal_length</td>
+            <td>Petal length</td>
+        </tr>
+        <tr>
+            <td>petal_width</td>
+            <td>Petal width</td>
+        </tr>
+    </table>
+</section>
+
+
+<!-- DOWNLOAD -->
+<section>
+    <h2>4. Manually Download the Dataset</h2>
+
+    <p>
+        Open the UCI Machine Learning Repository:
+    </p>
+
+    <p>
+        <a href="https://archive.ics.uci.edu/dataset/53/iris"
+           target="_blank">
+            Download Iris Dataset from UCI
+        </a>
+    </p>
+
+    <h3>Project Structure</h3>
+
+    <pre>
+```
+
+Multiclass_ANN/
+│
+├── iris.csv
+│
+└── multiclass_ann.py </pre>
+
+```
+    <div class="warning">
+        <strong>Important:</strong>
+        Download the dataset manually first. Do not use
+        <code>load_iris()</code> in this practical.
+    </div>
+</section>
+
+
+<!-- INSTALLATION -->
+<section>
+    <h2>5. Install Required Libraries</h2>
+
+    <pre><code>pip install pandas numpy matplotlib scikit-learn torch</code></pre>
+
+    <table>
+        <tr>
+            <th>Library</th>
+            <th>Purpose</th>
+        </tr>
+
+        <tr>
+            <td>Pandas</td>
+            <td>Read and manipulate CSV data</td>
+        </tr>
+
+        <tr>
+            <td>NumPy</td>
+            <td>Numerical operations</td>
+        </tr>
+
+        <tr>
+            <td>Matplotlib</td>
+            <td>Data visualization</td>
+        </tr>
+
+        <tr>
+            <td>Scikit-learn</td>
+            <td>Preprocessing and evaluation</td>
+        </tr>
+
+        <tr>
+            <td>PyTorch</td>
+            <td>Build and train ANN</td>
+        </tr>
+    </table>
+</section>
+
+
+<!-- IMPORT -->
+<section>
+    <h2>6. Import Libraries</h2>
+```
+
+<pre><code>import pandas as pd
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay
+
+import torch
+import torch.nn as nn
+import torch.optim as optim</code></pre>
+
+```
+</section>
+
+
+<!-- READ CSV -->
+<section>
+    <h2>7. Read the CSV Dataset</h2>
+```
+
+<pre><code>df = pd.read_csv("iris.csv")
+
+print(df.head())</code></pre>
+
+```
+    <h3>Inspect the Dataset</h3>
+```
+
+<pre><code>print(df.shape)
+
+print(df.columns)
+
+print(df.info())</code></pre>
+
+```
+    <p>We expect approximately:</p>
+
+    <ul>
+        <li>150 rows</li>
+        <li>5 columns</li>
+        <li>4 input features</li>
+        <li>1 target column</li>
+    </ul>
+</section>
+
+
+<!-- DATA EXPLORATION -->
+<section>
+    <h2>8. Explore the Dataset</h2>
+```
+
+<pre><code>print(df.describe())</code></pre>
+
+```
+    <h3>Check Class Distribution</h3>
+```
+
+<pre><code>print(df["species"].value_counts())</code></pre>
+
+```
+    <h3>Check Missing Values</h3>
+```
+
+<pre><code>print(df.isnull().sum())</code></pre>
+
+```
+    <div class="success">
+        Before training a model, always inspect your dataset.
+    </div>
+</section>
+
+
+<!-- VISUALIZATION -->
+<section>
+    <h2>9. Data Visualization</h2>
+```
+
+<pre><code>plt.figure(figsize=(8, 5))
+
+plt.scatter(
+    df["petal_length"],
+    df["petal_width"]
+)
+
+plt.xlabel("Petal Length")
+plt.ylabel("Petal Width")
+
+plt.title("Petal Length vs Petal Width")
+
+plt.show()</code></pre>
+
+```
+    <p>
+        Visualization helps us understand relationships between
+        input features.
+    </p>
+</section>
+
+
+<!-- ENCODING -->
+<section>
+    <h2>10. Convert Classes into Numbers</h2>
+
+    <p>
+        Neural networks work with numerical values, so we convert
+        the flower names into class numbers.
+    </p>
+```
+
+<pre><code>df["species"] = df["species"].map({
+    "Iris-setosa": 0,
+    "Iris-versicolor": 1,
+    "Iris-virginica": 2
+})</code></pre>
+
+```
+    <table>
+        <tr>
+            <th>Original Class</th>
+            <th>Encoded Value</th>
+        </tr>
+
+        <tr>
+            <td>Iris-setosa</td>
+            <td>0</td>
+        </tr>
+
+        <tr>
+            <td>Iris-versicolor</td>
+            <td>1</td>
+        </tr>
+
+        <tr>
+            <td>Iris-virginica</td>
+            <td>2</td>
+        </tr>
+    </table>
+</section>
+
+
+<!-- X Y -->
+<section>
+    <h2>11. Separate Features and Target</h2>
+
+    <h3>X — Input Features</h3>
+```
+
+<pre><code>X = df[
+    [
+        "sepal_length",
+        "sepal_width",
+        "petal_length",
+        "petal_width"
+    ]
+].values</code></pre>
+
+```
+    <h3>y — Target</h3>
+```
+
+<pre><code>y = df["species"].values</code></pre>
+
+```
+    <div class="info">
+        <strong>X:</strong> Information used by the model.
+        <br>
+        <strong>y:</strong> Answer that the model must learn to predict.
+    </div>
+</section>
+
+
+<!-- SPLIT -->
+<section>
+    <h2>12. Train-Test Split</h2>
+```
+
+<pre><code>X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)</code></pre>
+
+```
+    <p>Approximately:</p>
+
+    <table>
+        <tr>
+            <th>Dataset</th>
+            <th>Samples</th>
+        </tr>
+
+        <tr>
+            <td>Training</td>
+            <td>120</td>
+        </tr>
+
+        <tr>
+            <td>Testing</td>
+            <td>30</td>
+        </tr>
+    </table>
+
+    <p>
+        Training data is used to learn the model.
+        Testing data is used to evaluate the trained model.
+    </p>
+</section>
+
+
+<!-- SCALING -->
+<section>
+    <h2>13. Feature Scaling</h2>
+```
+
+<pre><code>scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+
+X_test = scaler.transform(X_test)</code></pre>
+
+```
+    <div class="warning">
+        <strong>Important:</strong>
+        Fit the scaler only on training data.
+        Test data should only be transformed.
+    </div>
+
+    <p>
+        Scaling helps neural networks train more effectively when
+        input features have different numerical ranges.
+    </p>
+</section>
+
+
+<!-- TENSORS -->
+<section>
+    <h2>14. Convert Data to PyTorch Tensors</h2>
+```
+
+<pre><code>X_train = torch.tensor(
+    X_train,
+    dtype=torch.float32
+)
+
+X_test = torch.tensor(
+    X_test,
+    dtype=torch.float32
+)
+
+y_train = torch.tensor(
+    y_train,
+    dtype=torch.long
+)
+
+y_test = torch.tensor(
+    y_test,
+    dtype=torch.long
+)</code></pre>
+
+```
+    <p>
+        PyTorch neural networks operate on tensors.
+    </p>
+</section>
+
+
+<!-- ARCHITECTURE -->
+<section>
+    <h2>15. ANN Architecture</h2>
+
+    <div class="architecture">
+
+        <div class="step">4 Input Features</div>
+
+        <div class="arrow">↓</div>
+
+        <div class="step">Linear: 4 → 16</div>
+
+        <div class="arrow">↓</div>
+
+        <div class="step">ReLU</div>
+
+        <div class="arrow">↓</div>
+
+        <div class="step">Linear: 16 → 8</div>
+
+        <div class="arrow">↓</div>
+
+        <div class="step">ReLU</div>
+
+        <div class="arrow">↓</div>
+
+        <div class="step">Linear: 8 → 3</div>
+
+        <div class="arrow">↓</div>
+
+        <div class="step">3 Classes</div>
+
+    </div>
+
+    <h3>Why 4 Input Neurons?</h3>
+
+    <p>
+        Because the dataset has four input features.
+    </p>
+
+    <h3>Why 3 Output Neurons?</h3>
+
+    <p>
+        Because the dataset contains three classes.
+    </p>
+</section>
+
+
+<!-- MODEL -->
+<section>
+    <h2>16. Build the ANN Using PyTorch</h2>
+```
+
+<pre><code>class ANN(nn.Module):
+
+    def __init__(self):
+
+        super().__init__()
+
+        self.network = nn.Sequential(
+
+            nn.Linear(4, 16),
+
+            nn.ReLU(),
+
+            nn.Linear(16, 8),
+
+            nn.ReLU(),
+
+            nn.Linear(8, 3)
+        )
+
+    def forward(self, x):
+
+        return self.network(x)
+
+
+model = ANN()
+
+print(model)</code></pre>
+
+```
+</section>
+
+
+<!-- LOSS -->
+<section>
+    <h2>17. Loss Function</h2>
+```
+
+<pre><code>criterion = nn.CrossEntropyLoss()</code></pre>
+
+```
+    <p>
+        <code>CrossEntropyLoss</code> is commonly used for
+        multiclass classification in PyTorch.
+    </p>
+
+    <div class="info">
+        The final ANN layer produces logits.
+        Do not add a Softmax layer before
+        <code>CrossEntropyLoss</code>.
+    </div>
+</section>
+
+
+<!-- OPTIMIZER -->
+<section>
+    <h2>18. Optimizer</h2>
+```
+
+<pre><code>optimizer = optim.Adam(
+    model.parameters(),
+    lr=0.001
+)</code></pre>
+
+```
+    <p>
+        The optimizer updates the neural-network weights
+        to reduce the loss.
+    </p>
+</section>
+
+
+<!-- TRAINING -->
+<section>
+    <h2>19. Train the ANN</h2>
+```
+
+<pre><code>epochs = 100
+
+loss_history = []
+
+for epoch in range(epochs):
+
+    # Forward propagation
+    outputs = model(X_train)
+
+    # Calculate loss
+    loss = criterion(
+        outputs,
+        y_train
+    )
+
+    # Clear old gradients
+    optimizer.zero_grad()
+
+    # Backpropagation
+    loss.backward()
+
+    # Update weights
+    optimizer.step()
+
+    loss_history.append(
+        loss.item()
+    )
+
+    if (epoch + 1) % 10 == 0:
+
+        print(
+            f"Epoch: {epoch+1}, "
+            f"Loss: {loss.item():.4f}"
+        )</code></pre>
+
+```
+</section>
+
+
+<!-- TRAINING PROCESS -->
+<section>
+    <h2>20. Understand the Training Process</h2>
+
+    <div class="architecture">
+
+        Input Data
+        <br>↓<br>
+        Forward Propagation
+        <br>↓<br>
+        Prediction
+        <br>↓<br>
+        Calculate Loss
+        <br>↓<br>
+        Backpropagation
+        <br>↓<br>
+        Calculate Gradients
+        <br>↓<br>
+        Adam Optimizer
+        <br>↓<br>
+        Update Weights
+        <br>↓<br>
+        Next Epoch
+
+    </div>
+</section>
+
+
+<!-- TESTING -->
+<section>
+    <h2>21. Test the Model</h2>
+```
+
+<pre><code>model.eval()
+
+with torch.no_grad():
+
+    outputs = model(X_test)
+
+    predictions = torch.argmax(
+        outputs,
+        dim=1
+    )</code></pre>
+
+```
+    <p>
+        <code>torch.argmax()</code> selects the output neuron
+        having the largest value.
+    </p>
+
+    <h3>Example</h3>
+```
+
+<pre><code>[2.1, 5.7, 1.2]</code></pre>
+
+```
+    <p>
+        The largest value is 5.7, which is at index 1.
+    </p>
+
+    <p>
+        Therefore the predicted class is:
+    </p>
+```
+
+<pre><code>Class 1 → Iris-versicolor</code></pre>
+
+```
+</section>
+
+
+<!-- ACCURACY -->
+<section>
+    <h2>22. Calculate Accuracy</h2>
+```
+
+<pre><code>y_pred = predictions.numpy()
+
+y_true = y_test.numpy()
+
+accuracy = accuracy_score(
+    y_true,
+    y_pred
+)
+
+print("Accuracy:", accuracy)</code></pre>
+
+```
+    <p>
+        Accuracy tells us the percentage of test samples
+        classified correctly.
+    </p>
+</section>
+
+
+<!-- REPORT -->
+<section>
+    <h2>23. Classification Report</h2>
+```
+
+<pre><code>print(
+    classification_report(
+        y_true,
+        y_pred,
+        target_names=[
+            "Setosa",
+            "Versicolor",
+            "Virginica"
+        ]
+    )
+)</code></pre>
+
+```
+    <p>The report contains:</p>
+
+    <ul>
+        <li>Precision</li>
+        <li>Recall</li>
+        <li>F1-score</li>
+        <li>Support</li>
+    </ul>
+</section>
+
+
+<!-- CONFUSION -->
+<section>
+    <h2>24. Confusion Matrix</h2>
+```
+
+<pre><code>cm = confusion_matrix(
+    y_true,
+    y_pred
+)
+
+print(cm)</code></pre>
+
+```
+    <h3>Display Confusion Matrix</h3>
+```
+
+<pre><code>disp = ConfusionMatrixDisplay(
+    confusion_matrix=cm,
+    display_labels=[
+        "Setosa",
+        "Versicolor",
+        "Virginica"
+    ]
+)
+
+disp.plot()
+
+plt.title("ANN Confusion Matrix")
+
+plt.show()</code></pre>
+
+```
+    <div class="info">
+        The diagonal values represent correctly classified samples.
+    </div>
+</section>
+
+
+<!-- LOSS GRAPH -->
+<section>
+    <h2>25. Training Loss Graph</h2>
+```
+
+<pre><code>plt.plot(loss_history)
+
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+
+plt.title("Training Loss")
+
+plt.show()</code></pre>
+
+```
+    <p>
+        During training, the loss should generally decrease
+        as the model learns.
+    </p>
+</section>
+
+
+<!-- NEW PREDICTION -->
+<section>
+    <h2>26. Predict a New Flower</h2>
+
+    <p>
+        Suppose we receive a new flower with these measurements:
+    </p>
+
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>Value</th>
+        </tr>
+
+        <tr>
+            <td>Sepal Length</td>
+            <td>5.1</td>
+        </tr>
+
+        <tr>
+            <td>Sepal Width</td>
+            <td>3.5</td>
+        </tr>
+
+        <tr>
+            <td>Petal Length</td>
+            <td>1.4</td>
+        </tr>
+
+        <tr>
+            <td>Petal Width</td>
+            <td>0.2</td>
+        </tr>
+    </table>
+```
+
+<pre><code>new_flower = [[
+    5.1,
+    3.5,
+    1.4,
+    0.2
+]]</code></pre>
+
+```
+    <h3>Scale the New Data</h3>
+```
+
+<pre><code>new_flower = scaler.transform(
+    new_flower
+)</code></pre>
+
+```
+    <h3>Convert to Tensor</h3>
+```
+
+<pre><code>new_flower = torch.tensor(
+    new_flower,
+    dtype=torch.float32
+)</code></pre>
+
+```
+    <h3>Make Prediction</h3>
+```
+
+<pre><code>model.eval()
+
+with torch.no_grad():
+
+    output = model(new_flower)
+
+    prediction = torch.argmax(
+        output,
+        dim=1
+    )
+
+print(
+    "Predicted Class:",
+    prediction.item()
+)</code></pre>
+
+```
+    <h3>Convert Class Number to Name</h3>
+```
+
+<pre><code>class_names = [
+    "Iris-setosa",
+    "Iris-versicolor",
+    "Iris-virginica"
+]
+
+print(
+    "Predicted Flower:",
+    class_names[prediction.item()]
+)</code></pre>
+
+```
+</section>
+
+
+<!-- COMPLETE PIPELINE -->
+<section>
+    <h2>27. Complete ANN Pipeline</h2>
+
+    <div class="architecture">
+
+        Download Dataset
+        <br>↓<br>
+        Read CSV
+        <br>↓<br>
+        Explore Dataset
+        <br>↓<br>
+        Visualize Data
+        <br>↓<br>
+        Encode Classes
+        <br>↓<br>
+        Separate X and y
+        <br>↓<br>
+        Train/Test Split
+        <br>↓<br>
+        Feature Scaling
+        <br>↓<br>
+        Convert to Tensor
+        <br>↓<br>
+        Build ANN
+        <br>↓<br>
+        Loss Function
+        <br>↓<br>
+        Optimizer
+        <br>↓<br>
+        Training
+        <br>↓<br>
+        Testing
+        <br>↓<br>
+        Accuracy
+        <br>↓<br>
+        Classification Report
+        <br>↓<br>
+        Confusion Matrix
+        <br>↓<br>
+        New Prediction
+
+    </div>
+</section>
+
+
+<!-- COMPLETE CODE -->
+<section>
+    <h2>28. Complete Python Program</h2>
+```
+
+<pre><code>import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    ConfusionMatrixDisplay
+)
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+
+# ==========================================
+# 1. Load Dataset
+# ==========================================
+
+df = pd.read_csv("iris.csv")
+
+print(df.head())
+
+print(df.shape)
+
+print(df.info())
+
+print(df.describe())
+
+print(df.isnull().sum())
+
+print(df["species"].value_counts())
+
+
+# ==========================================
+# 2. Visualization
+# ==========================================
+
+plt.figure(figsize=(8, 5))
+
+plt.scatter(
+    df["petal_length"],
+    df["petal_width"]
+)
+
+plt.xlabel("Petal Length")
+plt.ylabel("Petal Width")
+
+plt.title("Petal Length vs Petal Width")
+
+plt.show()
+
+
+# ==========================================
+# 3. Encode Classes
+# ==========================================
+
+df["species"] = df["species"].map({
+
+    "Iris-setosa": 0,
+
+    "Iris-versicolor": 1,
+
+    "Iris-virginica": 2
+})
+
+
+# ==========================================
+# 4. X and y
+# ==========================================
+
+X = df[
+    [
+        "sepal_length",
+        "sepal_width",
+        "petal_length",
+        "petal_width"
+    ]
+].values
+
+y = df["species"].values
+
+
+# ==========================================
+# 5. Train-Test Split
+# ==========================================
+
+X_train, X_test, y_train, y_test = train_test_split(
+
+    X,
+    y,
+
+    test_size=0.20,
+
+    random_state=42,
+
+    stratify=y
+)
+
+
+# ==========================================
+# 6. Feature Scaling
+# ==========================================
+
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+
+X_test = scaler.transform(X_test)
+
+
+# ==========================================
+# 7. PyTorch Tensors
+# ==========================================
+
+X_train = torch.tensor(
+    X_train,
+    dtype=torch.float32
+)
+
+X_test = torch.tensor(
+    X_test,
+    dtype=torch.float32
+)
+
+y_train = torch.tensor(
+    y_train,
+    dtype=torch.long
+)
+
+y_test = torch.tensor(
+    y_test,
+    dtype=torch.long
+)
+
+
+# ==========================================
+# 8. ANN
+# ==========================================
+
+class ANN(nn.Module):
+
+    def __init__(self):
+
+        super().__init__()
+
+        self.network = nn.Sequential(
+
+            nn.Linear(4, 16),
+
+            nn.ReLU(),
+
+            nn.Linear(16, 8),
+
+            nn.ReLU(),
+
+            nn.Linear(8, 3)
+        )
+
+    def forward(self, x):
+
+        return self.network(x)
+
+
+model = ANN()
+
+print(model)
+
+
+# ==========================================
+# 9. Loss
+# ==========================================
+
+criterion = nn.CrossEntropyLoss()
+
+
+# ==========================================
+# 10. Optimizer
+# ==========================================
+
+optimizer = optim.Adam(
+
+    model.parameters(),
+
+    lr=0.001
+)
+
+
+# ==========================================
+# 11. Training
+# ==========================================
+
+epochs = 100
+
+loss_history = []
+
+for epoch in range(epochs):
+
+    outputs = model(X_train)
+
+    loss = criterion(
+        outputs,
+        y_train
+    )
+
+    optimizer.zero_grad()
+
+    loss.backward()
+
+    optimizer.step()
+
+    loss_history.append(
+        loss.item()
+    )
+
+    if (epoch + 1) % 10 == 0:
+
+        print(
+            f"Epoch {epoch+1}/{epochs} "
+            f"Loss: {loss.item():.4f}"
+        )
+
+
+# ==========================================
+# 12. Testing
+# ==========================================
+
+model.eval()
+
+with torch.no_grad():
+
+    outputs = model(X_test)
+
+    predictions = torch.argmax(
+        outputs,
+        dim=1
+    )
+
+
+# ==========================================
+# 13. Accuracy
+# ==========================================
+
+y_true = y_test.numpy()
+
+y_pred = predictions.numpy()
+
+accuracy = accuracy_score(
+    y_true,
+    y_pred
+)
+
+print("\nAccuracy:", accuracy)
+
+
+# ==========================================
+# 14. Classification Report
+# ==========================================
+
+print(
+    classification_report(
+
+        y_true,
+
+        y_pred,
+
+        target_names=[
+
+            "Setosa",
+
+            "Versicolor",
+
+            "Virginica"
+        ]
+    )
+)
+
+
+# ==========================================
+# 15. Confusion Matrix
+# ==========================================
+
+cm = confusion_matrix(
+    y_true,
+    y_pred
+)
+
+disp = ConfusionMatrixDisplay(
+
+    confusion_matrix=cm,
+
+    display_labels=[
+
+        "Setosa",
+
+        "Versicolor",
+
+        "Virginica"
+    ]
+)
+
+disp.plot()
+
+plt.title(
+    "ANN Confusion Matrix"
+)
+
+plt.show()
+
+
+# ==========================================
+# 16. Loss Graph
+# ==========================================
+
+plt.plot(loss_history)
+
+plt.xlabel("Epoch")
+
+plt.ylabel("Loss")
+
+plt.title("Training Loss")
+
+plt.grid()
+
+plt.show()
+
+
+# ==========================================
+# 17. New Prediction
+# ==========================================
+
+new_flower = [[
+
+    5.1,
+
+    3.5,
+
+    1.4,
+
+    0.2
+]]
+
+
+new_flower = scaler.transform(
+    new_flower
+)
+
+
+new_flower = torch.tensor(
+
+    new_flower,
+
+    dtype=torch.float32
+)
+
+
+model.eval()
+
+with torch.no_grad():
+
+    output = model(
+        new_flower
+    )
+
+    prediction = torch.argmax(
+
+        output,
+
+        dim=1
+    )
+
+
+class_names = [
+
+    "Iris-setosa",
+
+    "Iris-versicolor",
+
+    "Iris-virginica"
+]
+
+
+print(
+
+    "Predicted Flower:",
+
+    class_names[
+        prediction.item()
+    ]
+)</code></pre>
+
+```
+</section>
+
+
+<!-- KEY CONCEPTS -->
+<section>
+    <h2>29. Key Concepts for Students</h2>
+
+    <table>
+        <tr>
+            <th>Concept</th>
+            <th>Meaning</th>
+        </tr>
+
+        <tr>
+            <td>X</td>
+            <td>Input features</td>
+        </tr>
+
+        <tr>
+            <td>y</td>
+            <td>Target/classes</td>
+        </tr>
+
+        <tr>
+            <td>Train Data</td>
+            <td>Used to learn model parameters</td>
+        </tr>
+
+        <tr>
+            <td>Test Data</td>
+            <td>Used to evaluate the trained model</td>
+        </tr>
+
+        <tr>
+            <td>StandardScaler</td>
+            <td>Scales input features</td>
+        </tr>
+
+        <tr>
+            <td>ANN</td>
+            <td>Artificial Neural Network</td>
+        </tr>
+
+        <tr>
+            <td>ReLU</td>
+            <td>Activation function</td>
+        </tr>
+
+        <tr>
+            <td>CrossEntropyLoss</td>
+            <td>Loss for multiclass classification</td>
+        </tr>
+
+        <tr>
+            <td>Adam</td>
+            <td>Optimizer</td>
+        </tr>
+
+        <tr>
+            <td>Epoch</td>
+            <td>One complete pass through training data</td>
+        </tr>
+
+        <tr>
+            <td>Argmax</td>
+            <td>Selects the class with the highest output score</td>
+        </tr>
+
+        <tr>
+            <td>Accuracy</td>
+            <td>Percentage of correct predictions</td>
+        </tr>
+
+        <tr>
+            <td>Confusion Matrix</td>
+            <td>Shows correct and incorrect predictions by class</td>
+        </tr>
+    </table>
+</section>
+
+
+<!-- FINAL -->
+<section>
+    <h2>30. Final Concept</h2>
+
+    <div class="success">
+
+        <strong>
+            Multiclass ANN:
+        </strong>
+
+        <br><br>
+
+        Multiple input features
+        →
+        Neural Network
+        →
+        Multiple output neurons
+        →
+        One predicted class
+
+    </div>
+
+    <p>
+        In this practical, the ANN receives four flower measurements
+        and predicts one of three Iris species.
+    </p>
+
+</section>
+```
+
+</div>
+
+<footer>
+    Multiclass Classification Using ANN | Python + PyTorch
+</footer>
+
+</body>
+</html>
