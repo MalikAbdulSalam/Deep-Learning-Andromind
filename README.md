@@ -30,6 +30,14 @@ ________________________________________________________________________________
 [Lecture 10 : Keras VS TensorFlow VS PyTorch ](https://malikabdulsalam.github.io/Deep-Learning-Andromind/9-Keras_TensorFlow_PyTorch_2026.html)
 
 [Lecture 11 : OCR](https://malikabdulsalam.github.io/Deep-Learning-Andromind/15-PyTorch_CNN_MNIST_Step_by_Step.html)
+
+[Lecture 12 : Multi Class Classification](https://malikabdulsalam.github.io/Deep-Learning-Andromind/18-Multi_classification.html)
+
+[Lecture 13 : Regression](https://malikabdulsalam.github.io/Deep-Learning-Andromind/19-regression.html)
+
+[Lecture 14 : Bias Variance over fitting under fitting](https://malikabdulsalam.github.io/Deep-Learning-Andromind/20-bias_varience_over_under_fitting.html)
+
+[Lecture 15 : Bias Variance over fitting under fitting](https://malikabdulsalam.github.io/Deep-Learning-Andromind/20-bias_varience_over_under_fitting.html)
 ## AI Tree
 
 ![ML Tree](35-AI_tree.png)
