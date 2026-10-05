@@ -37,7 +37,13 @@ ________________________________________________________________________________
 
 [Lecture 14 : Bias Variance over fitting under fitting](https://malikabdulsalam.github.io/Deep-Learning-Andromind/20-bias_varience_over_under_fitting.html)
 
-[Lecture 15 : Bias Variance over fitting under fitting](https://malikabdulsalam.github.io/Deep-Learning-Andromind/20-bias_varience_over_under_fitting.html)
+[Lecture 15 : k-fold_validation ](https://malikabdulsalam.github.io/Deep-Learning-Andromind/21-k-fold_validation.html)
+
+[Lecture 16 : YOLO using CPU and GPU ](https://malikabdulsalam.github.io/Deep-Learning-Andromind/22-yolo.html)
+
+[Lecture 17 : YOLO using Colab](https://malikabdulsalam.github.io/Deep-Learning-Andromind/23_yolo_colab.html)
+
+
 ## AI Tree
 
 ![ML Tree](35-AI_tree.png)
