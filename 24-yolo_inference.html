@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv8 Pretrained Model - Python Inference Guide</title>
+
+```
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        background: #f4f6f8;
+        color: #222;
+    }
+
+    header {
+        background: #1f2937;
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 25px;
+        margin-bottom: 25px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        color: #2563eb;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 8px;
+    }
+
+    h3 {
+        color: #374151;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 18px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 14px;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .note {
+        background: #eff6ff;
+        border-left: 5px solid #2563eb;
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    .warning {
+        background: #fff7ed;
+        border-left: 5px solid #f97316;
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    ul {
+        padding-left: 25px;
+    }
+
+    .folder {
+        background: #f3f4f6;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: monospace;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<header>
+    <h1>YOLOv8 Pretrained Model Inference</h1>
+    <p>Run your trained <strong>model.pt</strong> using Python and Ultralytics</p>
+</header>
+
+<div class="container">
+
+```
+<!-- INTRODUCTION -->
+<div class="card">
+    <h2>1. Introduction</h2>
+
+    <p>
+        This guide explains how to run a pretrained or custom-trained
+        <strong>YOLOv8 model</strong> using Python.
+    </p>
+
+    <p>
+        If you already have a trained model such as:
+    </p>
+
+    <div class="folder">
+        model.pt
+    </div>
+
+    <p>
+        you can use it to perform object detection on:
+    </p>
+
+    <ul>
+        <li>Images</li>
+        <li>Videos</li>
+        <li>Webcam</li>
+        <li>Image folders</li>
+        <li>Video streams</li>
+        <li>GPU-powered real-time detection</li>
+    </ul>
+</div>
+
+
+<!-- INSTALLATION -->
+<div class="card">
+    <h2>2. Install Ultralytics</h2>
+
+    <p>
+        Open Command Prompt, PowerShell, or your Anaconda terminal.
+    </p>
+
+    <pre><code>pip install ultralytics</code></pre>
+
+    <p>
+        Verify the installation:
+    </p>
+
+    <pre><code>yolo checks</code></pre>
+
+    <div class="note">
+        <strong>Note:</strong>
+        It is recommended to use a separate Python virtual environment
+        for your YOLO projects.
+    </div>
+</div>
+
+
+<!-- PROJECT STRUCTURE -->
+<div class="card">
+    <h2>3. Project Structure</h2>
+
+    <p>
+        A simple project can look like this:
+    </p>
+
+    <pre><code>yolov8_project/
+```
+
+│
+├── model.pt
+├── test.jpg
+├── video.mp4
+└── detect.py</code></pre> </div>
+
+```
+<!-- IMAGE -->
+<div class="card">
+    <h2>4. Run YOLOv8 on an Image</h2>
+
+    <p>
+        Create a Python file named:
+    </p>
+
+    <pre><code>detect.py</code></pre>
+
+    <p>
+        Add the following code:
+    </p>
+
+    <pre><code>from ultralytics import YOLO
+```
+
+# Load your trained model
+
+model = YOLO("model.pt")
+
+# Run inference
+
+results = model.predict(
+source="test.jpg",
+conf=0.25,
+save=True
+)
+
+print("Detection completed!")</code></pre>
+
+```
+    <h3>Output</h3>
+
+    <p>
+        The detected image will normally be saved inside:
+    </p>
+
+    <pre><code>runs/detect/predict/</code></pre>
+</div>
+
+
+<!-- WEBCAM -->
+<div class="card">
+    <h2>5. Run YOLOv8 on Webcam</h2>
+
+    <p>
+        To use your computer's default webcam:
+    </p>
+
+    <pre><code>from ultralytics import YOLO
+```
+
+model = YOLO("model.pt")
+
+model.predict(
+source=0,
+conf=0.25,
+show=True
+)</code></pre>
+
+```
+    <div class="note">
+        <strong>source=0</strong> means the default webcam.
+        If you have multiple cameras, you can try
+        <strong>source=1</strong>, <strong>source=2</strong>, etc.
+    </div>
+
+    <p>
+        Press <strong>Q</strong> or close the detection window to stop,
+        depending on your environment.
+    </p>
+</div>
+
+
+<!-- VIDEO -->
+<div class="card">
+    <h2>6. Run YOLOv8 on a Video</h2>
+
+    <p>
+        Put your video in the project folder, for example:
+    </p>
+
+    <pre><code>video.mp4</code></pre>
+
+    <p>
+        Then use:
+    </p>
+
+    <pre><code>from ultralytics import YOLO
+```
+
+model = YOLO("model.pt")
+
+results = model.predict(
+source="video.mp4",
+conf=0.25,
+save=True,
+show=True
+)
+
+print("Video detection completed!")</code></pre>
+
+```
+    <p>
+        The processed video will be saved in the YOLO runs directory.
+    </p>
+</div>
+
+
+<!-- FOLDER -->
+<div class="card">
+    <h2>7. Run Detection on a Folder of Images</h2>
+
+    <p>
+        You can also process multiple images at once.
+    </p>
+
+    <pre><code>from ultralytics import YOLO
+```
+
+model = YOLO("model.pt")
+
+model.predict(
+source="images/",
+conf=0.25,
+save=True
+)</code></pre>
+
+```
+    <p>
+        Example folder:
+    </p>
+
+    <pre><code>images/
+```
+
+├── image1.jpg
+├── image2.jpg
+├── image3.jpg
+└── image4.jpg</code></pre> </div>
+
+```
+<!-- GPU -->
+<div class="card">
+    <h2>8. Run YOLOv8 Using NVIDIA GPU</h2>
+
+    <p>
+        If your computer has a compatible NVIDIA GPU, you can use
+        CUDA to accelerate inference.
+    </p>
+
+    <pre><code>from ultralytics import YOLO
+```
+
+model = YOLO("model.pt")
+
+model.predict(
+source=0,
+conf=0.25,
+device=0,
+show=True
+)</code></pre>
+
+```
+    <div class="note">
+        <strong>device=0</strong> tells YOLO to use the first CUDA GPU.
+    </div>
+
+    <p>
+        To force CPU inference:
+    </p>
+
+    <pre><code>device="cpu"</code></pre>
+</div>
+
+
+<!-- COMPLETE -->
+<div class="card">
+    <h2>9. Complete Recommended Code</h2>
+
+    <p>
+        The following script gives you a clean starting point for
+        your YOLOv8 projects.
+    </p>
+
+    <pre><code>from ultralytics import YOLO
+```
+
+# =========================
+
+# SETTINGS
+
+# =========================
+
+MODEL_PATH = "model.pt"
+
+# Options:
+
+# "test.jpg"       -> image
+
+# "video.mp4"      -> video
+
+# "images/"        -> folder
+
+# 0                -> webcam
+
+SOURCE = "test.jpg"
+
+CONFIDENCE = 0.25
+
+# 0 = NVIDIA GPU
+
+# "cpu" = CPU
+
+DEVICE = 0
+
+# =========================
+
+# LOAD MODEL
+
+# =========================
+
+model = YOLO(MODEL_PATH)
+
+print("Model loaded successfully!")
+
+print("Classes:")
+print(model.names)
+
+# =========================
+
+# RUN DETECTION
+
+# =========================
+
+results = model.predict(
+source=SOURCE,
+conf=CONFIDENCE,
+device=DEVICE,
+save=True,
+show=True
+)
+
+# =========================
+
+# FINISHED
+
+# =========================
+
+print("Detection completed!")</code></pre> </div>
+
+```
+<!-- CUSTOM PATH -->
+<div class="card">
+    <h2>10. Using a Full Path to model.pt</h2>
+
+    <p>
+        If your model is stored somewhere else on your computer,
+        use the complete path.
+    </p>
+
+    <p>
+        For example:
+    </p>
+
+    <pre><code>MODEL_PATH = r"D:\Freelancing_Projects\bolt_detection\yolov8\best.pt"</code></pre>
+
+    <p>
+        The <strong>r</strong> before the string is useful on Windows
+        because it treats backslashes as normal characters.
+    </p>
+</div>
+
+
+<!-- CLASSES -->
+<div class="card">
+    <h2>11. Check Your Model Classes</h2>
+
+    <p>
+        You can print the class names stored in your trained model:
+    </p>
+
+    <pre><code>from ultralytics import YOLO
+```
+
+model = YOLO("model.pt")
+
+print(model.names)</code></pre>
+
+```
+    <p>
+        Example output:
+    </p>
+
+    <pre><code>{0: 'bolt', 1: 'nut', 2: 'washer'}</code></pre>
+</div>
+
+
+<!-- CONFIDENCE -->
+<div class="card">
+    <h2>12. Change Confidence Threshold</h2>
+
+    <p>
+        The confidence threshold controls how confident YOLO must be
+        before displaying a detection.
+    </p>
+
+    <h3>Lower confidence</h3>
+
+    <pre><code>conf=0.20</code></pre>
+
+    <h3>Normal starting point</h3>
+
+    <pre><code>conf=0.25</code></pre>
+
+    <h3>Higher confidence</h3>
+
+    <pre><code>conf=0.50</code></pre>
+
+    <p>
+        For example:
+    </p>
+
+    <pre><code>results = model.predict(
+source="test.jpg",
+conf=0.50,
+save=True
+```
+
+)</code></pre> </div>
+
+```
+<!-- RESULTS -->
+<div class="card">
+    <h2>13. Access Detection Results</h2>
+
+    <pre><code>from ultralytics import YOLO
+```
+
+model = YOLO("model.pt")
+
+results = model.predict(
+source="test.jpg",
+conf=0.25
+)
+
+for result in results:
+
+```
+boxes = result.boxes
+
+for box in boxes:
+
+    class_id = int(box.cls[0])
+    confidence = float(box.conf[0])
+
+    print("Class:", class_id)
+    print("Confidence:", confidence)</code></pre>
+</div>
+
+
+<!-- SUMMARY -->
+<div class="card">
+    <h2>14. Quick Reference</h2>
+
+    <pre><code># Image
+```
+
+source="test.jpg"
+
+# Video
+
+source="video.mp4"
+
+# Webcam
+
+source=0
+
+# Folder
+
+source="images/"
+
+# GPU
+
+device=0
+
+# CPU
+
+device="cpu"
+
+# Confidence
+
+conf=0.25
+
+# Save results
+
+save=True
+
+# Display results
+
+show=True</code></pre> </div>
+
+```
+<!-- FINAL -->
+<div class="card">
+    <h2>15. Basic Workflow</h2>
+
+    <ol>
+        <li>Install Ultralytics.</li>
+        <li>Put your <strong>model.pt</strong> in the project folder.</li>
+        <li>Put your test image/video in the project folder.</li>
+        <li>Create <strong>detect.py</strong>.</li>
+        <li>Load the model using <strong>YOLO("model.pt")</strong>.</li>
+        <li>Select your source.</li>
+        <li>Set confidence threshold.</li>
+        <li>Select CPU or GPU.</li>
+        <li>Run inference.</li>
+        <li>Check the generated results.</li>
+    </ol>
+
+    <div class="note">
+        <strong>Important:</strong>
+        The same inference code can be used with your custom-trained
+        YOLOv8 model. The model's class names are already stored in
+        the <strong>.pt</strong> file.
+    </div>
+</div>
+```
+
+</div>
+
+</body>
+</html>
