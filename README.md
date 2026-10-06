@@ -43,6 +43,7 @@ ________________________________________________________________________________
 
 [Lecture 17 : YOLO using Colab](https://malikabdulsalam.github.io/Deep-Learning-Andromind/23_yolo_colab.html)
 
+[Lecture 18 : YOLO Inference](https://malikabdulsalam.github.io/Deep-Learning-Andromind/24-yolo_inference.html)
 
 ## AI Tree
 
