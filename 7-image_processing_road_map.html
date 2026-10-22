@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What to Teach Next — Image Processing Roadmap</title>
+  <!-- Google Font & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Prism for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1150px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      padding: 2.8rem 2.5rem;
+    }
+
+    /* ---------- HEADINGS ---------- */
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #0f172a, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    h1 i {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.3rem;
+    }
+
+    .subhead {
+      font-size: 1.15rem;
+      color: #475569;
+      border-left: 5px solid #3b82f6;
+      padding-left: 1.5rem;
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+
+    h2 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      margin: 2.8rem 0 1.2rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 4px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #0f172a;
+    }
+
+    h2 i {
+      color: #3b82f6;
+      font-size: 1.8rem;
+    }
+
+    h3 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin: 1.8rem 0 0.7rem;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3 i {
+      color: #6366f1;
+      font-size: 1.25rem;
+    }
+
+    h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.4rem;
+      color: #334155;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: #334155;
+      text-align: justify;
+    }
+
+    /* ---------- ROADMAP / TIMELINE ---------- */
+    .roadmap {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+      margin: 2rem 0;
+    }
+
+    .phase {
+      display: flex;
+      gap: 1.5rem;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 1.8rem 1.8rem 1.8rem 2rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .phase:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
+      transform: translateX(4px);
+    }
+
+    .phase-number {
+      flex-shrink: 0;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #ffffff;
+      box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.4);
+    }
+
+    .phase-content {
+      flex: 1;
+    }
+
+    .phase-content h3 {
+      margin-top: 0;
+      margin-bottom: 0.6rem;
+      font-size: 1.4rem;
+      color: #0f172a;
+    }
+
+    .phase-content .tag {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.9rem;
+      border-radius: 999px;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .phase-content ul {
+      list-style-type: none;
+      margin-top: 0.5rem;
+    }
+
+    .phase-content li {
+      margin-bottom: 0.55rem;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      color: #334155;
+      font-size: 0.98rem;
+    }
+
+    .phase-content li i {
+      color: #3b82f6;
+      font-size: 0.75rem;
+      margin-top: 0.3rem;
+      flex-shrink: 0;
+    }
+
+    /* ---------- GRID CARDS ---------- */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.8rem;
+      margin: 1.8rem 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin: 1.8rem 0;
+    }
+
+    .card {
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 1.8rem 1.5rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+      transform: translateY(-3px);
+    }
+
+    .card h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+    }
+
+    .card h4 i {
+      color: #2563eb;
+    }
+
+    .card ul {
+      list-style-type: none;
+    }
+
+    .card li {
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      color: #334155;
+      font-size: 0.95rem;
+    }
+
+    .card li i {
+      color: #3b82f6;
+      font-size: 0.7rem;
+      margin-top: 0.3rem;
+      flex-shrink: 0;
+    }
+
+    /* ---------- CODE BLOCKS ---------- */
+    .code-block {
+      background: #f1f5f9;
+      border-radius: 16px;
+      margin: 1.8rem 0;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .code-header {
+      background: #e2e8f0;
+      padding: 0.8rem 1.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    .code-header i {
+      color: #3b82f6;
+    }
+
+    pre {
+      margin: 0;
+      padding: 1.4rem;
+      background: #f8fafc;
+      font-size: 0.95rem;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      overflow-x: auto;
+      tab-size: 4;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    pre[class*="language-"] {
+      background: #f8fafc !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      padding: 1.4rem !important;
+      font-size: 0.95rem;
+    }
+
+    /* ---------- CALLOUT ---------- */
+    .note {
+      background: #eff6ff;
+      border-left: 6px solid #3b82f6;
+      padding: 1.4rem 1.8rem;
+      border-radius: 14px;
+      margin: 2rem 0;
+      color: #1e3a8a;
+    }
+
+    .note i {
+      color: #2563eb;
+      margin-right: 10px;
+    }
+
+    .note strong {
+      font-weight: 600;
+    }
+
+    /* ---------- TABLE ---------- */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.8rem 0;
+      font-size: 0.95rem;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    th {
+      background: #1e293b;
+      color: #f8fafc;
+      font-weight: 600;
+      padding: 0.9rem 1.2rem;
+      text-align: left;
+    }
+
+    td {
+      padding: 0.85rem 1.2rem;
+      border-bottom: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* ---------- BADGE ---------- */
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.7rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-beginner { background: #dcfce7; color: #166534; }
+    .badge-intermediate { background: #fef3c7; color: #92400e; }
+    .badge-advanced { background: #fce7f3; color: #9d174d; }
+
+    /* ---------- FOOTER ---------- */
+    .footer {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 3px solid #e2e8f0;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    .footer i {
+      color: #3b82f6;
+      margin: 0 4px;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 800px) {
+      .container { padding: 1.8rem 1.2rem; }
+      h1 { font-size: 1.9rem; }
+      h2 { font-size: 1.5rem; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .phase { flex-direction: column; gap: 0.8rem; padding: 1.5rem; }
+      .phase-number { width: 44px; height: 44px; font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ================= HEADER ================= -->
+  <h1>
+    <i class="fas fa-road"></i> What to Teach Next — Image Processing Roadmap
+  </h1>
+  <p class="subhead">
+    A structured learning path from fundamental theory to advanced computer vision and deep learning.
+  </p>
+
+  <!-- ================= QUICK OVERVIEW ================= -->
+  <div class="note">
+    <i class="fas fa-info-circle"></i> <strong>How to use this guide:</strong> 
+    Follow the phases in order. Each phase builds on the previous one. 
+    Theory should always be paired with hands-on coding — aim for a <strong>40% theory / 60% practice</strong> split.
+  </div>
+
+  <!-- ================= ROADMAP PHASES ================= -->
+  <h2><i class="fas fa-sitemap"></i> The Learning Roadmap</h2>
+
+  <div class="roadmap">
+
+    <!-- Phase 1 -->
+    <div class="phase">
+      <div class="phase-number">1</div>
+      <div class="phase-content">
+        <h3>Digital Image Fundamentals <span class="badge badge-beginner">Beginner</span></h3>
+        <p style="font-size:0.98rem; margin-bottom:0.5rem; color:#475569;">
+          Solidify the theoretical foundation before diving into algorithms.
+        </p>
+        <ul>
+          <li><i class="fas fa-circle"></i> Image formation, sampling & quantization</li>
+          <li><i class="fas fa-circle"></i> Pixel relationships: neighbors, adjacency, connectivity, distance measures</li>
+          <li><i class="fas fa-circle"></i> Color spaces (RGB, HSV, YCbCr) and conversions</li>
+          <li><i class="fas fa-circle"></i> Image types: binary, grayscale, color, multispectral</li>
+          <li><i class="fas fa-circle"></i> Basic file formats (JPEG, PNG, TIFF, BMP) and compression</li>
+        </ul>
+        <div style="margin-top:0.8rem; font-size:0.9rem; color:#6366f1;">
+          <i class="fas fa-code"></i> <strong>Practice:</strong> Load, display, and inspect images with OpenCV & Pillow.
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase">
+      <div class="phase-number">2</div>
+      <div class="phase-content">
+        <h3>Image Enhancement in Spatial Domain <span class="badge badge-beginner">Beginner</span></h3>
+        <p style="font-size:0.98rem; margin-bottom:0.5rem; color:#475569;">
+          Learn to improve image quality and prepare data for further analysis.
+        </p>
+        <ul>
+          <li><i class="fas fa-circle"></i> Histogram processing: equalization, matching, statistics</li>
+          <li><i class="fas fa-circle"></i> Intensity transformations: negative, log, gamma, contrast stretching</li>
+          <li><i class="fas fa-circle"></i> Spatial filtering: correlation & convolution</li>
+          <li><i class="fas fa-circle"></i> Smoothing filters: mean, Gaussian, median, bilateral</li>
+          <li><i class="fas fa-circle"></i> Sharpening filters: Laplacian, unsharp masking, high-boost</li>
+        </ul>
+        <div style="margin-top:0.8rem; font-size:0.9rem; color:#6366f1;">
+          <i class="fas fa-code"></i> <strong>Practice:</strong> Implement filters from scratch and compare with OpenCV.
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase">
+      <div class="phase-number">3</div>
+      <div class="phase-content">
+        <h3>Image Restoration & Frequency Domain <span class="badge badge-intermediate">Intermediate</span></h3>
+        <p style="font-size:0.98rem; margin-bottom:0.5rem; color:#475569;">
+          Move from enhancement to mathematical restoration and frequency analysis.
+        </p>
+        <ul>
+          <li><i class="fas fa-circle"></i> Noise models: Gaussian, salt-and-pepper, speckle, periodic</li>
+          <li><i class="fas fa-circle"></i> Restoration filters: inverse, Wiener, constrained least squares</li>
+          <li><i class="fas fa-circle"></i> Fourier Transform: 2D DFT, properties, convolution theorem</li>
+          <li><i class="fas fa-circle"></i> Frequency domain filtering: low-pass, high-pass, band-pass, notch</li>
+          <li><i class="fas fa-circle"></i> Homomorphic filtering for illumination correction</li>
+        </ul>
+        <div style="margin-top:0.8rem; font-size:0.9rem; color:#6366f1;">
+          <i class="fas fa-code"></i> <strong>Practice:</strong> Implement FFT, visualize spectra, apply frequency filters.
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase">
+      <div class="phase-number">4</div>
+      <div class="phase-content">
+        <h3>Segmentation & Morphological Processing <span class="badge badge-intermediate">Intermediate</span></h3>
+        <p style="font-size:0.98rem; margin-bottom:0.5rem; color:#475569;">
+          Learn to partition images and analyze shapes.
+        </p>
+        <ul>
+          <li><i class="fas fa-circle"></i> Thresholding: global, Otsu, adaptive</li>
+          <li><i class="fas fa-circle"></i> Edge-based segmentation: Canny, LoG, Hough transform</li>
+          <li><i class="fas fa-circle"></i> Region-based: region growing, split-and-merge, watershed</li>
+          <li><i class="fas fa-circle"></i> Morphological operations: erosion, dilation, opening, closing</li>
+          <li><i class="fas fa-circle"></i> Advanced morphology: skeletonization, hit-or-miss, granulometry</li>
+          <li><i class="fas fa-circle"></i> Contour detection and shape analysis</li>
+        </ul>
+        <div style="margin-top:0.8rem; font-size:0.9rem; color:#6366f1;">
+          <i class="fas fa-code"></i> <strong>Practice:</strong> Build a document scanner and a coin counter.
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="phase">
+      <div class="phase-number">5</div>
+      <div class="phase-content">
+        <h3>Feature Extraction & Description <span class="badge badge-intermediate">Intermediate</span></h3>
+        <p style="font-size:0.98rem; margin-bottom:0.5rem; color:#475569;">
+          Extract meaningful information from images for recognition tasks.
+        </p>
+        <ul>
+          <li><i class="fas fa-circle"></i> Edge & corner detectors: Harris, Shi-Tomasi, FAST</li>
+          <li><i class="fas fa-circle"></i> Blob detection: LoG, DoG, SIFT, SURF</li>
+          <li><i class="fas fa-circle"></i> Binary descriptors: ORB, BRIEF, BRISK</li>
+          <li><i class="fas fa-circle"></i> HOG (Histogram of Oriented Gradients)</li>
+          <li><i class="fas fa-circle"></i> Feature matching: brute-force, FLANN, RANSAC</li>
+          <li><i class="fas fa-circle"></i> Image stitching and panorama creation</li>
+        </ul>
+        <div style="margin-top:0.8rem; font-size:0.9rem; color:#6366f1;">
+          <i class="fas fa-code"></i> <strong>Practice:</strong> Build an image panorama stitcher and a simple object matcher.
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 6 -->
+    <div class="phase">
+      <div class="phase-number">6</div>
+      <div class="phase-content">
+        <h3>Deep Learning for Image Processing <span class="badge badge-advanced">Advanced</span></h3>
+        <p style="font-size:0.98rem; margin-bottom:0.5rem; color:#475569;">
+          Transition to modern data-driven approaches.
+        </p>
+        <ul>
+          <li><i class="fas fa-circle"></i> Neural networks fundamentals: perceptron, backpropagation</li>
+          <li><i class="fas fa-circle"></i> Convolutional Neural Networks (CNNs): convolution, pooling, batch norm</li>
+          <li><i class="fas fa-circle"></i> Classic architectures: LeNet, AlexNet, VGG, ResNet, Inception</li>
+          <li><i class="fas fa-circle"></i> Transfer learning and fine-tuning</li>
+          <li><i class="fas fa-circle"></i> Data augmentation techniques for images</li>
+          <li><i class="fas fa-circle"></i> Image classification, object detection (YOLO, SSD), segmentation (U-Net, Mask R-CNN)</li>
+        </ul>
+        <div style="margin-top:0.8rem; font-size:0.9rem; color:#6366f1;">
+          <i class="fas fa-code"></i> <strong>Practice:</strong> Train a CNN on CIFAR-10, fine-tune ResNet, implement YOLO inference.
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 7 -->
+    <div class="phase">
+      <div class="phase-number">7</div>
+      <div class="phase-content">
+        <h3>Advanced Topics & Specializations <span class="badge badge-advanced">Advanced</span></h3>
+        <p style="font-size:0.98rem; margin-bottom:0.5rem; color:#475569;">
+          Choose a specialization based on your interests and career goals.
+        </p>
+        <ul>
+          <li><i class="fas fa-circle"></i> Generative models: GANs, VAEs, diffusion models for image synthesis</li>
+          <li><i class="fas fa-circle"></i> Image super-resolution and inpainting</li>
+          <li><i class="fas fa-circle"></i> Medical image analysis (MRI, CT, X-ray)</li>
+          <li><i class="fas fa-circle"></i> Remote sensing and satellite imagery</li>
+          <li><i class="fas fa-circle"></i> Video processing: tracking, optical flow, action recognition</li>
+          <li><i class="fas fa-circle"></i> 3D vision: stereo, depth estimation, point clouds</li>
+          <li><i class="fas fa-circle"></i> Real-time deployment: TensorRT, OpenVINO, ONNX, mobile</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= RECOMMENDED ORDER ================= -->
+  <h2><i class="fas fa-list-ol"></i> Recommended Teaching Order</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Module</th>
+        <th>Key Topics</th>
+        <th>Duration</th>
+        <th>Level</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Image Fundamentals</strong></td>
+        <td>Formation, sampling, color spaces, file formats</td>
+        <td>1 week</td>
+        <td><span class="badge badge-beginner">Beginner</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Spatial Enhancement</strong></td>
+        <td>Histograms, point ops, convolution, filters</td>
+        <td>2 weeks</td>
+        <td><span class="badge badge-beginner">Beginner</span></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Frequency Domain</strong></td>
+        <td>DFT, FFT, frequency filters, restoration</td>
+        <td>2 weeks</td>
+        <td><span class="badge badge-intermediate">Intermediate</span></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Segmentation & Morphology</strong></td>
+        <td>Thresholding, edges, watershed, morphology</td>
+        <td>2–3 weeks</td>
+        <td><span class="badge badge-intermediate">Intermediate</span></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Features & Description</strong></td>
+        <td>SIFT, ORB, HOG, matching, stitching</td>
+        <td>2 weeks</td>
+        <td><span class="badge badge-intermediate">Intermediate</span></td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Deep Learning</strong></td>
+        <td>CNNs, transfer learning, detection, segmentation</td>
+        <td>4–6 weeks</td>
+        <td><span class="badge badge-advanced">Advanced</span></td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>Specialization</strong></td>
+        <td>GANs, medical, video, 3D, deployment</td>
+        <td>Ongoing</td>
+        <td><span class="badge badge-advanced">Advanced</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ================= PRACTICE PROJECTS ================= -->
+  <h2><i class="fas fa-laptop-code"></i> Hands-On Projects by Phase</h2>
+  <div class="grid-3">
+    <div class="card">
+      <h4><i class="fas fa-seedling"></i> Beginner Projects</h4>
+      <ul>
+        <li><i class="fas fa-circle"></i> Image viewer with brightness/contrast sliders</li>
+        <li><i class="fas fa-circle"></i> Batch image resizer and format converter</li>
+        <li><i class="fas fa-circle"></i> Histogram equalization tool</li>
+        <li><i class="fas fa-circle"></i> Watermarking application</li>
+        <li><i class="fas fa-circle"></i> Simple photo filters (sepia, vintage)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-tools"></i> Intermediate Projects</h4>
+      <ul>
+        <li><i class="fas fa-circle"></i> Document scanner with perspective correction</li>
+        <li><i class="fas fa-circle"></i> Coin/object counter using contours</li>
+        <li><i class="fas fa-circle"></i> Face detection with Haar cascades</li>
+        <li><i class="fas fa-circle"></i> Panorama stitcher</li>
+        <li><i class="fas fa-circle"></i> License plate recognition pipeline</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-rocket"></i> Advanced Projects</h4>
+      <ul>
+        <li><i class="fas fa-circle"></i> Image classifier with transfer learning</li>
+        <li><i class="fas fa-circle"></i> Real-time object detection with YOLO</li>
+        <li><i class="fas fa-circle"></i> Medical image segmentation (U-Net)</li>
+        <li><i class="fas fa-circle"></i> Image super-resolution with GANs</li>
+        <li><i class="fas fa-circle"></i> Video object tracking system</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================= RECOMMENDED RESOURCES ================= -->
+  <h2><i class="fas fa-book-open"></i> Recommended Resources</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4><i class="fas fa-book"></i> Textbooks</h4>
+      <ul>
+        <li><i class="fas fa-circle"></i> <em>Digital Image Processing</em> — Gonzalez & Woods</li>
+        <li><i class="fas fa-circle"></i> <em>Computer Vision: Algorithms and Applications</em> — Szeliski</li>
+        <li><i class="fas fa-circle"></i> <em>Deep Learning</em> — Goodfellow, Bengio, Courville</li>
+        <li><i class="fas fa-circle"></i> <em>Programming Computer Vision with Python</em> — Solem</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-globe"></i> Online Courses & Docs</h4>
+      <ul>
+        <li><i class="fas fa-circle"></i> OpenCV Official Documentation & Tutorials</li>
+        <li><i class="fas fa-circle"></i> scikit-image User Guide</li>
+        <li><i class="fas fa-circle"></i> PyImageSearch Blog & Courses</li>
+        <li><i class="fas fa-circle"></i> Coursera: Deep Learning Specialization (Andrew Ng)</li>
+        <li><i class="fas fa-circle"></i> Fast.ai: Practical Deep Learning for Coders</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================= TEACHING TIPS ================= -->
+  <h2><i class="fas fa-chalkboard-teacher"></i> Teaching Tips</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4><i class="fas fa-lightbulb"></i> Pedagogy</h4>
+      <ul>
+        <li><i class="fas fa-circle"></i> Always show visual results — before vs. after</li>
+        <li><i class="fas fa-circle"></i> Derive math intuitively before writing code</li>
+        <li><i class="fas fa-circle"></i> Use Jupyter notebooks for interactive learning</li>
+        <li><i class="fas fa-circle"></i> Encourage experimentation with parameters</li>
+        <li><i class="fas fa-circle"></i> Relate each technique to real-world applications</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-exclamation-triangle"></i> Common Pitfalls</h4>
+      <ul>
+        <li><i class="fas fa-circle"></i> Skipping fundamentals → confusion later</li>
+        <li><i class="fas fa-circle"></i> Ignoring color space conversions (BGR vs RGB)</li>
+        <li><i class="fas fa-circle"></i> Not normalizing pixel values for deep learning</li>
+        <li><i class="fas fa-circle"></i> Overfitting on small datasets</li>
+        <li><i class="fas fa-circle"></i> Forgetting to validate results visually</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================= CODE EXAMPLE ================= -->
+  <h2><i class="fas fa-code"></i> Quick Starter Code</h2>
+  <p>A minimal example showing a complete pipeline: load → preprocess → detect edges → display.</p>
+  <div class="code-block">
+    <div class="code-header"><i class="fab fa-python"></i> python — complete_pipeline.py</div>
+    <pre><code class="language-python">import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+def process_image(path):
+    # 1. Load
+    img = cv2.imread(path)
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    
+    # 2. Grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
+    # 3. Denoise (Gaussian blur)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    
+    # 4. Histogram equalization
+    equalized = cv2.equalizeHist(blurred)
+    
+    # 5. Edge detection
+    edges = cv2.Canny(equalized, 100, 200)
+    
+    # 6. Display
+    fig, axes = plt.subplots(2, 3, figsize=(15, 8))
+    titles = ['Original', 'Grayscale', 'Blurred', 
+              'Equalized', 'Edges', 'Original + Edges']
+    images = [img_rgb, gray, blurred, equalized, edges, 
+              cv2.addWeighted(img_rgb, 0.7, 
+                              cv2.cvtColor(edges, cv2.COLOR_GRAY2RGB), 0.3, 0)]
+    
+    for ax, title, im in zip(axes.ravel(), titles, images):
+        ax.imshow(im, cmap='gray' if len(im.shape) == 2 else None)
+        ax.set_title(title)
+        ax.axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+
+# process_image('your_image.jpg')</code></pre>
+  </div>
+
+  <!-- ================= SUMMARY ================= -->
+  <div class="note" style="background: #f0fdf4; border-left-color: #22c55e; color: #166534;">
+    <i class="fas fa-check-circle" style="color: #22c55e;"></i> 
+    <strong>Summary:</strong> Start with fundamentals, master spatial and frequency domain techniques, 
+    move to segmentation and features, then transition to deep learning. Always pair theory with 
+    hands-on projects. By the end of this roadmap, learners will be ready for advanced computer 
+    vision roles or specialized research.
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <div class="footer">
+    <i class="fas fa-graduation-cap"></i> Image Processing & Computer Vision — Structured Learning Path
+    <br>
+    <span style="font-size:0.85rem; margin-top:0.4rem; display:inline-block;">
+      Theory + Practice = Mastery
+    </span>
+  </div>
+
+</div>
+
+<!-- Prism.js for syntax highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.

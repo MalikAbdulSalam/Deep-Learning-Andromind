@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theory of Introduction to Image Processing</title>
+  <!-- Google Font & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Prism for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      padding: 2.8rem 2.5rem;
+    }
+
+    /* Headings */
+    h1 {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #0f172a, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    h1 i {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.4rem;
+    }
+
+    .subhead {
+      font-size: 1.2rem;
+      color: #475569;
+      border-left: 5px solid #3b82f6;
+      padding-left: 1.5rem;
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+
+    h2 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      margin: 2.5rem 0 1.2rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 4px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #0f172a;
+    }
+
+    h2 i {
+      color: #3b82f6;
+      font-size: 1.8rem;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 2rem 0 0.8rem;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3 i {
+      color: #6366f1;
+      font-size: 1.3rem;
+    }
+
+    h4 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.5rem;
+      color: #334155;
+    }
+
+    p {
+      margin-bottom: 1.1rem;
+      color: #334155;
+      text-align: justify;
+    }
+
+    /* Math / formula boxes */
+    .math-block {
+      background: #f1f5f9;
+      border-left: 6px solid #6366f1;
+      padding: 1.5rem 1.8rem;
+      border-radius: 12px;
+      margin: 1.8rem 0;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 1.05rem;
+      color: #1e293b;
+      overflow-x: auto;
+    }
+
+    .math-block i {
+      color: #6366f1;
+    }
+
+    .math-inline {
+      background: #eef2ff;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      color: #4338ca;
+    }
+
+    /* Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.8rem;
+      margin: 1.8rem 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin: 1.8rem 0;
+    }
+
+    .card {
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 1.8rem 1.5rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+      transform: translateY(-3px);
+    }
+
+    .card h4 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+    }
+
+    .card h4 i {
+      color: #2563eb;
+    }
+
+    .card ul {
+      list-style-type: none;
+    }
+
+    .card li {
+      margin-bottom: 0.7rem;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      color: #334155;
+      font-size: 0.98rem;
+    }
+
+    .card li i {
+      color: #3b82f6;
+      font-size: 0.75rem;
+      margin-top: 0.3rem;
+    }
+
+    /* Diagram / image placeholders */
+    .diagram {
+      background: #f1f5f9;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .diagram svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .diagram .caption {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-top: 0.8rem;
+      font-weight: 500;
+    }
+
+    /* Code blocks */
+    .code-block {
+      background: #f1f5f9;
+      border-radius: 16px;
+      margin: 1.8rem 0;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .code-header {
+      background: #e2e8f0;
+      padding: 0.8rem 1.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    .code-header i {
+      color: #3b82f6;
+    }
+
+    pre {
+      margin: 0;
+      padding: 1.4rem;
+      background: #f8fafc;
+      font-size: 0.95rem;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      overflow-x: auto;
+      tab-size: 4;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    pre[class*="language-"] {
+      background: #f8fafc !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      padding: 1.4rem !important;
+      font-size: 0.95rem;
+    }
+
+    /* Note / callout */
+    .note {
+      background: #eff6ff;
+      border-left: 6px solid #3b82f6;
+      padding: 1.4rem 1.8rem;
+      border-radius: 14px;
+      margin: 2rem 0;
+      color: #1e3a8a;
+    }
+
+    .note i {
+      color: #2563eb;
+      margin-right: 10px;
+    }
+
+    .note strong {
+      font-weight: 600;
+    }
+
+    /* Formula styling */
+    .formula {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      background: #f1f5f9;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      margin: 1rem 0;
+      font-size: 1.05rem;
+      text-align: center;
+      border: 1px dashed #cbd5e1;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.8rem 0;
+      font-size: 0.98rem;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    th {
+      background: #1e293b;
+      color: #f8fafc;
+      font-weight: 600;
+      padding: 0.9rem 1.2rem;
+      text-align: left;
+    }
+
+    td {
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 3px solid #e2e8f0;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    .footer i {
+      color: #3b82f6;
+      margin: 0 4px;
+    }
+
+    /* Responsive */
+    @media (max-width: 750px) {
+      .container {
+        padding: 1.8rem 1.2rem;
+      }
+      h1 {
+        font-size: 1.9rem;
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ================= HEADER ================= -->
+  <h1>
+    <i class="fas fa-brain"></i> Theory of Introduction to Image Processing
+  </h1>
+  <p class="subhead">
+    Mathematical foundations, core concepts, and the science behind digital image manipulation.
+  </p>
+
+  <!-- ================= SECTION 1: WHAT IS AN IMAGE? ================= -->
+  <h2><i class="fas fa-camera"></i> 1. What is a Digital Image?</h2>
+  <p>
+    A <strong>digital image</strong> is a discrete representation of a two-dimensional function 
+    <span class="math-inline">f(x, y)</span>, where <span class="math-inline">x</span> and 
+    <span class="math-inline">y</span> are spatial coordinates, and the amplitude of 
+    <span class="math-inline">f</span> at any pair of coordinates is called the 
+    <strong>intensity</strong> or <strong>gray level</strong> of the image at that point.
+  </p>
+  <p>
+    For a digital image to be processed by a computer, both the spatial coordinates and the 
+    intensity values must be <strong>digitized</strong> — that is, converted into discrete 
+    quantities. This process involves two key steps:
+  </p>
+  <div class="grid-2">
+    <div class="card">
+      <h4><i class="fas fa-arrows-alt-h"></i> Sampling</h4>
+      <p style="font-size:0.98rem; margin-bottom:0;">
+        Discretization of the spatial coordinates <span class="math-inline">(x, y)</span>. 
+        The continuous image is divided into a grid of small regions called 
+        <strong>pixels</strong> (picture elements). The number of samples determines the 
+        <strong>spatial resolution</strong>.
+      </p>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-chart-line"></i> Quantization</h4>
+      <p style="font-size:0.98rem; margin-bottom:0;">
+        Discretization of the amplitude (intensity) values. The continuous range of 
+        brightness is mapped to a finite set of discrete levels. The number of levels 
+        determines the <strong>radiometric resolution</strong> (e.g., 8-bit = 256 levels).
+      </p>
+    </div>
+  </div>
+
+  <div class="diagram">
+    <svg width="600" height="180" viewBox="0 0 600 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Continuous signal -->
+      <path d="M 40 130 Q 80 40, 140 100 T 260 60 T 380 110 T 500 50 T 560 90" 
+            stroke="#6366f1" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <text x="40" y="160" fill="#64748b" font-size="12">Continuous f(x,y)</text>
+      <!-- Sampling points -->
+      <circle cx="40" cy="130" r="4" fill="#ef4444"/>
+      <circle cx="100" cy="78" r="4" fill="#ef4444"/>
+      <circle cx="160" cy="90" r="4" fill="#ef4444"/>
+      <circle cx="220" cy="72" r="4" fill="#ef4444"/>
+      <circle cx="280" cy="70" r="4" fill="#ef4444"/>
+      <circle cx="340" cy="85" r="4" fill="#ef4444"/>
+      <circle cx="400" cy="95" r="4" fill="#ef4444"/>
+      <circle cx="460" cy="65" r="4" fill="#ef4444"/>
+      <circle cx="520" cy="60" r="4" fill="#ef4444"/>
+      <circle cx="560" cy="90" r="4" fill="#ef4444"/>
+      <text x="40" y="175" fill="#64748b" font-size="12">Sampled & quantized (pixels)</text>
+    </svg>
+    <div class="caption">Figure 1: Sampling and quantization of a continuous signal into discrete pixels.</div>
+  </div>
+
+  <!-- ================= SECTION 2: MATHEMATICAL REPRESENTATION ================= -->
+  <h2><i class="fas fa-square-root-alt"></i> 2. Mathematical Representation</h2>
+  <p>
+    A digital image can be represented as a matrix of intensity values. For a grayscale image 
+    of size <span class="math-inline">M × N</span>:
+  </p>
+  <div class="math-block">
+    <i class="fas fa-function"></i> 
+    f(x, y) = 
+    <span style="display:inline-block; vertical-align:middle;">
+      <span style="display:block; text-align:center; border-bottom:1px solid #334155; padding:0 8px;">
+        f(0,0) &nbsp; f(0,1) &nbsp; ... &nbsp; f(0,N-1)
+      </span>
+      <span style="display:block; text-align:center; padding:0 8px;">
+        f(1,0) &nbsp; f(1,1) &nbsp; ... &nbsp; f(1,N-1)
+      </span>
+      <span style="display:block; text-align:center; padding:0 8px;">
+        ... &nbsp;&nbsp;&nbsp;&nbsp; ... &nbsp;&nbsp;&nbsp;&nbsp; ... &nbsp;&nbsp;&nbsp;&nbsp; ...
+      </span>
+      <span style="display:block; text-align:center; padding:0 8px;">
+        f(M-1,0) &nbsp; f(M-1,1) &nbsp; ... &nbsp; f(M-1,N-1)
+      </span>
+    </span>
+  </div>
+  <p>
+    Each element <span class="math-inline">f(x, y)</span> is a pixel value. For an 8-bit image, 
+    these values range from 0 (black) to 255 (white). For color images, we have three such 
+    matrices — one for each channel (Red, Green, Blue).
+  </p>
+
+  <div class="note">
+    <i class="fas fa-lightbulb"></i> <strong>Key insight:</strong> Image processing is fundamentally 
+    about manipulating these matrices using mathematical operations — linear algebra, calculus, 
+    statistics, and signal processing techniques.
+  </div>
+
+  <!-- ================= SECTION 3: TYPES OF IMAGES ================= -->
+  <h2><i class="fas fa-layer-group"></i> 3. Types of Digital Images</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Channels</th>
+        <th>Typical Bit Depth</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Binary</strong></td>
+        <td>Each pixel is either 0 or 1 (black/white)</td>
+        <td>1</td>
+        <td>1-bit</td>
+      </tr>
+      <tr>
+        <td><strong>Grayscale</strong></td>
+        <td>Intensity values from black to white</td>
+        <td>1</td>
+        <td>8-bit (256 levels)</td>
+      </tr>
+      <tr>
+        <td><strong>RGB Color</strong></td>
+        <td>Three channels: Red, Green, Blue</td>
+        <td>3</td>
+        <td>8-bit per channel (24-bit total)</td>
+      </tr>
+      <tr>
+        <td><strong>RGBA</strong></td>
+        <td>RGB + Alpha (transparency) channel</td>
+        <td>4</td>
+        <td>8-bit per channel (32-bit total)</td>
+      </tr>
+      <tr>
+        <td><strong>HSV / HSL</strong></td>
+        <td>Hue, Saturation, Value/Lightness</td>
+        <td>3</td>
+        <td>Varies (often 8-bit per channel)</td>
+      </tr>
+      <tr>
+        <td><strong>Multispectral</strong></td>
+        <td>Multiple bands (e.g., satellite imagery)</td>
+        <td>4–10+</td>
+        <td>Usually 16-bit or higher</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ================= SECTION 4: FUNDAMENTAL STEPS ================= -->
+  <h2><i class="fas fa-cogs"></i> 4. Fundamental Steps in Image Processing</h2>
+  <p>
+    The field of image processing encompasses a wide range of operations. These are typically 
+    organized into a pipeline, from low-level pixel operations to high-level understanding.
+  </p>
+  <div class="grid-3">
+    <div class="card">
+      <h4><i class="fas fa-dot-circle"></i> Low-Level</h4>
+      <ul>
+        <li><i class="fas fa-circle"></i> Image acquisition</li>
+        <li><i class="fas fa-circle"></i> Preprocessing (denoising, filtering)</li>
+        <li><i class="fas fa-circle"></i> Enhancement (contrast, sharpening)</li>
+        <li><i class="fas fa-circle"></i> Restoration (deblurring)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-chart-pie"></i> Mid-Level</h4>
+      <ul>
+        <li><i class="fas fa-circle"></i> Segmentation (partitioning)</li>
+        <li><i class="fas fa-circle"></i> Feature extraction (edges, corners)</li>
+        <li><i class="fas fa-circle"></i> Morphological operations</li>
+        <li><i class="fas fa-circle"></i> Object detection</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-globe"></i> High-Level</h4>
+      <ul>
+        <li><i class="fas fa-circle"></i> Image understanding</li>
+        <li><i class="fas fa-circle"></i> Scene interpretation</li>
+        <li><i class="fas fa-circle"></i> Pattern recognition</li>
+        <li><i class="fas fa-circle"></i> Computer vision tasks</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="diagram">
+    <svg width="700" height="120" viewBox="0 0 700 120" xmlns="http://www.w3.org/2000/svg">
+      <!-- Pipeline arrows -->
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#6366f1"/>
+        </marker>
+      </defs>
+      
+      <!-- Step 1 -->
+      <rect x="10" y="30" width="110" height="50" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+      <text x="65" y="60" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="600">Acquisition</text>
+      
+      <line x1="125" y1="55" x2="155" y2="55" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowhead)"/>
+      
+      <!-- Step 2 -->
+      <rect x="160" y="30" width="110" height="50" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+      <text x="215" y="60" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="600">Preprocessing</text>
+      
+      <line x1="275" y1="55" x2="305" y2="55" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowhead)"/>
+      
+      <!-- Step 3 -->
+      <rect x="310" y="30" width="110" height="50" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+      <text x="365" y="60" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="600">Segmentation</text>
+      
+      <line x1="425" y1="55" x2="455" y2="55" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowhead)"/>
+      
+      <!-- Step 4 -->
+      <rect x="460" y="30" width="110" height="50" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+      <text x="515" y="60" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="600">Features</text>
+      
+      <line x1="575" y1="55" x2="605" y2="55" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowhead)"/>
+      
+      <!-- Step 5 -->
+      <rect x="610" y="30" width="80" height="50" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+      <text x="650" y="60" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="600">Analysis</text>
+    </svg>
+    <div class="caption">Figure 2: Typical image processing pipeline from acquisition to high-level analysis.</div>
+  </div>
+
+  <!-- ================= SECTION 5: KEY OPERATIONS ================= -->
+  <h2><i class="fas fa-flask"></i> 5. Key Theoretical Operations</h2>
+
+  <h3><i class="fas fa-filter"></i> 5.1 Convolution & Filtering</h3>
+  <p>
+    Convolution is the cornerstone of linear image filtering. A small matrix called a 
+    <strong>kernel</strong> (or filter) is slid across the image, and the sum of element-wise 
+    products produces the output pixel value.
+  </p>
+  <div class="formula">
+    g(x, y) = &sum;<sub>i</sub> &sum;<sub>j</sub> &nbsp; f(x+i, y+j) &middot; h(i, j)
+  </div>
+  <p>
+    Where <span class="math-inline">f</span> is the input image, <span class="math-inline">h</span> 
+    is the kernel, and <span class="math-inline">g</span> is the output. Different kernels achieve 
+    different effects:
+  </p>
+  <div class="grid-3">
+    <div class="card">
+      <h4><i class="fas fa-water"></i> Blurring</h4>
+      <p style="font-size:0.9rem; margin-bottom:0;">
+        Averaging or Gaussian kernels smooth the image by reducing high-frequency noise.
+      </p>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-border-all"></i> Sharpening</h4>
+      <p style="font-size:0.9rem; margin-bottom:0;">
+        Laplacian or high-pass kernels enhance edges by emphasizing intensity changes.
+      </p>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-vector-square"></i> Edge Detection</h4>
+      <p style="font-size:0.9rem; margin-bottom:0;">
+        Sobel, Prewitt, and Canny operators detect discontinuities in intensity.
+      </p>
+    </div>
+  </div>
+
+  <h3><i class="fas fa-chart-bar"></i> 5.2 Histogram & Intensity Transformations</h3>
+  <p>
+    The <strong>histogram</strong> of an image represents the frequency distribution of pixel 
+    intensities. It provides valuable information about contrast, brightness, and dynamic range.
+  </p>
+  <div class="formula">
+    h(k) = n<sub>k</sub> &nbsp;&nbsp; for &nbsp; k = 0, 1, 2, ..., L-1
+  </div>
+  <p>
+    Where <span class="math-inline">n<sub>k</sub></span> is the number of pixels with intensity 
+    <span class="math-inline">k</span>, and <span class="math-inline">L</span> is the number of 
+    possible intensity levels (e.g., 256 for 8-bit).
+  </p>
+  <p>
+    <strong>Histogram equalization</strong> is a powerful technique that transforms the image to 
+    have a uniform histogram, thereby enhancing contrast:
+  </p>
+  <div class="formula">
+    s = T(r) = (L - 1) &sum;<sub>j=0</sub><sup>r</sup> p<sub>r</sub>(j)
+  </div>
+  <p>
+    Where <span class="math-inline">p<sub>r</sub>(j)</span> is the probability of intensity 
+    <span class="math-inline">j</span>.
+  </p>
+
+  <h3><i class="fas fa-vector-square"></i> 5.3 Edge Detection Theory</h3>
+  <p>
+    Edges correspond to significant local changes in intensity. The gradient of an image 
+    <span class="math-inline">∇f</span> gives the direction and magnitude of the greatest rate 
+    of change:
+  </p>
+  <div class="formula">
+    ∇f = [ G<sub>x</sub>, G<sub>y</sub> ]<sup>T</sup> = 
+    [ ∂f/∂x , ∂f/∂y ]<sup>T</sup>
+  </div>
+  <p>
+    The <strong>gradient magnitude</strong> is <span class="math-inline">|∇f| = √(G<sub>x</sub>² + G<sub>y</sub>²)</span>, 
+    and the direction is <span class="math-inline">θ = atan2(G<sub>y</sub>, G<sub>x</sub>)</span>.
+    The <strong>Canny edge detector</strong> is a multi-stage algorithm that includes Gaussian 
+    smoothing, gradient computation, non-maximum suppression, and hysteresis thresholding.
+  </p>
+
+  <div class="code-block">
+    <div class="code-header"><i class="fab fa-python"></i> Sobel edge detection example</div>
+    <pre><code class="language-python">import cv2
+import numpy as np
+
+# Load grayscale image
+img = cv2.imread('image.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Sobel derivatives
+Gx = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=3)
+Gy = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=3)
+
+# Gradient magnitude
+magnitude = np.sqrt(Gx**2 + Gy**2)
+magnitude = np.uint8(np.clip(magnitude, 0, 255))</code></pre>
+  </div>
+
+  <h3><i class="fas fa-paint-brush"></i> 5.4 Morphological Operations</h3>
+  <p>
+    Morphology deals with the shape and structure of objects. It uses a <strong>structuring element</strong> 
+    to probe the image. The two fundamental operations are:
+  </p>
+  <div class="grid-2">
+    <div class="card">
+      <h4><i class="fas fa-expand"></i> Dilation (⊕)</h4>
+      <p style="font-size:0.95rem; margin-bottom:0;">
+        Expands the boundaries of foreground objects. Formally: 
+        <span class="math-inline">A ⊕ B = { z | (B̂)<sub>z</sub> ∩ A ≠ ∅ }</span>. 
+        Fills small holes and connects broken segments.
+      </p>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-compress"></i> Erosion (⊖)</h4>
+      <p style="font-size:0.95rem; margin-bottom:0;">
+        Shrinks foreground objects. Formally: 
+        <span class="math-inline">A ⊖ B = { z | (B)<sub>z</sub> ⊆ A }</span>. 
+        Removes small protrusions and separates touching objects.
+      </p>
+    </div>
+  </div>
+  <p>
+    Combinations of these give <strong>opening</strong> (erosion then dilation) and 
+    <strong>closing</strong> (dilation then erosion), which are used for noise removal 
+    and shape preservation.
+  </p>
+
+  <!-- ================= SECTION 6: COLOR THEORY ================= -->
+  <h2><i class="fas fa-palette"></i> 6. Color Theory & Color Spaces</h2>
+  <p>
+    Color is a perceptual phenomenon, but in image processing, we model it mathematically using 
+    <strong>color spaces</strong>. The most common is the <strong>RGB</strong> space, where each 
+    pixel is a combination of red, green, and blue primary colors.
+  </p>
+  
+  <h4>RGB to Grayscale Conversion</h4>
+  <p>
+    Because human vision is more sensitive to green, a weighted sum is used for luminance:
+  </p>
+  <div class="formula">
+    Y = 0.299 R + 0.587 G + 0.114 B
+  </div>
+  <p>
+    This is known as the <strong>luminance</strong> formula (ITU-R BT.601). 
+    Other color spaces like <strong>HSV</strong> (Hue, Saturation, Value) and 
+    <strong>YCbCr</strong> separate chromatic information from intensity, which is useful for 
+    compression (JPEG) and skin detection.
+  </p>
+
+  <div class="grid-3">
+    <div class="card">
+      <h4><i class="fas fa-tint"></i> RGB</h4>
+      <p style="font-size:0.9rem; margin-bottom:0;">Additive color model for displays.</p>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-sun"></i> HSV</h4>
+      <p style="font-size:0.9rem; margin-bottom:0;">Cylindrical: Hue (color), Saturation (purity), Value (brightness).</p>
+    </div>
+    <div class="card">
+      <h4><i class="fas fa-tv"></i> YCbCr</h4>
+      <p style="font-size:0.9rem; margin-bottom:0;">Luma + chroma; used in video and JPEG compression.</p>
+    </div>
+  </div>
+
+  <!-- ================= SECTION 7: TRANSFORMS ================= -->
+  <h2><i class="fas fa-wave-square"></i> 7. Frequency Domain & Transforms</h2>
+  <p>
+    While spatial domain operations work directly on pixels, the <strong>frequency domain</strong> 
+    represents the image in terms of its frequency components. The <strong>Fourier Transform</strong> 
+    decomposes an image into sine and cosine components:
+  </p>
+  <div class="formula">
+    F(u, v) = &sum;<sub>x=0</sub><sup>M-1</sup> &sum;<sub>y=0</sub><sup>N-1</sup> 
+    f(x, y) &middot; e<sup>-j2π(ux/M + vy/N)</sup>
+  </div>
+  <p>
+    The inverse
